@@ -4,7 +4,7 @@ var router = express.Router();
 /* GET users listing. */
 //For Personal Details
 router.get('/', function(req, res, next) {
-  res.render('users', { title: 'User Page' });
+  res.render('dashboard', { title: 'Dashboard Page' });
 });
 
 //For Personal Previous Leaves
