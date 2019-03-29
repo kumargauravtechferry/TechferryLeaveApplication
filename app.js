@@ -10,22 +10,11 @@ var flash=require("connect-flash");
 var session = require('express-session');
 var bodyParser = require('body-parser');
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var dashboardRouter = require('./routes/dashboard');
 var loginRouter = require('./routes/login');
+var notificationRouter = require('./routes/notification');
 
 
-//#region  login method
-
-// put the credentials to coonect with database
-// var connection = mysql.createConnection({
-// 	host     : 'localhost',
-// 	user     : 'root',
-// 	password : '12345',
-// 	database : 'nodelogin'
-// });
-
-// Express is what we'll use for our web applications, this includes packages@
-//  useful in web development, such as sessions and handling HTTP requests, to initialize it we can do:
 
 var app = express();
 
@@ -52,25 +41,38 @@ app.use(passport.session());
 // }));
 
 
-app.use(bodyParser.urlencoded({extended : true}));
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 app.use(bodyParser.json());
 
-app.get('/login', function(request, response) {
-	response.render('./login.hbs');
-});
+// app.get('/login', function(request, response) {
+//     response.render('./login.hbs');
+// });
 
-app.get('/users.hbs', function(request, response) {
 
-	if (request.session.loggedin) {
-		response.render('/users.hbs', {
-			username: request.session.username
-		});
-		//response.send('Welcome back, <h1>' +  + '</h1>!');
-	} else {
-		response.send('Please login to view this page!');
-	}
-	response.end();
-});
+// get dummy json file for user profile
+// var fs = require('fs');
+// var obj;
+// fs.readFile('./profile.json', 'utf8', function (err, data) {
+//   if (err) throw err;
+//   obj = JSON.parse(data);
+//   console.log("profile information "+ obj.userId);
+// });
+
+// app.get('/users.hbs', function(request, response) {
+
+//     if (request.session.loggedin) {
+//         response.render('/users.hbs', {
+//             username: request.session.username
+//         });
+//         //response.send('Welcome back, <h1>' +  + '</h1>!');
+//     } else {
+//         response.send('Please login to view this page!');
+//     }
+//     response.end();
+// });
+
 
 
 //#endregion
@@ -83,28 +85,31 @@ hbs.registerPartials(__dirname + '/views/partials');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({
+    extended: false
+}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/dashboard', usersRouter);
+app.use('/dashboard', dashboardRouter);
 app.use('/login', loginRouter);
+app.use('/notifications', notificationRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  next(createError(404));
+    next(createError(404));
 });
 
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
 });
 
 module.exports = app;

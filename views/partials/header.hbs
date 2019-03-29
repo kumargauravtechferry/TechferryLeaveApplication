@@ -4,8 +4,23 @@
     <title>
         {{ title }}
     </title>
-    <link href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css' rel='stylesheet'>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!------ Include the above in your HEAD tag ---------->
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
     <link rel='stylesheet' href='../stylesheets/style.css' />
+    <link href='../stylesheets/fullcalendar.min.css' rel='stylesheet' />
+    <link href='../stylesheets/fullcalendar.print.min.css' rel='stylesheet' media='print' />
+    <script src='../javascripts/moment.min.js'></script>
+    <script src='../javascripts/jquery.min.js'></script>
+    <script src='../javascripts/fullcalendar.min.js'></script>
+    <script src='../javascripts/calender-dashboard.js'></script>
 </head>
 
 
@@ -29,11 +44,11 @@
             </li>
             {{#if role}}
             <li class="nav-item">
-                <a class="nav-link" href="/users/view-employee">Employee</a>
+                <a class="nav-link" href="/dashboard/view-employees">Employee</a>
             </li>
             {{/if}}
             <li class="nav-item">
-                <a class="nav-link" href="/leave">Leave Management</a>
+                <a class="nav-link" href="/dashboard/leave">Leave Management</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/notifications">Notifications</a>
@@ -45,7 +60,7 @@
 
         <ul class="navbar-nav mr-auto right-text">
             <li class="nav-item ">
-                <a class="nav-link" href="/">Sign Out </a>
+                <a class="nav-link" href="/logOut">Sign Out </a>
             </li>
 
         </ul>
