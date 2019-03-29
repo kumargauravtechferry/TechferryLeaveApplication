@@ -4,6 +4,11 @@ var router = express.Router();
 /* GET users listing. */
 //For Personal Details
 router.get('/', function(req, res, next) {
+    // check authentication
+  if(!req.isAuthenticated()){
+    return res.redirect('/login');
+  }
+
   res.render('dashboard', { title: 'Dashboard Page', role: req.session.role === "TF-E001" ? true : false });
 });
 
