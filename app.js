@@ -29,6 +29,7 @@ var app = express();
 
 //We now need to let Express know we'll be using some of its packages:
 
+
 app.use(session({
 	secret: 'secret',
 	resave: true,
@@ -46,15 +47,20 @@ app.get('/login', function(request, response) {
 // check the user credentials for login
 
 app.post('/auth', function(request, response) {
+	var userRoleId = "TF-E001";
+	var userRoleHRId = "TF-HR001"; 
 
 	var username = request.body.username;
 	var password = request.body.password;
 	if (username && password) {
 		connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
 			if (results.length > 0) {
+				request.session.role =userRoleId;
 				request.session.loggedin = true;
 				request.session.username = username;
-		response.send('Welcome '+request.session.username);
+				console.log("entered");
+				return response.redirect('dashboard');
+		response.send('Welcome '+request.session.username +"& userRoleId:- "+userRoleId);
 			} else {
 				response.send('Incorrect Username and/or Password!');
 			}			
