@@ -49,7 +49,6 @@ app.get('/login', function(request, response) {
 app.post('/auth', function(request, response) {
 	var userRoleId = "TF-E001";
 	var userRoleHRId = "TF-HR001"; 
-
 	var username = request.body.username;
 	var password = request.body.password;
 	if (username && password) {
@@ -85,6 +84,7 @@ app.get('/users.hbs', function(request, response) {
 	}
 	response.end();
 });
+
 
 
 //#endregion
