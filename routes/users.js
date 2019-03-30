@@ -4,7 +4,7 @@ var router = express.Router();
 /* GET users listing. */
 //For Personal Details
 router.get('/', function(req, res, next) {
-  res.render('dashboard', { title: 'Dashboard Page', role: req.session.role === "TF-E001" ? true : false });
+  res.render('dashboard', { title: 'Dashboard Page', userName: req.session.userName, userId: req.session.userId, role: req.session.role === "TF-E001" ? true : false });
 });
 
 //For Personal Previous Leaves

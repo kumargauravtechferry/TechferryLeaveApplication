@@ -30,7 +30,6 @@ var app = express();
 
 //We now need to let Express know we'll be using some of its packages:
 
-
 app.use(session({
     secret: 'secret',
     resave: true,
@@ -47,10 +46,19 @@ app.get('/login', function(request, response) {
     response.render('./login.hbs');
 });
 
+
+// get dummy json file for user profile
+var fs = require('fs');
+var obj;
+fs.readFile('./profile.json', 'utf8', function (err, data) {
+  if (err) throw err;
+  obj = JSON.parse(data);
+  console.log("profile information "+ obj.userId);
+});
+
 // check the user credentials for login
 
 app.post('/auth', function(request, response) {
-<<<<<<< Updated upstream
 	var userRoleId = "TF-E001";
 	var userRoleHRId = "TF-HR001"; 
 	var username = request.body.username;
@@ -59,9 +67,10 @@ app.post('/auth', function(request, response) {
 		connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
 			if (results.length > 0) {
 				request.session.role =userRoleId;
+				request.session.userId = obj.userId;
+				request.session.userName = obj.userName;
 				request.session.loggedin = true;
 				request.session.username = username;
-				console.log("entered");
 				return response.redirect('dashboard');
 		response.send('Welcome '+request.session.username +"& userRoleId:- "+userRoleId);
 			} else {
@@ -73,26 +82,6 @@ app.post('/auth', function(request, response) {
 		response.send('Please enter Username and Password!');
 		response.end();
 	}
-=======
-
-    var username = request.body.username;
-    var password = request.body.password;
-    if (username && password) {
-        connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
-            if (results.length > 0) {
-                request.session.loggedin = true;
-                request.session.username = username;
-                response.send('Welcome ' + request.session.username);
-            } else {
-                response.send('Incorrect Username and/or Password!');
-            }
-            response.end();
-        });
-    } else {
-        response.send('Please enter Username and Password!');
-        response.end();
-    }
->>>>>>> Stashed changes
 });
 
 

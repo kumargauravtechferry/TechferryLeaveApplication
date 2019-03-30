@@ -17,7 +17,6 @@ router.get('/notification', function(req, res, next) {
         title: 'Techferry | Notification'
     });
 });
-<<<<<<< Updated upstream
 
 // function for logging out a user & if the user is no longer authenticated.
 
@@ -36,6 +35,4 @@ var logout = function (req, res, next) {
 	
   };
 
-=======
->>>>>>> Stashed changes
 module.exports = router;
