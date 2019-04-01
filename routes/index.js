@@ -8,12 +8,12 @@ router.get('/', function(req, res, next) {
         title: 'Techferry'
     });
 });
-router.get('/contact',isAuth, function(req, res, next) {
+router.get('/contact',isAuth.isAuthenticated, function(req, res, next) {
     res.render('contact', {
         title: 'Techferry | Contact'
     });
 });
-router.get('/notification',isAuth, function(req, res, next) {
+router.get('/notification',isAuth.isAuthenticated, function(req, res, next) {
     res.render('notifications', {
         title: 'Techferry | Notification'
     });
