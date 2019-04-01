@@ -12,7 +12,7 @@ passport.serializeUser(function(user, done) {
 
 // used to deserialize the user
 passport.deserializeUser(function(id, done) {
-    connection.query("select * from user where id = "+id,function(err,rows){	
+    connection.query("select * from user where UserId = "+id,function(err,rows){	
         done(err, rows[0]);
     });
     
@@ -35,7 +35,7 @@ passport.use('local-login', new LocalStrategy({
 },
 function(req, email, password, done) { // callback with email and password from our form
 
-        connection.query("SELECT * FROM `user` WHERE `email` = '" + email + "'",function(err,rows){
+        connection.query("SELECT * FROM `user` WHERE `Email` = '" + email + "'",function(err,rows){
         if (err)
             return done(err);
             if (!rows.length) {
