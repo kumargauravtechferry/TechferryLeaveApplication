@@ -43,7 +43,7 @@ function(req, email, password, done) { // callback with email and password from 
         } 
         
         // if the user is found but the password is wrong
-        if (!( rows[0].password == password))
+        if (!((rows[0].Password).toString() == password))
             return done(null, false, {message: 'Oops! Wrong password.'} ); // create the loginMessage and save it to session as flashdata
         
         // all is well, return successful user
