@@ -6,7 +6,7 @@ var passport = require('passport');
 var connection = require('./mysqlConnection');
 
 passport.serializeUser(function(user, done) {
-    done(null, user.id);
+    done(null, user.UserId);
     // done(null, 1);
 });
 
