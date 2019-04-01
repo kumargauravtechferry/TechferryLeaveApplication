@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var isAuth = require('../service/service');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -7,12 +8,12 @@ router.get('/', function(req, res, next) {
         title: 'Techferry'
     });
 });
-router.get('/contact', function(req, res, next) {
+router.get('/contact',isAuth, function(req, res, next) {
     res.render('contact', {
         title: 'Techferry | Contact'
     });
 });
-router.get('/notification', function(req, res, next) {
+router.get('/notification',isAuth, function(req, res, next) {
     res.render('notifications', {
         title: 'Techferry | Notification'
     });
