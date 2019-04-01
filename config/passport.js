@@ -12,7 +12,7 @@ passport.serializeUser(function(user, done) {
 
 // used to deserialize the user
 passport.deserializeUser(function(id, done) {
-    connection.query("select * from user where UserId = "+id,function(err,rows){	
+    connection.query("select * from user where UserId = "+id + " ",function(err,rows){	
         done(err, rows[0]);
     });
     
@@ -43,7 +43,7 @@ function(req, email, password, done) { // callback with email and password from 
         } 
         
         // if the user is found but the password is wrong
-        if (!((rows[0].Password).toString() == password))
+        if (!(rows[0].Password == password))
             return done(null, false, {message: 'Oops! Wrong password.'} ); // create the loginMessage and save it to session as flashdata
         
         // all is well, return successful user

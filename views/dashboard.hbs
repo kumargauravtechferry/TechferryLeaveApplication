@@ -1,5 +1,7 @@
 {{> header}}
 
+
+
 <div class="container">
     <div class="row">
         <div class="col-xl-3 col-lg-6 col-12">
@@ -63,9 +65,9 @@
             </div>
         </div>
         <div>
-            <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+            {{!-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> --}}
 <!------ Include the above in your HEAD tag ---------->
 
 <div class="container emp-profile">
@@ -73,28 +75,28 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="profile-img">
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS52y5aInsxSm31CvHOFHWujqUx_wWTS9iM6s7BAm21oEN_RiGoog" alt=""/>
-                            <div class="file btn btn-lg btn-primary">
+                            <img class="empPhoto" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS52y5aInsxSm31CvHOFHWujqUx_wWTS9iM6s7BAm21oEN_RiGoog" alt=""/>
+                            {{!-- <div class="file btn btn-lg btn-primary">
                                 Change Photo
                                 <input type="file" name="file"/>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="profile-head">
-                                    <h5>
+                                    <h5 class="employeeName">
                                         Kshiti Ghelani
                                     </h5>
-                                    <h6>
+                                    <h6 class="employeeId">
                                         Web Developer and Designer
                                     </h6>
-                                    <p class="proile-rating">RANKINGS : <span>8/10</span></p>
+                                    <p class="proile-rating employeeEmail">RANKINGS : <span>8/10</span></p>
                             <ul class="nav nav-tabs" id="myTab" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">About</a>
+                                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Employee Details</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Timeline</a>
+                                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Employee Leaves</a>
                                 </li>
                             </ul>
                         </div>
@@ -106,8 +108,8 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="profile-work">
-                            <p>WORK LINK</p>
-                            <a href="">Website Link</a><br/>
+                            {{!-- <p>WORK LINK</p> --}}
+                            <a href="/dashboard/leave">Apply Leave</a><br/>
                            
                         </div>
                     </div>
@@ -116,42 +118,78 @@
                             <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <label>User Id</label>
+                                                <label>Address</label>
                                             </div>
-                                            <div class="col-md-6">
-                                                <p>{{userId}}</p>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <label>Name</label>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <p>{{userName}}</p>
+                                            <div class="col-md-6 empAddress">
+                                                <p>Add - Line 1</p>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <label>Email</label>
+                                                <label>Date of Birth</label>
                                             </div>
-                                            <div class="col-md-6">
-                                                <p>kshitighelani@gmail.com</p>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <label>Phone</label>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <p>123 456 7890</p>
+                                            <div class="col-md-6 empDob">
+                                                <p> 09-06-1991</p>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <label>Profession</label>
+                                                <label>Gender</label>
                                             </div>
+                                            <div class="col-md-6 empGender">
+                                                <p>Male</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
                                             <div class="col-md-6">
-                                                <p>Web Developer and Designer</p>
+                                                <label>Marital Satus</label>
+                                            </div>
+                                            <div class="col-md-6 empMStatus">
+                                                <p>Single</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Contact Number</label>
+                                            </div>
+                                            <div class="col-md-6 empContactNumber">
+                                                <p>0123456789</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Emergency Contact Number</label>
+                                            </div>
+                                            <div class="col-md-6 empEmergencyContactNumber">
+                                                <p>0123456789</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Blood Group</label>
+                                            </div>
+                                            <div class="col-md-6 empBloodGroup">
+                                                <p>B+</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Joining Date</label>
+                                            </div>
+                                            <div class="col-md-6 empJoiningDate">
+                                                <p>04/06/2018</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Employee Status</label>
+                                            </div>
+                                            <div class="col-md-6 empStatus">
+                                                <p>Active</p>
                                             </div>
                                         </div>
                             </div>
@@ -203,6 +241,9 @@
                                     </div>
                                 </div>
                             </div>
+
+                            {{!-- Calender --}}
+                            <div id='calendar'></div>
                         </div>
                     </div>
                 </div>
@@ -211,3 +252,6 @@
         </div>
     </div>
 </div>
+
+
+    <script src="../javascripts/dashboard.js"></script>
