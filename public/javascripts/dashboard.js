@@ -7,8 +7,8 @@ $(document).ready(function () {
         url: "/dashboard",
         async: true,
         success: function (resultData) {
-            //console.log(resultData); 
-            $('.employeeName').html(resultData.Firstname + " " + resultData.Lastname);
+            console.log(resultData); 
+            $('.employeeName').html(resultData.FirstName + " " + resultData.LastName);
             $('.employeeId').html(resultData.EmpId);
             $('.employeeEmail').html(resultData.Email);
             $('.empAddress').html(resultData.Street1 + " " + resultData.Street1 + " " + resultData.Street1 + " " + resultData.Street1);
@@ -21,6 +21,7 @@ $(document).ready(function () {
             $('.empJoiningDate').html(resultData.JoinedDate);
             $('.empStatus').html(resultData.StatusName);
             $('.empAvailableLeaves').html(resultData.AvailableLeaves);
+            $('.empDesignation').html(" (" + resultData.Designation + ")");
             $('.empPhoto').attr("src", ".." + resultData.Photo + resultData.EmpId + ".png");
         },
         error: function (err) {

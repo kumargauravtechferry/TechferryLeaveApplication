@@ -22,10 +22,13 @@ router.get('/', function (req, res, next) {
 
 router.post('/', (req, res, next) => {
     //console.log(req.user);
-    var connectionCommand = `Select * from User as u
+    var connectionCommand = `Select u.EmpId, u.FirstName, u.LastName, u.Email, u.DOB, u.Gender, u.MaritalSatus, u.ContactNumber, u.EmergencyNumber,
+    u.BloodGroup, u.Photo, e.JoinedDate, e.AvailableLeaves,
+    a.Street1, a.Street2, a.City, a.State, s.StatusName, d.Designation from User as u
     inner join Employee as e on u.EmpId = e.EmpId
     inner join Address as a on u.AddressId = a.AddressId
     inner join EmployeeStatus as s on e.StatusId = s.StatusId
+    inner join Designation as d on u.DesignationId = d.DesignationId
     WHERE u.Email = "${req.user.Email}"`;
     connection.query(connectionCommand, function (err, rows) {
         if (err)
@@ -61,10 +64,36 @@ router.post('/fetchHolidays', (req, res, next) => {
 router.post('/fetchLeaves', (req, res, next) => {
     //console.log(req.user);
 
-    var connectionCommand = `Select * from Leaves as l
+    var connectionCommand = `Select l.LeaveDate, lt.LeaveTypeName, lt.LeaveValue, l.Reason from Leaves as l
     inner join LeavesType as lt on l.LeaveTypeId = lt.LeaveTypeId
     inner join user as u on u.UserId = l.UserId
     where email = "${req.user.Email}"`;
+
+    connection.query(connectionCommand, function (err, rows) {
+        if (err)
+            return res.send(err);
+        if (!rows.length) {
+            //return done(null, false, req.flash('loginMessage', 'No User Found.')); // req.flash is the way to set flashdata using connect-flash
+            return res.send(null);
+        } else {
+            return res.send(rows);
+        }
+    });
+
+});
+
+router.post('/view-employees', (req, res, next) => {
+    //console.log(req.user);
+
+    var connectionCommand = `Select u.UserId, u.EmpId, u.FirstName, u.LastName, u.Email, u.ContactNumber, u.Photo,
+    u.Photo, e.AvailableLeaves,
+    s.StatusName, d.Designation,
+    (Select Sum(lt.LeaveValue) from Leaves as l
+    inner join LeavesType as lt on l.LeaveTypeId = lt.LeaveTypeId
+    where UserId = u.UserId) as TotalLeaves from User as u
+    inner join Employee as e on u.EmpId = e.EmpId
+    inner join EmployeeStatus as s on e.StatusId = s.StatusId
+    inner join Designation as d on u.DesignationId = d.DesignationId`;
 
     connection.query(connectionCommand, function (err, rows) {
         if (err)
@@ -86,6 +115,14 @@ router.get('/prev', isAuth.isAuthenticated, function (req, res, next) {
     });
 });
 
+//For Viewing Details
+router.post('/viewEmployeeDetails', isAuth.isAuthenticated, function (req, res, next) {
+    res.render('employee-details', {
+        title: 'Employees Details',
+        empId: req.body.EmpId
+    });
+});
+
 //From HR : Check the details/list of other users.
 router.get('/view-employees', isAuth.isAuthenticated, function (req, res, next) {
     res.render('view_employees', {
@@ -94,7 +131,15 @@ router.get('/view-employees', isAuth.isAuthenticated, function (req, res, next) 
 });
 
 //From HR : Check the details of one user.
-router.get('/view-employees/:id', isAuth.isAuthenticated, function (req, res) {
+router.get('/employee-details', isAuth.isAuthenticated, function (req, res) {
+    res.render('employee-details', {
+        title: 'Employees Details',
+        id: req.params.id
+    });
+});
+
+//From HR : Edit the details of one user.
+router.get('/edit-employee', isAuth.isAuthenticated, function (req, res) {
     res.render('edit_employee', {
         title: 'Edit Employees Leaves Page',
         id: req.params.id
