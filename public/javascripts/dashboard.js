@@ -1,12 +1,12 @@
 $(document).ready(function () {
 
-    var myKeyVals = "";
+    //var myKeyVals = "";
 
     $.ajax({
         type: 'POST',
         url: "/dashboard",
-        data: myKeyVals,
-        success: function (resultData) { 
+        async: true,
+        success: function (resultData) {
             //console.log(resultData); 
             $('.employeeName').html(resultData.Firstname + " " + resultData.Lastname);
             $('.employeeId').html(resultData.EmpId);
@@ -20,10 +20,79 @@ $(document).ready(function () {
             $('.empBloodGroup').html(resultData.BloodGroup);
             $('.empJoiningDate').html(resultData.JoinedDate);
             $('.empStatus').html(resultData.StatusName);
-            $('.empPhoto').attr("src",".." + resultData.Photo +  resultData.EmpId + ".png");
+            $('.empAvailableLeaves').html(resultData.AvailableLeaves);
+            $('.empPhoto').attr("src", ".." + resultData.Photo + resultData.EmpId + ".png");
         },
-        error: function(err) {
+        error: function (err) {
             alert(err);
         }
     });
+
+    $.ajax({
+        type: 'POST',
+        url: "/dashboard/fetchHolidays",
+        async: true,
+        success: function (res) {
+
+            console.log(res);
+
+            var event = [];
+            for (var i = 0; i < res.length; i++) {
+                event.push({
+                    title: res[i].name,
+                    start: res[i].leaveDate,
+                    color: res[i].type == 'holiday' ? '#000' : '#999',
+                    textColor: '#fff'
+                })
+            }
+
+            var curDate = moment().format('YYYY-MM-DD')
+            $('#calendar').fullCalendar({
+                defaultDate: curDate,
+                editable: false,
+                navLinks: false,
+                eventLimit: true, // allow "more" link when too many events
+                events: event
+            });
+
+        },
+        error: function (err) {
+
+        }
+    });
+
+    $.ajax({
+        type: 'POST',
+        url: "/dashboard/fetchLeaves",
+        async: true,
+        success: function (res) {
+
+            //console.log(res);
+
+            var leavesTaken = 0;
+
+            var dummyTableRow = '';
+            $('.empLeavesTableBody').empty();
+
+            for (var i = 0; i < res.length; i++) {
+                leavesTaken += res[i].LeaveValue;
+                dummyTableRow += `<tr>
+                                <td>${moment(res[i].LeaveDate).format('DD-MM-YYYY')}</td>
+                                <td>${res[i].LeaveTypeName}</td>
+                                <td>${res[i].LeaveValue}</td>
+                                <td>${res[i].Reason}</td>
+                            </tr>`;
+            }
+
+
+            $('.empLeavesTaken').html(leavesTaken);
+            $('.empLeavesTableBody').append(dummyTableRow);
+
+
+        },
+        error: function (err) {
+
+        }
+    });
+
 });

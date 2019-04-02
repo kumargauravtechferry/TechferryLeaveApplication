@@ -21,7 +21,7 @@ router.get('/', function (req, res, next) {
 });
 
 router.post('/', (req, res, next) => {
-    console.log(req.user);
+    //console.log(req.user);
     var connectionCommand = `Select * from User as u
     inner join Employee as e on u.EmpId = e.EmpId
     inner join Address as a on u.AddressId = a.AddressId
@@ -33,8 +33,47 @@ router.post('/', (req, res, next) => {
         if (!rows.length) {
             //return done(null, false, req.flash('loginMessage', 'No User Found.')); // req.flash is the way to set flashdata using connect-flash
             return res.send("No Data Found");
-        } else{
+        } else {
             return res.send(rows[0]);
+        }
+    });
+
+});
+
+router.post('/fetchHolidays', (req, res, next) => {
+    //console.log(req.user);
+    var connectionCommand = `(Select HolidayDate as leaveDate, HolidayName as name, 'holiday' as type from Holidays)
+    union all 
+    (Select LeaveDate as leaveDate, Reason as name, 'leave' as type from Leaves where UserId = ${req.user.UserId});`;
+    connection.query(connectionCommand, function (err, rows) {
+        if (err)
+            return res.send(err);
+        if (!rows.length) {
+            //return done(null, false, req.flash('loginMessage', 'No User Found.')); // req.flash is the way to set flashdata using connect-flash
+            return res.send(null);
+        } else {
+            return res.send(rows);
+        }
+    });
+
+});
+
+router.post('/fetchLeaves', (req, res, next) => {
+    //console.log(req.user);
+
+    var connectionCommand = `Select * from Leaves as l
+    inner join LeavesType as lt on l.LeaveTypeId = lt.LeaveTypeId
+    inner join user as u on u.UserId = l.UserId
+    where email = "${req.user.Email}"`;
+
+    connection.query(connectionCommand, function (err, rows) {
+        if (err)
+            return res.send(err);
+        if (!rows.length) {
+            //return done(null, false, req.flash('loginMessage', 'No User Found.')); // req.flash is the way to set flashdata using connect-flash
+            return res.send(null);
+        } else {
+            return res.send(rows);
         }
     });
 
