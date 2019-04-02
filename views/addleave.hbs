@@ -1,0 +1,106 @@
+<style>
+    .login-form {
+        width: 300px;
+        margin: 0 auto;
+        font-family: Tahoma, Geneva, sans-serif;
+    }
+    .login-form h1 {
+        text-align: center;
+        color: #4d4d4d;
+        font-size: 24px;
+        padding: 20px 0 20px 0;
+    }
+
+    .login-form input[type="password"],
+    .login-form input[type="text"] {
+        width: 100%;
+        padding: 15px;
+        border: 1px solid #dddddd;
+        margin-bottom: 15px;
+        box-sizing: border-box;
+    }
+
+    .login-form input[type="submit"] {
+        width: 100%;
+        padding: 15px;
+        background-color: #535b63;
+        border: 0;
+        box-sizing: border-box;
+        cursor: pointer;
+        font-weight: bold;
+        color: #ffffff;
+    }
+    .card-body {
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 1.25rem;
+}
+.custom-control-label
+{
+    display: contents;
+}
+</style>
+</head>
+
+<body>
+
+    {{> header}}
+    <div class="llimiterimiter">
+                <form class="login100-form validate-form" action="/addleave" method="POST">
+    <!-- Title -->
+    <h1>Apply Leave</h1>
+    <!-- End Title -->
+   
+    <!--breadcrum end-->
+
+        <!-- Apply Leave Form -->
+        <div class="card pmd-card single-col-form">
+            <form id="apply-leave" method="post" action="" novalidate="novalidate">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group pmd-textfield pmd-textfield-floating-label ">
+                                <label for="leave-type">Leave Type</label>
+                                <select name="leave-type" id="leave-type" class="form-control" title="Please select a Leave Type" required="">
+                                    {{#each leaveTypeData}}
+                                    <option value="{{LeaveTypeId}}">{{LeaveTypeName}}</option>
+                                    {{/each}}
+                                </select><span class="pmd-textfield-focused"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                                <label class="control-label" for="datepickerstart">Start Date</label>
+                                <input type="text" class="form-control" id="datepickerstart" name="datepickerstart"><span class="pmd-textfield-focused"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                                <label class="control-label" for="datepickerend">End Date</label>
+                                <input type="text" class="form-control" id="datepickerend" name="datepickerend"><span class="pmd-textfield-focused"></span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                                <label>Reason</label>
+                                <textarea class="form-control" id="reason" name="reason"></textarea><span class="pmd-textfield-focused"></span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="custom-control custom-checkbox pmd-checkbox">
+                                <input class="custom-control-input" type="checkbox" value="" id="inverse_defaultCheck1">
+                                <label class="custom-control-label" for="inverse_defaultCheck1">
+                                    Is it a Half Day?
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary pmd-ripple-effect pmd-btn-raised" name="applyleave" value="Apply Leave">Apply Leave</button> <a href="leave.html" class="btn btn-outline-secondary pmd-ripple-effect">Cancel</a>
+                </div>
+            </form>
+        </div>
+                </form>
+    </div>

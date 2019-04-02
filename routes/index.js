@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var isAuth = require('../service/service');
+var connection = require('../config/mysqlConnection');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -29,6 +30,28 @@ router.get('/logOut', function(req, res, next) {
 //    console.log(req.user)
    res.redirect('/login');
 });
+
+router.get('/addleave',isAuth, function(req, res, next) {
+  
+    var leaveTypeData = [];
+    
+    connection.query("SELECT * from leavestype",function(err, rows, fields){
+        if(rows.length != 0){
+            leaveTypeData = rows;
+            //res.json(data);
+        }else{
+            leaveTypeData = [];
+            //res.json(data);
+        }
+
+        res.render('addleave', {
+            title: 'Techferry |  Add leave',
+            leaveTypeData: leaveTypeData
+        });
+    });
+
+});
+
 
 var logout = function (req, res, next) {
 	
