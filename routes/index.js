@@ -31,10 +31,22 @@ router.get('/logOut', function(req, res, next) {
    res.redirect('/login');
 });
 
-router.get('/addleave',isAuth, function(req, res, next) {
-  
-    var leaveTypeData = [];
+router.get('/addleave',isAuth.isAuthenticated, function(req, res, next) {
     
+    getLeaveTypeData(null, function(err, result){
+        res.render('addleave', {
+            title: 'Techferry |  Add leave',
+            leaveTypeData: result
+        });
+    });
+       
+
+});
+
+
+var getLeaveTypeData = function(params, callbackFn){
+    
+    var leaveTypeData = [];
     connection.query("SELECT * from leavestype",function(err, rows, fields){
         if(rows.length != 0){
             leaveTypeData = rows;
@@ -44,13 +56,9 @@ router.get('/addleave',isAuth, function(req, res, next) {
             //res.json(data);
         }
 
-        res.render('addleave', {
-            title: 'Techferry |  Add leave',
-            leaveTypeData: leaveTypeData
-        });
+        callbackFn(undefined, leaveTypeData);
     });
-
-});
+};
 
 
 var logout = function (req, res, next) {
