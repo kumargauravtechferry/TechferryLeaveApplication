@@ -107,7 +107,7 @@ router.get('/reset_password/:token',function(req, res, next){
             next(false)
         if (!rows.length) {
             // res.redirect('/login')
-            var statusMessage = `<span>OPPS! your password reset link has expired. click here  for  <a href="/login">login</a></span>`;
+            var statusMessage = `<span>your password reset link has expired. click here  for  <a href="/login">login</a></span>`;
             res.render('sucessPage', { status_Message_flag: true, statusMessage: statusMessage})
         } else{
             res.render('reset_password',{url: '/change_password/'+token})
@@ -181,7 +181,7 @@ router.get('/change_password/:id',function(req, res, next){
             // return done(err);
         if (!rows.length) {
             // return next(err)
-            var statusMessage = `<span>OPPS! your password reset link has expired. click here  for  <a href="/login">login</a></span>`;
+            var statusMessage = `<span>your password reset link has expired. click here  for  <a href="/login">login</a></span>`;
             res.render('sucessPage', { status_Message_flag: true, statusMessage: statusMessage})
             // return done(null, false, {message:'No User Found.'}); // req.flash is the way to set flashdata using connect-flash
         }
@@ -191,5 +191,38 @@ router.get('/change_password/:id',function(req, res, next){
 router.get('/sucessPage',function(req, res, next){
     res.render('sucessPage',{title: 'Sucess!', statusMessage: ''} )
 })
+router.get('/addleave',isAuth.isAuthenticated, function(req, res, next) {
+    
+    getLeaveTypeData(null, function(err, result){
+        res.render('addleave', {
+            title: 'Techferry |  Add leave',
+            leaveTypeData: result
+        });
+    });
+       
+
+});
+
+
+var getLeaveTypeData = function(params, callbackFn){
+    
+    var leaveTypeData = [];
+    connection.query("SELECT * from leavestype",function(err, rows, fields){
+        if(rows.length != 0){
+            leaveTypeData = rows;
+            //res.json(data);
+        }else{
+            leaveTypeData = [];
+            //res.json(data);
+        }
+
+        callbackFn(undefined, leaveTypeData);
+    });
+};
+
+
+var logout = function (req, res, next) {
+	
+  };
 
 module.exports = router;

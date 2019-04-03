@@ -14,7 +14,7 @@ passport.serializeUser(function(user, done) {
 
 // used to deserialize the user
 passport.deserializeUser(function(id, done) {
-    connection.query("select * from user where UserId = "+id,function(err,rows){	
+    connection.query("select * from user where UserId = "+id + " ",function(err,rows){	
         done(err, rows[0]);
     });
     

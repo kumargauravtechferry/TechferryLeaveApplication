@@ -1,67 +1,46 @@
 
-<style>
-    .validate-form {
-        margin: 0px auto;
-    }
-    .rs1-wrap-input100{
-        width:100% !important
-    }
-    .login100-form-title {
-        padding: 25px
-    }
-    .validate-input{
-        margin-bottom: 25px;
-    }
-    .login100-form{
-        padding: 59px 65px 40px 65px !important;
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    }
-    .container{
-        margin-top: 25px;
-    }
 
-    .error_message{
-        height: 30px;
-        background: #aba0a0;
-        color: white;
-        text-align: center;
-        padding: 6px;
-    }
-    .cross_close{
-        float: right;
-        cursor: pointer;
-    }
-    .send_message{
-        padding: 30px;
-        margin: 0px auto;
-        /* top: 37px; */
-        margin-top: 95px;
-        height: 77px;
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    }
-    .send_message span{
-        margin: 36px;
-        margin-top: 89px;
-    }
-</style>
 
-{{> header}}
 
-    {{!-- <section id="banner"> --}}
-    <div class="limiter">
-        <div class="container-login100">
-            <div class="wrap-login100">
-                    {{!-- {{statusMessage}} --}}
-                    <div class="send_message">{{{statusMessage}}} </div>
+    <!DOCTYPE html>
+<html lang="en">
 
-        </div>
-        </div>
-        </div>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
-        <script>
-                setTimeout(function () {
-                     document.getElementById('js_error_message').style.display='none';
-                }, 1000);
-        </script>
+	<title>404 HTML Tempalte by Colorlib</title>
 
-    {{!-- </section> --}}
+	<!-- Google font -->
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,900" rel="stylesheet">
+
+	<!-- Custom stlylesheet -->
+	<link type="text/css" rel="stylesheet" href="../stylesheets/404style.css" />
+
+	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+		  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+		  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+</head>
+
+<body>
+
+	<div id="notfound">
+		<div class="notfound">
+			<div class="notfound-404">
+				<h1>Oops!</h1>
+			</div>
+			<h2>404 - Page not found</h2>
+            {{{statusMessage}}}
+
+		</div>
+	</div>
+
+</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+
+</html>
