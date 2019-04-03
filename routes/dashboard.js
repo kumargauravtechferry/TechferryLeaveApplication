@@ -9,7 +9,10 @@ router.get('/', function(req, res, next) {
   if(!req.isAuthenticated()){
     return res.redirect('/login');
   }
-  console.log(req.user)
+//   console.log(req.user)
+// router.post('/',function(req,res,next){
+
+// });
   res.render('dashboard', { title: 'Dashboard Page'});
 });
 
@@ -19,6 +22,10 @@ router.get('/prev',isAuth.isAuthenticated, function(req, res, next) {
         title: 'Previous Leaves Page'
     });
 });
+
+// router.post('/',function(req,res,next){
+//     console.log(req)
+// })
 
 //From HR : Check the details/list of other users.
 router.get('/view-employees',isAuth.isAuthenticated, function(req, res, next) {

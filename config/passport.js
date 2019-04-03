@@ -2,6 +2,8 @@
 				
 var LocalStrategy   = require('passport-local').Strategy;
 var passport = require('passport');
+var  crypto = require('crypto');
+var config = require('./config');
 
 var connection = require('./mysqlConnection');
 
@@ -37,13 +39,21 @@ function(req, email, password, done) { // callback with email and password from 
 
         connection.query("SELECT * FROM `user` WHERE `Email` = '" + email + "'",function(err,rows){
         if (err)
-            return done(err);
-            if (!rows.length) {
-            return done(null, false, req.flash('loginMessage', 'No User Found.')); // req.flash is the way to set flashdata using connect-flash
+        return done(err);
+        if (!rows.length) {
+            return done(null, false, {message:'No User Found.'}); // req.flash is the way to set flashdata using connect-flash
         } 
         
+        // get salt
+        var salt = config.salt;
+        // Encrypt Password given
+        var givenEncPass = crypto.pbkdf2Sync(password,  salt, 1000, 64, `sha512`).toString(`hex`);
+
+
+        // Match encrypted password
+
         // if the user is found but the password is wrong
-        if (!((rows[0].Password).toString() == password))
+        if (!((rows[0].Password).toString() == givenEncPass))
             return done(null, false, {message: 'Oops! Wrong password.'} ); // create the loginMessage and save it to session as flashdata
         
         // all is well, return successful user

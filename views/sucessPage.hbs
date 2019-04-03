@@ -1,0 +1,67 @@
+
+<style>
+    .validate-form {
+        margin: 0px auto;
+    }
+    .rs1-wrap-input100{
+        width:100% !important
+    }
+    .login100-form-title {
+        padding: 25px
+    }
+    .validate-input{
+        margin-bottom: 25px;
+    }
+    .login100-form{
+        padding: 59px 65px 40px 65px !important;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    }
+    .container{
+        margin-top: 25px;
+    }
+
+    .error_message{
+        height: 30px;
+        background: #aba0a0;
+        color: white;
+        text-align: center;
+        padding: 6px;
+    }
+    .cross_close{
+        float: right;
+        cursor: pointer;
+    }
+    .send_message{
+        padding: 30px;
+        margin: 0px auto;
+        /* top: 37px; */
+        margin-top: 95px;
+        height: 77px;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    }
+    .send_message span{
+        margin: 36px;
+        margin-top: 89px;
+    }
+</style>
+
+{{> header}}
+
+    {{!-- <section id="banner"> --}}
+    <div class="limiter">
+        <div class="container-login100">
+            <div class="wrap-login100">
+                    {{!-- {{statusMessage}} --}}
+                    <div class="send_message">{{{statusMessage}}} </div>
+
+        </div>
+        </div>
+        </div>
+
+        <script>
+                setTimeout(function () {
+                     document.getElementById('js_error_message').style.display='none';
+                }, 1000);
+        </script>
+
+    {{!-- </section> --}}

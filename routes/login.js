@@ -7,7 +7,17 @@ var isAuth = require('../service/service');
 /* GET home page. */
 router.get('/', isAuth.checklogin,function(req, res, next) {
   // console.log(req.session)
-  res.render('login', { title: 'login Page', message: 'password wrong'});
+  var message = '';
+  if(req.session.flash){
+    if(req.session.flash.status_Message){
+      var length = req.session.flash.status_Message.length
+
+      message = req.session.flash.status_Message[length - 1];
+    }
+
+     req.flash('status_Message','');
+  }
+  res.render('login', { title: 'login Page', message: message});
 });
 
 
