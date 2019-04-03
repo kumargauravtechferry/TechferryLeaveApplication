@@ -23,10 +23,10 @@ router.get('/', function (req, res, next) {
 
 router.post('/', (req, res, next) => {
     //console.log(req.user);
-    var connectionCommand = `Select u.EmpId, u.FirstName, u.LastName, u.Email, u.DOB, u.Gender, u.MaritalSatus, u.ContactNumber, u.EmergencyNumber,
+    var connectionCommand = `Select e.EmployeeId, u.Firstname, u.Lastname, u.Email, u.DOB, u.Gender, u.MaritalSatus, u.ContactNumber, u.EmergencyNumber,
     u.BloodGroup, u.Photo, e.JoinedDate, e.AvailableLeaves,
     a.Street1, a.Street2, a.City, a.State, s.StatusName, d.Designation from User as u
-    inner join Employee as e on u.EmpId = e.EmpId
+    inner join Employee as e on u.EmpId = e.Id
     inner join Address as a on u.AddressId = a.AddressId
     inner join EmployeeStatus as s on e.StatusId = s.StatusId
     inner join Designation as d on u.DesignationId = d.DesignationId

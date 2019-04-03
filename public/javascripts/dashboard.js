@@ -8,8 +8,8 @@ $(document).ready(function () {
         async: true,
         success: function (resultData) {
             console.log(resultData); 
-            $('.employeeName').html(resultData.FirstName + " " + resultData.LastName);
-            $('.employeeId').html(resultData.EmpId);
+            $('.employeeName').html(resultData.Firstname + " " + resultData.Lastname);
+            $('.employeeId').html(resultData.EmployeeId);
             $('.employeeEmail').html(resultData.Email);
             $('.empAddress').html(resultData.Street1 + " " + resultData.Street1 + " " + resultData.Street1 + " " + resultData.Street1);
             $('.empDob').html(resultData.DOB);
