@@ -18,7 +18,7 @@ router.get('/', function (req, res, next) {
         return res.redirect('/login');
     }
     //console.log(req.user)
-    res.render('dashboard', { title: 'Dashboard Page' });
+    res.render('dashboard', { title: 'Dashboard Page', user: req.user });
 });
 
 router.post('/', (req, res, next) => {

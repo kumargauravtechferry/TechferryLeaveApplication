@@ -1,0 +1,85 @@
+.login-form {
+    width: 300px;
+    margin: 0 auto;
+    font-family: Tahoma, Geneva, sans-serif;
+}
+
+.login-form h1 {
+    text-align: center;
+    color: #4d4d4d;
+    font-size: 24px;
+    padding: 20px 0 20px 0;
+}
+
+.login-form input[type="password"],
+.login-form input[type="text"] {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #dddddd;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+.login-form input[type="submit"] {
+    width: 100%;
+    padding: 15px;
+    background-color: #535b63;
+    border: 0;
+    box-sizing: border-box;
+    cursor: pointer;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.login100-more{
+    width: 100% !important;
+}
+
+.container-login100{
+    width: auto !important;
+    padding: 0 !important;
+    min-height: 0px !important
+
+}
+
+
+.validate-form {
+    margin: 122px auto;
+}
+.rs1-wrap-input100{
+    width:100% !important
+}
+.login100-form-title {
+    padding: 25px
+}
+.validate-input{
+    margin-bottom: 25px;
+}
+.login100-form{
+    padding: 20px 50px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    background: #fff;
+    width: 30%;
+    height: 60%;
+    /* overflow: auto; */
+    margin: auto;
+    margin-left: 10%;
+    position: absolute;
+    top: 0;
+    left: 0px;
+    bottom: 0;
+    right: 0;
+}
+.login100-form a{
+    color: #1d2982;
+    padding: 30px 0px;
+    font-size: 14px;
+}
+
+.rs1-wrap-input100, .rs2-wrap-input100{
+   width: 100%;
+}
+
+.status_message {
+    color: red;
+}

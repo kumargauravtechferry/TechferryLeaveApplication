@@ -1,8 +1,31 @@
+<style>
+.message-container{
+    padding: 40px;
+    min-width: 600px; 
+}
+.message-container {
+    max-width: 410px;
+    width: 100%;
+    text-align: center;
+}
+#message-container{
+    position: relative;
+    height: 100vh;
+}
+
+#message-container .message-container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+</style>
 
 
 
-
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -11,13 +34,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
-	<title>404 HTML Tempalte by Colorlib</title>
+	<title></title>
 
 	<!-- Google font -->
 	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,900" rel="stylesheet">
 
 	<!-- Custom stlylesheet -->
-	<link type="text/css" rel="stylesheet" href="../stylesheets/404style.css" />
+	{{!-- <link type="text/css" rel="stylesheet" href="../stylesheets/404style.css" /> --}}
 
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -30,13 +53,14 @@
 
 <body>
 
-	<div id="notfound">
-		<div class="notfound">
-			<div class="notfound-404">
+	<div id="message-container">
+		<div class="message-container" style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);">
+			{{!-- <div class="notfound-404">
 				<h1>Oops!</h1>
-			</div>
-			<h2>404 - Page not found</h2>
-            {{{statusMessage}}}
+			</div> --}}
+			{{!-- <h2>404 - Page not found</h2> --}}
+            <h1>{{title}}</h1>
+           <h3>{{{statusMessage}}}</h3> 
 
 		</div>
 	</div>

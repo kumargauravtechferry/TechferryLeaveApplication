@@ -9,7 +9,7 @@ var smtpTransport = require('../service/nodeMailer')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    res.render('index', {
+    res.render('login', {
         title: 'Techferry'
     });
 });
@@ -63,34 +63,41 @@ router.post('/forgotPassword',function(req, res, next){
                 connection.query("UPDATE user SET token= '"+ token +"' WHERE UserId= " + rows[0].UserId + "", function(err, rows){
                     console.log(err)
                     console.log(rows)
-                    var url  = 'http://localhost:3000/reset_password/' + token;
-                    console.log(url+name)
-                    var data = {
-                        to: email,
-                        from: 'rduvedi@techferry.com',
-                        template: '../views/email.hbs',
-                        subject: 'Password help has arrived!',
-                        // context: {
-                        //   url: 'http://localhost:3000/reset_password?token=' + token,
-                        //   name: 'test'
-                        // },
-                        html:`<div>
-                                <h3>Dear ${name},</h3>
-                                <p>You requested for a password reset, kindly use this <a href="${url}">link</a> to reset your password</p>
-                                <br>
-                                <p>Cheers!</p>
-                            </div>`
-                    }
-                    smtpTransport.sendMail(data, function(err) {
-                        if (!err) {
-                            var statusMessage = `<span>A Link send to this ${email} mail. please Check your Mail  </span>`;
-                        //   return res.json({ message: 'Kindly check your email for further instructions' });
-                            res.render('forgotPassword', {title: 'Forgot Password', status_Message_flag: true, statusMessage: statusMessage})
-                        } else {
-                        //   return done(err);
-                        console.log(err)
+                    if(rows.changedRows) {
+                        var url  = 'http://localhost:3000/reset_password/' + token;
+                        console.log(url+name)
+                        var data = {
+                            to: email,
+                            from: 'rduvedi@techferry.com',
+                            template: '../views/email.hbs',
+                            subject: 'Password help has arrived!',
+                            // context: {
+                            //   url: 'http://localhost:3000/reset_password?token=' + token,
+                            //   name: 'test'
+                            // },
+                            html:`<div>
+                                    <h3>Dear ${name},</h3>
+                                    <p>You requested for a password reset, kindly use this <a href="${url}">link</a> to reset your password</p>
+                                    <br>
+                                    <p>Cheers!</p>
+                                </div>`
                         }
-                        });
+                        smtpTransport.sendMail(data, function(err) {
+                            if (!err) {
+                                var statusMessage = `<div class="title_message"><h2>Check Your inbox.</h2></div><div class="title_message"><span>We have send password reset instructions into your <label class="email_label">${email}</label> mail id. please Check your Mail.  </span></div>`;
+                            //   return res.json({ message: 'Kindly check your email for further instructions' });
+                                res.render('forgotPassword', {title: 'Forgot Password', status_Message_flag: true, statusMessage: statusMessage})
+                            } else {
+                            //   return done(err);
+                            console.log(err)
+                            }
+                            });
+                    }
+                     else{
+                        var statusMessage = ` click here  for  <a href="/login">login</a></span>`;
+                        res.render('sucessPage', { status_Message_flag: true, statusMessage: statusMessage})
+                     }
+
                 });
             });
         } 
@@ -107,8 +114,8 @@ router.get('/reset_password/:token',function(req, res, next){
             next(false)
         if (!rows.length) {
             // res.redirect('/login')
-            var statusMessage = `<span>your password reset link has expired. click here  for  <a href="/login">login</a></span>`;
-            res.render('sucessPage', { status_Message_flag: true, statusMessage: statusMessage})
+            var statusMessage = `<span>Sorry, this link is no longer valid. <p>click here  for</p>  <a href="/login">login</a></span>`;
+            res.render('sucessPage', { title: 'Oops! 404 ',status_Message_flag: true, statusMessage: statusMessage})
         } else{
             res.render('reset_password',{url: '/change_password/'+token})
         }
@@ -132,8 +139,8 @@ router.post('/change_password/:id',function(req,res,next){
             // return done(err);
         if (!rows.length) {
             // return next(err)
-            var statusMessage = `<span>OPPS! your password reset link has expired. click here  for  <a href="/login">login</a></span>`;
-            res.render('sucessPage', {title: 'sucess', status_Message_flag: true, statusMessage: statusMessage})
+            var statusMessage = `<span>Sorry, this link is no longer valid. <p>click here  for</p> <a href="/login">login</a></span>`;
+            res.render('sucessPage', {title: 'Oops! 404 ', status_Message_flag: true, statusMessage: statusMessage})
             // return done(null, false, {message:'No User Found.'}); // req.flash is the way to set flashdata using connect-flash
         } else{
             if(password == confirm_password){
@@ -152,8 +159,8 @@ router.post('/change_password/:id',function(req,res,next){
                             if (!rows) {
                                 res.redirect('/login')
                             } else{
-                                var statusMessage = `<span>You have sucessfully change password click this here  for  <a href="/login">login</a></span>`;
-                                res.render('sucessPage', {title: 'sucess', status_Message_flag: true, statusMessage: statusMessage})
+                                var statusMessage = `<span>You can now sign in with your new passowrd <p>click here  for </p> <a href="/login">login</a></span>`;
+                                res.render('sucessPage', {title: 'Password Changed!', status_Message_flag: true, statusMessage: statusMessage})
                             }
                         });
                     }
@@ -181,8 +188,8 @@ router.get('/change_password/:id',function(req, res, next){
             // return done(err);
         if (!rows.length) {
             // return next(err)
-            var statusMessage = `<span>your password reset link has expired. click here  for  <a href="/login">login</a></span>`;
-            res.render('sucessPage', { status_Message_flag: true, statusMessage: statusMessage})
+            var statusMessage = `<span>Sorry, this link is no longer valid. <p>click here  for</p> <a href="/login">login</a></span>`;
+            res.render('sucessPage', { title: 'Oops! 404 ',status_Message_flag: true, statusMessage: statusMessage})
             // return done(null, false, {message:'No User Found.'}); // req.flash is the way to set flashdata using connect-flash
         }
     });
