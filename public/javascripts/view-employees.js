@@ -21,7 +21,7 @@ $(document).ready(function () {
                                 <div class="card">
                                     <div class="card-body text-center">
                                         <p><img class=" img-fluid"
-                                                src="..${res[i].Photo}${res[i].UserId}.png"
+                                                src="${res[i].Photo}${res[i].EmployeeId}.png"
                                                 alt="card image"></p>
                                         <h4 class="card-title empListName">${res[i].FirstName} ${res[i].LastName}</h4>
                                         <h6 class="card-title empListDesignation">${res[i].Designation}</h6>

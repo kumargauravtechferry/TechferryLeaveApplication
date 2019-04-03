@@ -22,7 +22,7 @@ $(document).ready(function () {
             $('.empStatus').html(resultData.StatusName);
             $('.empAvailableLeaves').html(resultData.AvailableLeaves);
             $('.empDesignation').html(" (" + resultData.Designation + ")");
-            $('.empPhoto').attr("src", ".." + resultData.Photo + resultData.EmpId + ".png");
+            $('.empPhoto').attr("src", resultData.Photo + resultData.EmployeeId + ".png");
         },
         error: function (err) {
             alert(err);

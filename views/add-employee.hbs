@@ -1,0 +1,393 @@
+{{> header}}
+
+<style>
+    @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,700');
+    @import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+
+
+
+        {
+            {
+             !-- main {
+                max-width: 80%;
+                margin: auto;
+                padding: 40px;
+                border: 1px solid rgba(0, 0, 0, .2);
+                background: #fff;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, .1);
+            }
+
+            --
+        }
+    }
+
+    main {
+        max-width: 80%;
+        margin: auto;
+        padding: 40px;
+        background: #fff;
+    }
+
+
+    section {
+        display: none;
+        padding: 20px 0 0;
+        border-top: 1px solid #abc;
+    }
+
+
+
+    label {
+        display: inline-block;
+        margin: 0 0 -1px;
+        padding: 15px 25px;
+        font-weight: 600;
+        text-align: center;
+        color: #abc;
+        border: 1px solid transparent;
+    }
+
+    label:before {
+        font-family: fontawesome;
+        font-weight: normal;
+        margin-right: 10px;
+    }
+
+    label[for*='1']:before {
+        content: '\f1cb';
+    }
+
+    label[for*='2']:before {
+        content: '\f17d';
+    }
+
+    label[for*='3']:before {
+        content: '\f16c';
+    }
+
+    label[for*='4']:before {
+        content: '\f171';
+    }
+
+    label:hover {
+        color: #789;
+        cursor: pointer;
+    }
+
+    input:checked+label {
+        color: #0af;
+        border: 1px solid #abc;
+        border-top: 2px solid #0af;
+        border-bottom: 1px solid #fff;
+    }
+
+    #tab1:checked~#content1,
+    #tab2:checked~#content2,
+    #tab3:checked~#content3,
+    #tab4:checked~#content4 {
+        display: block;
+    }
+
+    @media screen and (max-width: 800px) {
+        label {
+            font-size: 0;
+        }
+
+        label:before {
+            margin: 0;
+            font-size: 18px;
+        }
+    }
+
+    @media screen and (max-width: 500px) {
+        label {
+            padding: 15px;
+        }
+    }
+
+    <style type="text/css">.form-style-5 {
+        max-width: 500px;
+        padding: 10px 20px;
+        background: #f4f7f8;
+        margin: 10px auto;
+        padding: 20px;
+        background: #f4f7f8;
+        border-radius: 8px;
+        font-family: Georgia, "Times New Roman", Times, serif;
+    }
+
+    .form-style-5 fieldset {
+        border: none;
+    }
+
+    .form-style-5 legend {
+        font-size: 1.4em;
+        margin-bottom: 10px;
+    }
+
+    .form-style-5 label {
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    .form-style-5 input[type="text"],
+    .form-style-5 input[type="date"],
+    .form-style-5 input[type="datetime"],
+    .form-style-5 input[type="email"],
+    .form-style-5 input[type="number"],
+    .form-style-5 input[type="search"],
+    .form-style-5 input[type="time"],
+    .form-style-5 input[type="file"],
+    .form-style-5 input[type="url"],
+    .form-style-5 textarea,
+    .form-style-5 select {
+        font-family: Georgia, "Times New Roman", Times, serif;
+        background: rgba(255, 255, 255, .1);
+        border: none;
+        border-radius: 4px;
+        font-size: 15px;
+        margin: 0;
+        outline: 0;
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        background-color: #e8eeef;
+        color: #8a97a0;
+        -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03) inset;
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03) inset;
+        margin-bottom: 30px;
+    }
+
+    .form-style-5 input[type="text"]:focus,
+    .form-style-5 input[type="date"]:focus,
+    .form-style-5 input[type="datetime"]:focus,
+    .form-style-5 input[type="email"]:focus,
+    .form-style-5 input[type="number"]:focus,
+    .form-style-5 input[type="search"]:focus,
+    .form-style-5 input[type="time"]:focus,
+    .form-style-5 input[type="url"]:focus,
+    .form-style-5 textarea:focus,
+    .form-style-5 select:focus {
+        background: #d2d9dd;
+    }
+
+    .form-style-5 select {
+        -webkit-appearance: menulist-button;
+        height: 35px;
+    }
+
+    .form-style-5 .number {
+        background: #1abc9c;
+        color: #fff;
+        height: 30px;
+        width: 30px;
+        display: inline-block;
+        font-size: 0.8em;
+        margin-right: 4px;
+        line-height: 30px;
+        text-align: center;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.2);
+        border-radius: 15px 15px 15px 0px;
+    }
+
+    .form-style-5 input[type="submit"],
+    .form-style-5 input[type="button"] {
+        position: relative;
+        display: block;
+        padding: 19px 39px 18px 39px;
+        color: #FFF;
+        margin: 0 auto;
+        background: #1abc9c;
+        font-size: 18px;
+        text-align: center;
+        font-style: normal;
+        width: 100%;
+        border: 1px solid #16a085;
+        border-width: 1px 1px 3px;
+        margin-bottom: 10px;
+    }
+
+    .form-style-5 input[type="submit"]:hover,
+    .form-style-5 input[type="button"]:hover {
+        background: #109177;
+    }
+
+    .lwidth50 {
+        width: 50%;
+        float: left;
+    }
+
+    .rwidth50 {
+        width: 50%;
+        float: left;
+    }
+
+    h5{
+        text-align: center;
+    }
+</style>
+</style>
+<h5>Add Employee</h5>
+<main>
+
+
+
+
+    <section id="content1" style="display:block; border-top: none;">
+        <div class="lwidth100">
+            <div class="form-style-5">
+                <form action="/dashboard/addEmp" method="POST">
+
+                    <fieldset>
+                        <legend><span class="number">*</span> Basic Info</legend>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <input type="text" name="firstName" placeholder="Enter First Name" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <input type="text" name="lastName" placeholder="Enter Last Name" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <input type="email" name="email" placeholder="Enter Email Address" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <input name="dob" placeholder="Date of Birth" type="text" onfocus="(this.type='date')" onblur="(this.type='text')" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <select id="gender" name="gender">
+                                    <option value="-1">-- Select Gender --</option>
+                                    <option value="M">Male</option>
+                                    <option value="F">Female</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <select id="maritalStatus" name="maritalStatus">
+                                    <option value="-1">-- Select Marital Status --</option>
+                                    <option value="married">Married</option>
+                                    <option value="unmarried">Unmarried</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <input type="text" name="contactNumber" placeholder="Enter Contact Number" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <input type="text" name="emergencyNumber" placeholder="Enter Emergency Contact Number" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <select id="bloodGroup" name="bloodGroup">
+                                    <option value="-1">-- Select Blood Group --</option>
+                                    <option value="A+">A+</option>
+                                    <option value="O+">O+</option>
+                                    <option value="B+">B+</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="O-">O-</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB-">AB-</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <select id="designation" name="designation">
+                                    <option value="-1">-- Select Designation --</option>
+                                    {{#each designation}}
+                                        <option value="{{this.DesignationId}}">{{this.Designation}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                            <legend><span class="number">*</span> Address of Employee</legend>
+                            <div class="col-sm-12">
+                                <input type="text" name="address1" placeholder="Enter Address Line 1" required>
+                            </div>
+                            <div class="col-sm-12">
+                                <input type="text" name="address2" placeholder="Enter Address Line 2">
+                            </div>
+                            <div class="col-sm-6">
+                                <input type="text" name="city" placeholder="Enter City" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <select id="stateslist" name="stateslist">
+                                    <option value="-1">-- Select State --</option>
+                                    <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                                    <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                    <option value="Assam">Assam</option>
+                                    <option value="Bihar">Bihar</option>
+                                    <option value="Chandigarh">Chandigarh</option>
+                                    <option value="Chhattisgarh">Chhattisgarh</option>
+                                    <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                                    <option value="Daman and Diu">Daman and Diu</option>
+                                    <option value="Delhi">Delhi</option>
+                                    <option value="Goa">Goa</option>
+                                    <option value="Gujarat">Gujarat</option>
+                                    <option value="Haryana">Haryana</option>
+                                    <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                    <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                    <option value="Jharkhand">Jharkhand</option>
+                                    <option value="Karnataka">Karnataka</option>
+                                    <option value="Kerala">Kerala</option>
+                                    <option value="Lakshadweep">Lakshadweep</option>
+                                    <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                    <option value="Maharashtra">Maharashtra</option>
+                                    <option value="Manipur">Manipur</option>
+                                    <option value="Meghalaya">Meghalaya</option>
+                                    <option value="Mizoram">Mizoram</option>
+                                    <option value="Nagaland">Nagaland</option>
+                                    <option value="Orissa">Orissa</option>
+                                    <option value="Pondicherry">Pondicherry</option>
+                                    <option value="Punjab">Punjab</option>
+                                    <option value="Rajasthan">Rajasthan</option>
+                                    <option value="Sikkim">Sikkim</option>
+                                    <option value="Tamil Nadu">Tamil Nadu</option>
+                                    <option value="Tripura">Tripura</option>
+                                    <option value="Uttaranchal">Uttaranchal</option>
+                                    <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                    <option value="West Bengal">West Bengal</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <input type="number" name="zip" placeholder="Enter Zip Code" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <select id="country" name="country" disabled>
+                                    <option value="-1">India</option>
+                                </select>
+                            </div>
+                            <legend><span class="number">*</span> Official Info</legend>
+                            <div class="col-sm-6">
+                                <input type="text" name="empId" value="TF-02" required disabled>
+                            </div>
+                            <div class="col-sm-6">
+                                <select id="status" name="status">
+                                    <option value="-1">-- Select Employee Status --</option>
+                                    {{#each status}}
+                                        <option value="{{this.StatusId}}">{{this.StatusName}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <input type="text" name="joiningDate" placeholder="Enter Joining Date" onfocus="(this.type='date')" onblur="(this.type='text')" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <input type="number" name="availableLeaves" placeholder="Enter Available Leaves" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <input type="file" name="pic" accept="image/*" required>
+                            </div>
+                        </div>
+
+                        
+                    <input type="submit" value="Apply" />
+                </form>
+            </div>
+        </div>
+        <div class="rwidth50">
+
+        </div>
+    </section>
+
+
+
+
+</main>
