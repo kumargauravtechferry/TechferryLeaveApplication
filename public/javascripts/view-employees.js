@@ -43,9 +43,9 @@ $(document).ready(function () {
                                         <h5 class="card-title empListAvailableLeaves">${res[i].AvailableLeaves}</h5>
                                         <ul class="list-inline">
                                             <li class="list-inline-item">
-                                                <a class="btn btn-primary btn-sm btn-block viewEmpDetails" name="${res[i].EmpId}" href="#" style="color:#fff !important">
+                                                <button class="btn btn-primary btn-sm btn-block viewEmpDetails" name="${res[i].UserId}" style="color:#fff !important">
                                                     View/Edit Employee Details
-                                                </a>
+                                                </button>
                                             </li>
                                         </ul>
                                     </div>
@@ -66,25 +66,37 @@ $(document).ready(function () {
     });
 
 
+    setTimeout(function(){
+        bindClickEvents();
+    }, 10);
 
     
 
 });
 
-$('.viewEmpDetails').click(function(){
-    $.ajax({
-        type: 'POST',
-        url: "/dashboard/viewEmployeeDetails",
-        async: true,
-        success: function (res) {
+function bindClickEvents(){
+    $('.viewEmpDetails').click(function(){
 
-            //console.log(res);
+        var params = {
+            userId: $(this).attr("name")
+        };
 
-            
-
-        },
-        error: function (err) {
-
-        }
+        $.ajax({
+            type: 'POST',
+            url: "/dashboard/viewEmployeeDetails",
+            data: params,
+            async: true,
+            success: function (res) {
+    
+                //console.log(res);
+    
+                
+    
+            },
+            error: function (err) {
+    
+            }
+        });
     });
-});
+}
+

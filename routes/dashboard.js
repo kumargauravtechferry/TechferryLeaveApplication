@@ -117,10 +117,8 @@ router.get('/prev', isAuth.isAuthenticated, function (req, res, next) {
 
 //For Viewing Details
 router.post('/viewEmployeeDetails', isAuth.isAuthenticated, function (req, res, next) {
-    res.render('employee-details', {
-        title: 'Employees Details',
-        empId: req.body.EmpId
-    });
+    var userId = req.body.userId;
+    res.redirect('/employee-details');
 });
 
 //From HR : Check the details/list of other users.
@@ -142,7 +140,7 @@ router.get('/employee-details', isAuth.isAuthenticated, function (req, res) {
 router.get('/edit-employee', isAuth.isAuthenticated, function (req, res) {
     res.render('edit_employee', {
         title: 'Edit Employees Leaves Page',
-        id: req.params.id
+        
     });
 });
 
