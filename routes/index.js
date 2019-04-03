@@ -199,30 +199,33 @@ router.get('/addleave',isAuth.isAuthenticated, function(req, res, next) {
             leaveTypeData: result
         });
     });
+});
        
 
-});
 
+router.post('/addleave', function(req, res) {
+    console.log('req.body');
+    console.log("user id "+req.user.UserId);
+    console.log(req.body);
+    let leavetype = req.body["leave-type"];
+    let LeaveDate = req.body.datepickerstart;
+    let LeaveReason = req.body.reason;
+    let leaveStartDate = req.body.datepickerstart;
+    let leaveEndDate = req.body.datepickerend;
+    let UserId = req.user.UserId;
+    let EmpId = req.user.EmpId
+    console.log("user info "+req.user);
 
-var getLeaveTypeData = function(params, callbackFn){
-    
-    var leaveTypeData = [];
-    connection.query("SELECT * from leavestype",function(err, rows, fields){
-        if(rows.length != 0){
-            leaveTypeData = rows;
-            //res.json(data);
-        }else{
-            leaveTypeData = [];
-            //res.json(data);
-        }
+    let laeveDifference = moment(leaveEndDate).format('YYYY-MM-DD')-moment(leaveStartDate).format('YYYY-MM-DD');
+   
+    let insertbody = [leavetype,UserId,LeaveReason,moment(LeaveDate).format('YYYY-MM-DD'),EmpId];
+    let insertQuery = "insert into leaves(LeaveTypeId,UserId,Reason,LeaveDate,CreatedBy) VALUES (?,?,?,?,?)";
 
-        callbackFn(undefined, leaveTypeData);
+    connection.query(insertQuery, insertbody,(err, result) => {
+        console.log(err)
+        console.log("data inserted"+result);
     });
-};
-
-
-var logout = function (req, res, next) {
-	
-  };
+    res.end()
+});
 
 module.exports = router;

@@ -3,6 +3,7 @@ var router = express.Router();
 var isAuth = require('../service/service');
 var axios = require('axios');
 var connection = require('../config/mysqlConnection');
+var moment = require("moment");
 
 /* GET users listing. */
 //For Personal Details
@@ -46,7 +47,7 @@ router.post('/', (req, res, next) => {
 router.post('/fetchHolidays', (req, res, next) => {
     //console.log(req.user);
     var connectionCommand = `(Select HolidayDate as leaveDate, HolidayName as name, 'holiday' as type from Holidays)
-    union all 
+    union all
     (Select LeaveDate as leaveDate, Reason as name, 'leave' as type from Leaves where UserId = ${req.user.UserId});`;
     connection.query(connectionCommand, function (err, rows) {
         if (err)
@@ -79,7 +80,6 @@ router.post('/fetchLeaves', (req, res, next) => {
             return res.send(rows);
         }
     });
-
 });
 
 router.post('/view-employees', (req, res, next) => {
@@ -152,7 +152,7 @@ router.get('/view-employees/:id/prev', isAuth.isAuthenticated, function (req, re
     });
 });
 
-//From HR : Check the details of one user.
+// //From HR : Check the details of one user.
 router.get('/leave', isAuth.isAuthenticated, function (req, res) {
     res.render('leave', {
         title: 'View Employees Leaves Previous Page',
@@ -161,5 +161,64 @@ router.get('/leave', isAuth.isAuthenticated, function (req, res) {
 });
 
 
+// router.get('/addleave', function(req, res) {
+//     res.render('addleave', {
+//         title: 'Log Leaves'
+//     });
+// });
+
+var getLeaveTypeData = function(params, callbackFn){
+
+    var leaveTypeData = [];
+    connection.query("SELECT * from leavestype",function(err, rows, fields){
+        if(rows.length != 0){
+            leaveTypeData = rows;
+            //res.json(data);
+        }else{
+            leaveTypeData = [];
+            //res.json(data);
+        }
+
+        callbackFn(undefined, leaveTypeData);
+    });
+};
+
+router.get('/addleave',isAuth.isAuthenticated, function(req, res, next) {
+
+    getLeaveTypeData(null, function(err, result){
+        res.render('addleave', {
+            title: 'Log Leaves',
+            leaveTypeData: result
+        });
+    });
+});
+
+
+router.post('/addleave', function(req, res) {
+    console.log('req.body');
+    console.log("user id "+req.user.UserId);
+    console.log(req.body);
+    let leavetype = req.body["leave-type"];
+    let LeaveDate = req.body.datepickerstart;
+    let LeaveReason = req.body.reason;
+    let leaveStartDate = req.body.datepickerstart;
+    let leaveEndDate = req.body.datepickerend;
+    // let UserId = req.user.UserId;
+    // let EmpId = req.user.EmpId
+    console.log("user info "+req.user);
+
+    let laeveDifference = moment(leaveEndDate).format('YYYY-MM-DD')-moment(leaveStartDate).format('YYYY-MM-DD');
+
+    let insertbody = [leavetype,LeaveReason,moment(LeaveDate).format('YYYY-MM-DD')];//UserId=,UserId,,EmpId=,CreatedBy
+    let insertQuery = "insert into leaves(LeaveTypeId,Reason,LeaveDate) VALUES (?,?,?)";
+
+    connection.query(insertQuery, insertbody,(err, result) => {
+        console.log(err)
+        console.log("data inserted"+result);
+    });
+    res.end()
+
+    // res.send("leave apply page.")
+});
 
 module.exports = router;

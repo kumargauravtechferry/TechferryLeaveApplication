@@ -42,12 +42,9 @@
 }
 </style>
 </head>
-
 <body>
-
     {{> header}}
     <div class="llimiterimiter">
-                <form class="login100-form validate-form" action="/addleave" method="POST">
     <!-- Title -->
     <h1>Apply Leave</h1>
     <!-- End Title -->
@@ -56,7 +53,7 @@
 
         <!-- Apply Leave Form -->
         <div class="card pmd-card single-col-form">
-            <form id="apply-leave" method="post" action="" novalidate="novalidate">
+            <form id="apply-leave" method="post" action="/dashboard/addleave" novalidate="novalidate">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-12">
@@ -75,7 +72,7 @@
                                 <input type="text" class="form-control" id="datepickerstart" name="datepickerstart"><span class="pmd-textfield-focused"></span>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6" >
                             <div class="form-group pmd-textfield pmd-textfield-floating-label">
                                 <label class="control-label" for="datepickerend">End Date</label>
                                 <input type="text" class="form-control" id="datepickerend" name="datepickerend"><span class="pmd-textfield-focused"></span>
@@ -87,14 +84,6 @@
                                 <textarea class="form-control" id="reason" name="reason"></textarea><span class="pmd-textfield-focused"></span>
                             </div>
                         </div>
-                        <div class="col-12">
-                            <div class="custom-control custom-checkbox pmd-checkbox">
-                                <input class="custom-control-input" type="checkbox" value="" id="inverse_defaultCheck1">
-                                <label class="custom-control-label" for="inverse_defaultCheck1">
-                                    Is it a Half Day?
-                                </label>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <div class="card-footer">
@@ -102,5 +91,4 @@
                 </div>
             </form>
         </div>
-                </form>
     </div>
