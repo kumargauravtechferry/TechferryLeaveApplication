@@ -9,9 +9,11 @@ var smtpTransport = require('../service/nodeMailer')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    res.render('login', {
-        title: 'Techferry'
-    });
+    if (!req.isAuthenticated()) {
+        return res.redirect('/login');
+    }
+    //console.log(req.user)
+    res.render('dashboard', { title: 'Dashboard Page' , user: req.user});
 });
 router.get('/contact',isAuth.isAuthenticated, function(req, res, next) {
     res.render('contact', {

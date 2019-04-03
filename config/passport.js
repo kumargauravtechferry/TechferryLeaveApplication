@@ -14,7 +14,10 @@ passport.serializeUser(function(user, done) {
 
 // used to deserialize the user
 passport.deserializeUser(function(id, done) {
-    connection.query("select * from user where UserId = "+id + " ",function(err,rows){	
+    var query = `select * from user inner join user_roles on user.UserId = user_roles.UserId where user.UserId = ${id}`
+    // console.log(query);
+    connection.query(query,function(err,rows){	
+        // console.log(rows[0]);
         done(err, rows[0]);
     });
     

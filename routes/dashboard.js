@@ -18,10 +18,10 @@ router.get('/', function (req, res, next) {
         return res.redirect('/login');
     }
     //console.log(req.user)
-    res.render('dashboard', { title: 'Dashboard Page' });
+    res.render('dashboard', { title: 'Dashboard Page', user: req.user });
 });
 
-router.post('/', (req, res, next) => {
+router.post('/',isAuth.isAuthenticated, (req, res, next) => {
     //console.log(req.user);
     var connectionCommand = `Select u.EmpId, u.FirstName, u.LastName, u.Email, u.DOB, u.Gender, u.MaritalSatus, u.ContactNumber, u.EmergencyNumber,
     u.BloodGroup, u.Photo, e.JoinedDate, e.AvailableLeaves,

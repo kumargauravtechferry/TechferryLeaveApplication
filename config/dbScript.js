@@ -98,12 +98,19 @@ insert into Holidays(HolidayName, HolidayDate, UpdatedOn, CreatedOn) values ('Di
 insert into Holidays(HolidayName, HolidayDate, UpdatedOn, CreatedOn) values ('Christmas', '2019-12-25', now(), now());
 
 /* Role Table */
-CREATE TABLE Role (
-    RoleId INT(10) AUTO_INCREMENT PRIMARY KEY,
-    RoleName VARCHAR(100) NOT NULL Unique,
-    UpdatedOn datetime,
-    CreatedOn datetime
-);
+CREATE TABLE `role` (
+    `Id` int(10) NOT NULL AUTO_INCREMENT,
+    `RoleId` int(10) NOT NULL,
+    `RoleName` varchar(100) NOT NULL,
+    `UpdatedOn` datetime DEFAULT NULL,
+    `CreatedOn` datetime DEFAULT NULL,
+    PRIMARY KEY (`Id`),
+    UNIQUE KEY `RoleId` (`RoleId`),
+    UNIQUE KEY `RoleName` (`RoleName`)
+  ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+ 
+ insert into role(RoleId, RoleName, UpdatedOn, CreatedOn) values(1 , 'Admin', now(),now());
+ insert into role(RoleId, RoleName, UpdatedOn, CreatedOn) values(2, 'Employee', now(),now())
 
 /* this table is the mapping table between user and role table */
 CREATE TABLE User_Roles (
