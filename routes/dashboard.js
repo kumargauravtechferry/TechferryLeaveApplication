@@ -25,7 +25,7 @@ router.get('/', function (req, res, next) {
     });
 });
 
-router.post('/', isAuth.isAuthenticated,isAuth.requireRole(2), (req, res, next) => {
+router.post('/', isAuth.isAuthenticated, isAuth.requireRole(2), (req, res, next) => {
     //console.log(req.user);
     var connectionCommand = `Select e.EmployeeId, u.Firstname, u.Lastname, u.Email, u.DOB, u.Gender, u.MaritalSatus, u.ContactNumber, u.EmergencyNumber,
     u.BloodGroup, u.Photo, e.JoinedDate, e.AvailableLeaves,
@@ -48,7 +48,7 @@ router.post('/', isAuth.isAuthenticated,isAuth.requireRole(2), (req, res, next) 
 
 });
 
-router.post('/fetchHolidays',isAuth.requireRole(2), (req, res, next) => {
+router.post('/fetchHolidays', isAuth.requireRole(2), (req, res, next) => {
     //console.log(req.user);
     var connectionCommand = `(Select HolidayDate as leaveDate, HolidayName as name, 'holiday' as type from Holidays)
     union all
@@ -66,7 +66,23 @@ router.post('/fetchHolidays',isAuth.requireRole(2), (req, res, next) => {
 
 });
 
-router.post('/fetchLeaves',isAuth.requireRole(2), (req, res, next) => {
+router.post('/holidaysLeave', (req, res, next) => {
+    //console.log(req.user);
+    var connectionCommand = `(Select HolidayDate as leaveDate, HolidayName as name, 'holiday' as type from Holidays)`;
+    connection.query(connectionCommand, function (err, rows) {
+        if (err)
+            return res.send(err);
+        if (!rows.length) {
+            //return done(null, false, req.flash('loginMessage', 'No User Found.')); // req.flash is the way to set flashdata using connect-flash
+            return res.send(null);
+        } else {
+            return res.send(rows);
+        }
+    });
+
+});
+
+router.post('/fetchLeaves', (req, res, next) => {
     //console.log(req.user);
 
     var connectionCommand = `Select l.LeaveDate, lt.LeaveTypeName, lt.LeaveValue, l.Reason from Leaves as l
@@ -86,7 +102,7 @@ router.post('/fetchLeaves',isAuth.requireRole(2), (req, res, next) => {
     });
 });
 
-router.post('/view-employees',isAuth.requireRole(1), (req, res, next) => {
+router.post('/view-employees', isAuth.requireRole(1), (req, res, next) => {
     //console.log(req.user);
 
     var connectionCommand = `Select u.UserId, e.EmployeeId, u.FirstName, u.LastName, u.Email, u.ContactNumber, u.Photo,
@@ -122,7 +138,7 @@ router.get('/prev', isAuth.isAuthenticated, function (req, res, next) {
 });
 
 //For Viewing Details
-router.post('/viewEmployeeDetails', isAuth.isAuthenticated, isAuth.requireRole(1),function (req, res, next) {
+router.post('/viewEmployeeDetails', isAuth.isAuthenticated, isAuth.requireRole(1), function (req, res, next) {
     var userId = req.body.userId;
     res.redirect('/employee-details');
 });
@@ -187,7 +203,7 @@ var connectionPromiseDStatus = new Promise(function (resolve, reject) {
 
 
 //Add Employee Post Request
-router.post('/addEmp', isAuth.isAuthenticated,isAuth.requireRole(1), function (req, res, next) {
+router.post('/addEmp', isAuth.isAuthenticated, isAuth.requireRole(1), function (req, res, next) {
 
 
     //User Table Data
@@ -415,7 +431,7 @@ var getLeaveTypeData = function (params, callbackFn) {
     });
 };
 
-router.post('/leave',isAuth.requireRole(2), function (req, res) {
+router.post('/leave', isAuth.requireRole(2), function (req, res) {
 
     let leavetype = req.body["leave-type"];
     let LeaveDate = req.body.datepickerstart;
