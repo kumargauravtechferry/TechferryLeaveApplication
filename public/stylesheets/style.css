@@ -509,8 +509,157 @@ input.input100 {
     width: 20%;
 }
 
-.profile-image-round{
-    width: 36px;
-    height: 36px;
+.container.emp-profile {
+    background-color: rgba(233, 236, 239, 0.16862745098039217);
+    padding: 20px;
+    border: 1px solid #e9ecef;
+    margin: 20px 0 100px 0;
+    box-shadow: 1px 5px 10px #0000ff3d;
+}
+
+.profile-head .nav-link.active {
+    color: blue !important;
+    font-weight: 600;
+    border-top: 3px solid blue !important;
+}
+
+div#myTabContent {
+    background: #fff;
+    padding: 20px;
+    color: grey;
+}
+
+#myTabContent .tab-pane {
+    font-size: 14px;
+    line-height: 18px;
+    min-height: 500px;
+    border-bottom: 3px dotted #007bff;
+}
+
+#myTabContent .tab-pane label {
+    color: #007bff;
+    font-weight: 600;
+}
+
+.profile-image-round {
+    width: 30px;
+    height: 30px;
     border-radius: 50%
+}
+
+#myTabContent .tab-pane .row {
+    margin-bottom: 10px;
+    border-bottom: 1px dotted lightblue;
+    padding-bottom: 5px;
+}
+
+.table th {
+    border-top: none;
+}
+
+.table thead th {
+    color: blue;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 123, 255, 0.04);
+}
+
+td {
+    color: #007bff;
+    font-size: 14px;
+}
+
+.navbarRight a {
+    padding: 25px 10px;
+    cursor: pointer;
+}
+
+/************* Dashboard calendar ***********/
+
+.fc-toolbar.fc-header-toolbar {
+    margin: 20px;
+}
+
+.fc-left h2 {
+    font-size: 24px;
+    color: blue;
+}
+
+.fc-ltr .fc-basic-view .fc-day-top .fc-day-number {
+    float: none !important;
+    font-size: 20px;
+    padding: 10px;
+    text-align: center;
+}
+
+.fc .fc-row .fc-content-skeleton table, .fc .fc-row .fc-content-skeleton td, .fc .fc-row .fc-helper-skeleton td {
+    padding: 30px;
+    text-align: center;
+}
+
+.fc-day-header {
+    font-size: 18px;
+    background-color: #0062cc;
+    padding: 10px !important;
+    color: #fff;
+}
+
+button.fc-today-button.fc-button.fc-state-default.fc-corner-left.fc-corner-right.fc-state-disabled {
+    width: 120px;
+}
+
+.profile-head {
+    background-color: #fff;
+    padding: 20px 10px;
+    margin: 20px 0;
+    box-shadow: 1px 1px 1px #e1e1e1;
+}
+
+span.employeeName {
+    font-size: 30px;
+    color: blue;
+}
+
+span.empDesignation {
+    font-size: 15px;
+    color: lightskyblue;
+}
+
+.employeeId, .employeeEmail {
+    color: rgba(255, 0, 0, 0.5411764705882353);
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.profile-work {
+    text-align: center;
+}
+
+a.applyLeaveBtn {
+    background-color: blue;
+    padding: 20px 30px;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.empPhoto {
+    width: 250px;
+    margin: auto;
+    height: 250px;
+    border-radius: 50%;
+    border-color: blue;
+    box-shadow: 1px 0px 6px #87cefaab;
+    border: 1px solid #17a2b873;
+}
+
+.profile-img {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.nav-link.active {
+    color: blue !important;
+    font-size: 15px;
+    border-top: 3px solid blue !important;
 }
