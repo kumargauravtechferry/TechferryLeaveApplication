@@ -9,15 +9,7 @@
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <!------ Include the above in your HEAD tag ---------->
-  <!-- DataTables CSS -->
-  <link href="css/addons/datatables.min.css" rel="stylesheet">
-  <!-- DataTables JS -->
-  <script href="js/addons/datatables.min.js" rel="stylesheet"></script>
 
-  <!-- DataTables Select CSS -->
-  <link href="css/addons/datatables-select.min.css" rel="stylesheet">
-  <!-- DataTables Select JS -->
-  <script href="js/addons/datatables-select.min.js" rel="stylesheet"></script>
   <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -29,7 +21,6 @@
   <script src='../javascripts/jquery.min.js'></script>
   <script src='../javascripts/fullcalendar.min.js'></script>
   <script src='../javascripts/calender-dashboard.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js'></script>
 </head>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-inverse">
@@ -51,23 +42,25 @@
   </button>
 
   <div class="collapse navbar-collapse" id="navbarNavDropdown">
-
+    {{#if userRole}}
     <ul class="navbar-nav navbarLeft">
       <li class="nav-item active">
         <a class="nav-link" href="/dashboard">Dashboard</a>
       </li>
-      {{#if userRole}}
       <li class="nav-item">
         <a class="nav-link" href="/dashboard/view-employees">Employee Management</a>
       </li>
-      {{/if}}
-    </ul>
 
+
+    </ul>
+    {{/if}}
 
   </div>
   <ul class="nav navbar-nav navbarRight">
     <li class="nav-item my-sm-0">
-      <a class="nav-link" href="/dashboard"><img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS52y5aInsxSm31CvHOFHWujqUx_wWTS9iM6s7BAm21oEN_RiGoog' class="profile-image-round"></a>
+      <a class="nav-link" href="/dashboard"><img
+          src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS52y5aInsxSm31CvHOFHWujqUx_wWTS9iM6s7BAm21oEN_RiGoog'
+          class="profile-image-round"></a>
     </li>
     {{#if user}}
     <li class="nav-item my-sm-0">
