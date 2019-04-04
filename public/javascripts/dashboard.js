@@ -7,7 +7,13 @@ $(document).ready(function () {
         url: "/dashboard",
         async: true,
         success: function (resultData) {
-            console.log(resultData);
+            //console.log(resultData); 
+            console.log(resultData.Photo); 
+
+            var image = new Image();
+            image = resultData.Photo;
+            $('.empPhoto').attr("src", "data:image/png;base64," + (resultData.Photo).toString());
+
             $('.employeeName').html(resultData.Firstname + " " + resultData.Lastname);
             $('.employeeId').html(resultData.EmployeeId);
             $('.employeeEmail').html(resultData.Email);
@@ -22,7 +28,7 @@ $(document).ready(function () {
             $('.empStatus').html(resultData.StatusName);
             $('.empAvailableLeaves').html(resultData.AvailableLeaves);
             $('.empDesignation').html(" (" + resultData.Designation + ")");
-            $('.empPhoto').attr("src", resultData.Photo + resultData.EmployeeId + ".png");
+            //$('.empPhoto').attr("src", resultData.Photo + resultData.EmployeeId + ".png");
         },
         error: function (err) {
             alert(err);

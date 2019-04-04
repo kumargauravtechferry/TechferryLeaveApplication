@@ -238,7 +238,7 @@
     <section id="content1" style="display:block; border-top: none;">
         <div class="lwidth100">
             <div class="form-style-5">
-                <form action="/dashboard/addEmp" method="POST">
+                <form action="/dashboard/addEmp" method="POST"  enctype="multipart/form-data">
 
                     <fieldset>
                         <legend><span class="number">*</span> Basic Info</legend>
@@ -350,13 +350,13 @@
                                 <input type="number" name="zip" placeholder="Enter Zip Code" required>
                             </div>
                             <div class="col-sm-6">
-                                <select id="country" name="country" disabled>
+                                <select id="country" name="country" readonly>
                                     <option value="-1">India</option>
                                 </select>
                             </div>
                             <legend><span class="number">*</span> Official Info</legend>
                             <div class="col-sm-6">
-                                <input type="text" name="empId" value="TF-02" required disabled>
+                                <input type="text" id="employeeId" name="employeeId" value="{{empId}}" required readonly>
                             </div>
                             <div class="col-sm-6">
                                 <select id="status" name="status">

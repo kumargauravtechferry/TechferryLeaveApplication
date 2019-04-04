@@ -4,6 +4,12 @@ var isAuth = require('../service/service');
 var axios = require('axios');
 var connection = require('../config/mysqlConnection');
 var moment = require("moment");
+var fs = require('fs');
+const fileUpload = require('express-fileupload');
+var busboy = require('connect-busboy');
+
+var multer = require("multer");
+
 
 /* GET users listing. */
 //For Personal Details
@@ -159,17 +165,22 @@ router.get('/add-employee', isAuth.isAuthenticated, isAuth.requireRole(1), funct
     designation = '';
     status = '';
 
+
+
     connectionPromiseDesignation.then((result) => {
         designation = result;
-        return connectionPromiseDStatus.then((res1) => {
-            status = res1;
-            res.render('add-employee', {
-                designation,
-                status,
-                user: req.user,
-                userRole: (req.user.RoleId == 1) ? true : false
-            });
-        })
+        return connectionPromiseDStatus;
+    }).then((res1) => {
+        status = res1;
+        return connectionPromiseFetchEmployeeId;
+    }).then((res2) => {
+        //console.log(res2);
+        var empId = "TF-0" + (parseInt(res2) + 1).toString();
+        res.render('add-employee', {
+            designation,
+            status,
+            empId
+        });
     }).catch((err) => {
         console.log("error: " + err);
     });
@@ -201,10 +212,42 @@ var connectionPromiseDStatus = new Promise(function (resolve, reject) {
     });
 });
 
+var connectionPromiseFetchEmployeeId = new Promise(function (resolve, reject) {
+    connection.query(`SELECT e.employeeId FROM user as u
+    inner join Employee as e on e.id = u.empId
+    ORDER BY u.userId DESC LIMIT 1`, function (err, rows) {
+            if (err) {
+                reject(null);
+            } else if (!rows.length) {
+                reject(null);
+            } else {
+                var empId = (rows[0].employeeId).substring(3);
+                resolve(empId);
+            }
+        });
+});
 
-//Add Employee Post Request
-router.post('/addEmp', isAuth.isAuthenticated, isAuth.requireRole(1), function (req, res, next) {
+function convertImgToDataURLviaCanvas(url, callback, outputFormat) {
+    var img = new Image();
+    img.crossOrigin = 'Anonymous';
+    img.onload = function() {
+      var canvas = document.createElement('CANVAS');
+      var ctx = canvas.getContext('2d');
+      var dataURL;
+      canvas.height = this.height;
+      canvas.width = this.width;
+      ctx.drawImage(this, 0, 0);
+      dataURL = canvas.toDataURL(outputFormat);
+      callback(dataURL);
+      canvas = null;
+    };
+    img.src = url;
+  }
 
+//Add Employee Post Request multer({dest: "./uploads/"})
+router.post('/addEmp', isAuth.isAuthenticated, multer({dest: "./uploads/"}).single("pic"), function (req, res, next) {
+
+    console.log(JSON.stringify(req.body));
 
     //User Table Data
     let firstName = req.body.firstName;
@@ -217,12 +260,21 @@ router.post('/addEmp', isAuth.isAuthenticated, isAuth.requireRole(1), function (
     let emergencyNumber = req.body.emergencyNumber;
     let bloodGroup = req.body.bloodGroup;
     let designation = req.body.designation;
+    let empId = req.body.employeeId;
+    // console.log("Employee ID: " + req.file.toString('base64'));
+    // console.log("Employee ID: " + new Buffer(fs.readFileSync(req.file.path)).toString("base64"));
+    //let buff = fs.readFileSync(req.body.pic);  
+    //let picture = buff.toString('base64');
     let picture = req.body.pic;
-    let pic = req.body.pic.substr(req.body.pic.lastIndexOf('\\') + 1).split('.')[0];
-    let image_name = 'TF-02.' + pic;
+    let picUpload = new Buffer(fs.readFileSync(req.file.path)).toString("base64");
+    // convertImgToDataURLviaCanvas(picUpload, function(base64Img) {
+    //     console.log(base64Img)
+    //         });
+    // let image_name = req.body.pic;
+    // let pic = req.body.pic.substr(req.body.pic.lastIndexOf('\\') + 1).split('.')[1];
+    // image_name = empId + '.' + pic;
     let password = Math.floor((Math.random() * 10000000000) + 1).toString(16);
     //Firstname , Lastname ,  Email , Password , DOB , Gender , MaritalSatus , ContactNumber , EmergencyNumber , BloodGroup , Photo
-
 
     //Address Table
     let address1 = req.body.address1;
@@ -236,7 +288,7 @@ router.post('/addEmp', isAuth.isAuthenticated, isAuth.requireRole(1), function (
     let joiningDate = req.body.joiningDate;
     let availableLeaves = req.body.availableLeaves;
     let status = req.body.status;
-    let empParams = [status, joiningDate, availableLeaves];
+    let empParams = [empId, status, joiningDate, availableLeaves];
 
     let addressId = 0;
     let employeeId = 0;
@@ -257,7 +309,7 @@ router.post('/addEmp', isAuth.isAuthenticated, isAuth.requireRole(1), function (
             console.log(result);
             addressId = result.insertId;
 
-            connection.query('insert into Employee(EmployeeId, StatusId, JoinedDate, AvailableLeaves, UpdatedOn, CreatedOn) VALUES (\'TF-02\',?,?,?, now(), now())', empParams, function (err1, result1) {
+            connection.query('insert into Employee(EmployeeId, StatusId, JoinedDate, AvailableLeaves, UpdatedOn, CreatedOn) VALUES (?,?,?,?, now(), now())', empParams, function (err1, result1) {
                 if (err1) {
                     connection.rollback(function () {
                         throw err1;
@@ -266,10 +318,12 @@ router.post('/addEmp', isAuth.isAuthenticated, isAuth.requireRole(1), function (
 
                 employeeId = result1.insertId;
 
-                // let img_path = `public/images/profile/${image_name}`;
+                //let img_path = `public/images/profile/${image_name}`;
 
-                // picture.mv(img_path, (err3) => {
+                // picture.mv(img_path, (err3 ) => {
                 //     if (err3) {
+
+                //         console.log("image error: " + err3);
                 //         connection.rollback(function () {
                 //             throw err3;
                 //         });
@@ -423,7 +477,8 @@ var getLeaveTypeData = function (params, callbackFn) {
         if (rows.length != 0) {
             leaveTypeData = rows;
 
-        } else {
+        }
+        else {
             leaveTypeData = [];
         }
 

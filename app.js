@@ -9,10 +9,12 @@ var passport = require('passport');
 var flash = require("connect-flash");
 var session = require('express-session');
 var bodyParser = require('body-parser');
+const fileUpload = require('express-fileupload');
 var indexRouter = require('./routes/index');
 var dashboardRouter = require('./routes/dashboard');
 var loginRouter = require('./routes/login');
 var notificationRouter = require('./routes/notification');
+var busboy = require('connect-busboy');
 
 
 
@@ -74,6 +76,10 @@ app.use(bodyParser.json());
 // });
 
 
+//Upload Image
+
+//app.use(express.methodOverride());
+//app.use(express.multipart());
 
 //#endregion
 
