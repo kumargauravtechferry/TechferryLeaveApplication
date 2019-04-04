@@ -500,3 +500,11 @@ input.input100 {
 .right-text {
     text-align: right;
 }
+
+.navbarLeft {
+    width: 80%;
+}
+
+.navbarRight {
+    width: 20%;
+}

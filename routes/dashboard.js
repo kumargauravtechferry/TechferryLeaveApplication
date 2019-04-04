@@ -125,14 +125,14 @@ router.post('/viewEmployeeDetails', isAuth.isAuthenticated, function (req, res, 
 });
 
 //From HR : Check the details/list of other users.
-router.get('/view-employees', isAuth.isAuthenticated, function (req, res, next) {
+router.get('/view-employees', isAuth.isAuthenticated, isAuth.requireRole(1), function (req, res, next) {
     res.render('view_employees', {
         title: 'View Employees Leaves Page'
     });
 });
 
 //For Personal Previous Leaves
-router.get('/add-employee', isAuth.isAuthenticated, function (req, res, next) {
+router.get('/add-employee', isAuth.isAuthenticated, isAuth.requireRole(1), function (req, res, next) {
 
 
     designation = '';
@@ -347,7 +347,7 @@ insertIntoEmployeeAndFetchID: (employee, callback) => {
 
 
 //From HR : Check the details of one user.
-router.get('/employee-details', isAuth.isAuthenticated, function (req, res) {
+router.get('/employee-details', isAuth.isAuthenticated, isAuth.requireRole(1), function (req, res) {
     res.render('employee-details', {
         title: 'Employees Details',
         id: req.params.id
@@ -355,7 +355,7 @@ router.get('/employee-details', isAuth.isAuthenticated, function (req, res) {
 });
 
 //From HR : Edit the details of one user.
-router.get('/edit-employee', isAuth.isAuthenticated, function (req, res) {
+router.get('/edit-employee', isAuth.isAuthenticated, isAuth.requireRole(1), function (req, res) {
     res.render('edit_employee', {
         title: 'Edit Employees Leaves Page',
 
@@ -363,7 +363,7 @@ router.get('/edit-employee', isAuth.isAuthenticated, function (req, res) {
 });
 
 //From HR : Check the details of one user.
-router.get('/view-employees/:id/prev', isAuth.isAuthenticated, function (req, res) {
+router.get('/view-employees/:id/prev', isAuth.isAuthenticated, isAuth.requireRole(1), function (req, res) {
     res.render('edit_employee_prev', {
         title: 'View Employees Leaves Previous Page',
         id: req.params.id
@@ -371,7 +371,7 @@ router.get('/view-employees/:id/prev', isAuth.isAuthenticated, function (req, re
 });
 
 // //From HR : Check the details of one user.
-router.get('/leave', isAuth.isAuthenticated, function (req, res) {
+router.get('/leave', isAuth.isAuthenticated, isAuth.requireRole(2), function (req, res) {
 
     getLeaveTypeData(null, function (err, result) {
         console.log("resule data " + result)

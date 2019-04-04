@@ -15,5 +15,15 @@ function checklogin(req, res, next) {
   next();
 }
 
+function requireRole (role) {
+  return function (req, res, next) {
+      if (req.user && ((req.user.RoleId == 1) || (req.user.RoleId === role))) {
+          next();
+      } else {
+          res.render('error-page');
+      }
+  }
+}
 
-module.exports = { isAuthenticated: isAuthenticated, checklogin: checklogin };
+
+module.exports = { isAuthenticated: isAuthenticated, checklogin: checklogin, requireRole:requireRole };
