@@ -54,20 +54,21 @@
 
     </ul>
     {{/if}}
-    <ul class="nav navbar-nav navbarRight">
-      {{#if user}}
-      <li class="nav-item my-sm-0">
-        <a class="nav-link" href="/logOut">Log out</a>
-      </li>
-      {{else}}
-      <li class="nav-item my-sm-0">
-        <a class="nav-link" href="/login">Login</a>
-      </li>
 
-      {{/if}}
-
-    </ul>
   </div>
+  <ul class="nav navbar-nav navbarRight">
+    {{#if user}}
+    <li class="nav-item my-sm-0">
+      <a class="nav-link" href="/logOut">Log out</a>
+    </li>
+    {{else}}
+    <li class="nav-item my-sm-0">
+      <a class="nav-link" href="/login">Login</a>
+    </li>
+
+    {{/if}}
+
+  </ul>
 </nav>
 
 
