@@ -373,8 +373,8 @@ router.get('/edit-employee', isAuth.isAuthenticated, isAuth.requireRole(1), func
 });
 
 //From HR : Check the details of one user.
-router.get('/view-employees/:id/prev', isAuth.isAuthenticated, isAuth.requireRole(1), function (req, res) {
-    res.render('edit_employee_prev', {
+router.get('/view-employees/:id', isAuth.isAuthenticated, isAuth.requireRole(1), function (req, res) {
+    res.render('dashboard', {
         title: 'View Employees Leaves Previous Page',
         id: req.params.id,
         user: req.user,

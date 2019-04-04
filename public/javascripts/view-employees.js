@@ -43,9 +43,9 @@ $(document).ready(function () {
                                         <h5 class="card-title empListAvailableLeaves">${res[i].AvailableLeaves}</h5>
                                         <ul class="list-inline">
                                             <li class="list-inline-item">
-                                                <button class="btn btn-primary btn-sm btn-block viewEmpDetails" name="${res[i].UserId}" style="color:#fff !important">
+                                                <a class="btn btn-primary btn-sm btn-block viewEmpDetails" name="${res[i].UserId}" style="color:#fff !important" href="/dashboard/view-employees/${res[i].UserId}">
                                                     View/Edit Employee Details
-                                                </button>
+                                                </a>
                                             </li>
                                         </ul>
                                     </div>

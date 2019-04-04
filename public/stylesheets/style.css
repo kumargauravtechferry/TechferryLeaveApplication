@@ -508,3 +508,9 @@ input.input100 {
 .navbarRight {
     width: 20%;
 }
+
+.profile-image-round{
+    width: 36px;
+    height: 36px;
+    border-radius: 50%
+}
