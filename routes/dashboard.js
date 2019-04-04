@@ -18,15 +18,18 @@ router.get('/', function (req, res, next) {
         return res.redirect('/login');
     }
     //console.log(req.user)
-    res.render('dashboard', { title: 'Dashboard Page', user: req.user });
+    res.render('dashboard', {
+        title: 'Dashboard Page',
+        user: req.user
+    });
 });
 
-router.post('/',isAuth.isAuthenticated, (req, res, next) => {
+router.post('/', isAuth.isAuthenticated, (req, res, next) => {
     //console.log(req.user);
-    var connectionCommand = `Select u.EmpId, u.FirstName, u.LastName, u.Email, u.DOB, u.Gender, u.MaritalSatus, u.ContactNumber, u.EmergencyNumber,
+    var connectionCommand = `Select e.EmployeeId, u.Firstname, u.Lastname, u.Email, u.DOB, u.Gender, u.MaritalSatus, u.ContactNumber, u.EmergencyNumber,
     u.BloodGroup, u.Photo, e.JoinedDate, e.AvailableLeaves,
     a.Street1, a.Street2, a.City, a.State, s.StatusName, d.Designation from User as u
-    inner join Employee as e on u.EmpId = e.EmpId
+    inner join Employee as e on u.EmpId = e.Id
     inner join Address as a on u.AddressId = a.AddressId
     inner join EmployeeStatus as s on e.StatusId = s.StatusId
     inner join Designation as d on u.DesignationId = d.DesignationId
@@ -196,7 +199,7 @@ router.post('/addEmp', isAuth.isAuthenticated, function (req, res, next) {
     let image_name = 'TF-02.' + pic;
     let password = Math.floor((Math.random() * 10000000000) + 1).toString(16);
     //Firstname , Lastname ,  Email , Password , DOB , Gender , MaritalSatus , ContactNumber , EmergencyNumber , BloodGroup , Photo
-    
+
 
     //Address Table
     let address1 = req.body.address1;
@@ -217,7 +220,9 @@ router.post('/addEmp', isAuth.isAuthenticated, function (req, res, next) {
     let userId = 0;
 
     connection.beginTransaction(function (err) {
-        if (err) { throw err; }
+        if (err) {
+            throw err;
+        }
 
         connection.query('insert into Address(Street1, Street2, City, State, Zip, UpdatedOn, CreatedOn) VALUES (?,?,?,?,?, now(), now())', addressParams, function (err, result) {
             if (err) {
@@ -248,40 +253,42 @@ router.post('/addEmp', isAuth.isAuthenticated, function (req, res, next) {
                 //     }
 
                 let g = 'M';
-                if(gender == "M"){
-                g = 'M';
-                } else{
+                if (gender == "M") {
+                    g = 'M';
+                } else {
                     g = 'F';
                 }
-                    let userParams = [firstName, lastName, email, password, dob, g, maritalStatus, contactNumber, emergencyNumber, bloodGroup, "../images/profile/", designation];
+                let userParams = [firstName, lastName, email, password, dob, g, maritalStatus, contactNumber, emergencyNumber, bloodGroup, "../images/profile/", designation];
 
-                    // send the player's details to the database
-                    connection.query(`insert into user(EmpId, AddressId, Firstname , Lastname ,  Email , Password , DOB , Gender , MaritalSatus , ContactNumber , EmergencyNumber , BloodGroup , Photo , UpdatedOn , CreatedOn, DesignationId) VALUES (${employeeId}, ${addressId}, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now(), now(), ?)`, userParams, function (err2, result2) {
-                        if (err2) {
-                            console.log("error::::" + err2);
+                // send the player's details to the database
+                connection.query(`insert into user(EmpId, AddressId, Firstname , Lastname ,  Email , Password , DOB , Gender , MaritalSatus , ContactNumber , EmergencyNumber , BloodGroup , Photo , UpdatedOn , CreatedOn, DesignationId) VALUES (${employeeId}, ${addressId}, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now(), now(), ?)`, userParams, function (err2, result2) {
+                    if (err2) {
+                        console.log("error::::" + err2);
+                        connection.rollback(function () {
+                            throw err2;
+                        });
+                    }
+
+                    userId = result2.insertId;
+
+                    connection.query('insert into User_Roles(UserId, RoleId, UpdatedOn, CreatedOn) VALUES (?, 2, now(), now())', userId, function (err1, result1) {
+                        if (err1) {
                             connection.rollback(function () {
-                                throw err2;
+                                throw err1;
                             });
                         }
 
-                        userId = result2.insertId;
-
-                        connection.query('insert into User_Roles(UserId, RoleId, UpdatedOn, CreatedOn) VALUES (?, 2, now(), now())', userId, function (err1, result1) {
-                            if (err1) {
+                        connection.commit(function (err) {
+                            if (err) {
                                 connection.rollback(function () {
-                                    throw err1;
+                                    throw err;
                                 });
                             }
-
-                            connection.commit(function (err) {
-                                if (err) {
-                                    connection.rollback(function () {
-                                        throw err;
-                                    });
-                                }
-                                res.send({message: "SUCCESS!!"});
+                            res.send({
+                                message: "SUCCESS!!"
                             });
                         });
+                    });
                     // });
                 });
 
@@ -366,8 +373,8 @@ router.get('/view-employees/:id/prev', isAuth.isAuthenticated, function (req, re
 // //From HR : Check the details of one user.
 router.get('/leave', isAuth.isAuthenticated, function (req, res) {
 
-    getLeaveTypeData(null, function(err, result){
-        console.log("resule data "+result)
+    getLeaveTypeData(null, function (err, result) {
+        console.log("resule data " + result)
         res.render('leave', {
             title: 'Log Leaves',
             leaveTypeData: result
@@ -379,15 +386,14 @@ router.get('/leave', isAuth.isAuthenticated, function (req, res) {
     // });
 });
 
-var getLeaveTypeData = function(params, callbackFn){
+var getLeaveTypeData = function (params, callbackFn) {
 
     var leaveTypeData = [];
     connection.query("SELECT * from leavestype", function (err, rows, fields) {
         if (rows.length != 0) {
             leaveTypeData = rows;
 
-        }
-        else{
+        } else {
             leaveTypeData = [];
         }
 
@@ -395,7 +401,7 @@ var getLeaveTypeData = function(params, callbackFn){
     });
 };
 
-router.post('/leave', function(req, res) {
+router.post('/leave', function (req, res) {
 
     let leavetype = req.body["leave-type"];
     let LeaveDate = req.body.datepickerstart;
@@ -407,20 +413,19 @@ router.post('/leave', function(req, res) {
     let UserId = req.user.UserId;
     let CreatedBy = req.user.UserId;
     end = moment(EndDate),
-    days = end.diff(StartDate, 'days');
-    console.log("days calucation"+ days);
+        days = end.diff(StartDate, 'days');
+    console.log("days calucation" + days);
 
-   for(var i=1; i<=days; i++)
-   {
-    let insertbody = [leavetype,UserId,LeaveReason,moment(LeaveDate).format('YYYY-MM-DD'),CreatedBy];
-    let insertQuery = "insert into leaves(LeaveTypeId,UserId,Reason,LeaveDate,CreatedBy) VALUES (?,?,?,?,?)";
-   
-    connection.query(insertQuery, insertbody,(err, result) => {
-        console.log(err)
+    for (var i = 1; i <= days; i++) {
+        let insertbody = [leavetype, UserId, LeaveReason, moment(LeaveDate).format('YYYY-MM-DD'), CreatedBy];
+        let insertQuery = "insert into leaves(LeaveTypeId,UserId,Reason,LeaveDate,CreatedBy) VALUES (?,?,?,?,?)";
 
-        console.log("data inserted"+result);
-        res.redirect("/leave")
-    });
+        connection.query(insertQuery, insertbody, (err, result) => {
+            console.log(err)
+
+            console.log("data inserted" + result);
+            res.redirect("/leave")
+        });
     }
     res.end()
 });
