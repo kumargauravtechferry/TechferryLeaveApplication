@@ -21,12 +21,12 @@ router.get('/', function (req, res, next) {
     res.render('dashboard', { title: 'Dashboard Page', user: req.user });
 });
 
-router.post('/',isAuth.isAuthenticated, (req, res, next) => {
+router.post('/', (req, res, next) => {
     //console.log(req.user);
-    var connectionCommand = `Select u.EmpId, u.FirstName, u.LastName, u.Email, u.DOB, u.Gender, u.MaritalSatus, u.ContactNumber, u.EmergencyNumber,
+    var connectionCommand = `Select e.EmployeeId, u.Firstname, u.Lastname, u.Email, u.DOB, u.Gender, u.MaritalSatus, u.ContactNumber, u.EmergencyNumber,
     u.BloodGroup, u.Photo, e.JoinedDate, e.AvailableLeaves,
     a.Street1, a.Street2, a.City, a.State, s.StatusName, d.Designation from User as u
-    inner join Employee as e on u.EmpId = e.EmpId
+    inner join Employee as e on u.EmpId = e.Id
     inner join Address as a on u.AddressId = a.AddressId
     inner join EmployeeStatus as s on e.StatusId = s.StatusId
     inner join Designation as d on u.DesignationId = d.DesignationId
@@ -122,14 +122,14 @@ router.post('/viewEmployeeDetails', isAuth.isAuthenticated, function (req, res, 
 });
 
 //From HR : Check the details/list of other users.
-router.get('/view-employees', isAuth.isAuthenticated, function (req, res, next) {
+router.get('/view-employees', isAuth.isAuthenticated,isAuth.requireRole(1), function (req, res, next) {
     res.render('view_employees', {
         title: 'View Employees Leaves Page'
     });
 });
 
 //For Personal Previous Leaves
-router.get('/add-employee', isAuth.isAuthenticated, function (req, res, next) {
+router.get('/add-employee', isAuth.isAuthenticated,isAuth.requireRole(1), function (req, res, next) {
 
 
     designation = '';
@@ -340,7 +340,7 @@ insertIntoEmployeeAndFetchID: (employee, callback) => {
 
 
 //From HR : Check the details of one user.
-router.get('/employee-details', isAuth.isAuthenticated, function (req, res) {
+router.get('/employee-details', isAuth.isAuthenticated,isAuth.requireRole(1), function (req, res) {
     res.render('employee-details', {
         title: 'Employees Details',
         id: req.params.id
@@ -348,7 +348,7 @@ router.get('/employee-details', isAuth.isAuthenticated, function (req, res) {
 });
 
 //From HR : Edit the details of one user.
-router.get('/edit-employee', isAuth.isAuthenticated, function (req, res) {
+router.get('/edit-employee', isAuth.isAuthenticated, isAuth.requireRole(1),function (req, res) {
     res.render('edit_employee', {
         title: 'Edit Employees Leaves Page',
 
@@ -356,7 +356,7 @@ router.get('/edit-employee', isAuth.isAuthenticated, function (req, res) {
 });
 
 //From HR : Check the details of one user.
-router.get('/view-employees/:id/prev', isAuth.isAuthenticated, function (req, res) {
+router.get('/view-employees/:id/prev', isAuth.isAuthenticated,isAuth.requireRole(1), function (req, res) {
     res.render('edit_employee_prev', {
         title: 'View Employees Leaves Previous Page',
         id: req.params.id
@@ -364,7 +364,7 @@ router.get('/view-employees/:id/prev', isAuth.isAuthenticated, function (req, re
 });
 
 // //From HR : Check the details of one user.
-router.get('/leave', isAuth.isAuthenticated, function (req, res) {
+router.get('/leave', isAuth.isAuthenticated,isAuth.requireRole(2), function (req, res) {
 
     getLeaveTypeData(null, function(err, result){
         console.log("resule data "+result)
