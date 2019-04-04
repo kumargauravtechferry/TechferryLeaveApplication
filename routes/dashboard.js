@@ -18,15 +18,15 @@ router.get('/', function (req, res, next) {
         return res.redirect('/login');
     }
     //console.log(req.user)
-    res.render('dashboard', { title: 'Dashboard Page', user: req.user });
+    res.render('dashboard', { title: 'Dashboard Page' });
 });
 
 router.post('/', (req, res, next) => {
     //console.log(req.user);
-    var connectionCommand = `Select e.EmployeeId, u.Firstname, u.Lastname, u.Email, u.DOB, u.Gender, u.MaritalSatus, u.ContactNumber, u.EmergencyNumber,
+    var connectionCommand = `Select u.EmpId, u.FirstName, u.LastName, u.Email, u.DOB, u.Gender, u.MaritalSatus, u.ContactNumber, u.EmergencyNumber,
     u.BloodGroup, u.Photo, e.JoinedDate, e.AvailableLeaves,
     a.Street1, a.Street2, a.City, a.State, s.StatusName, d.Designation from User as u
-    inner join Employee as e on u.EmpId = e.Id
+    inner join Employee as e on u.EmpId = e.EmpId
     inner join Address as a on u.AddressId = a.AddressId
     inner join EmployeeStatus as s on e.StatusId = s.StatusId
     inner join Designation as d on u.DesignationId = d.DesignationId
@@ -154,18 +154,19 @@ router.get('/view-employees/:id/prev', isAuth.isAuthenticated, function (req, re
 
 // //From HR : Check the details of one user.
 router.get('/leave', isAuth.isAuthenticated, function (req, res) {
-    res.render('leave', {
-        title: 'View Employees Leaves Previous Page',
-        id: req.params.id
+
+    getLeaveTypeData(null, function(err, result){
+        console.log("resule data "+result)
+        res.render('leave', {
+            title: 'Log Leaves',
+            leaveTypeData: result
+        });
     });
+    // res.render('leave', {
+    //     title: 'View Employees Leaves Previous Page',
+    //     id: req.params.id
+    // });
 });
-
-
-// router.get('/addleave', function(req, res) {
-//     res.render('addleave', {
-//         title: 'Log Leaves'
-//     });
-// });
 
 var getLeaveTypeData = function(params, callbackFn){
 
@@ -173,52 +174,44 @@ var getLeaveTypeData = function(params, callbackFn){
     connection.query("SELECT * from leavestype",function(err, rows, fields){
         if(rows.length != 0){
             leaveTypeData = rows;
-            //res.json(data);
-        }else{
+
+        }
+        else{
             leaveTypeData = [];
-            //res.json(data);
         }
 
         callbackFn(undefined, leaveTypeData);
     });
 };
 
-router.get('/addleave',isAuth.isAuthenticated, function(req, res, next) {
+router.post('/leave', function(req, res) {
 
-    getLeaveTypeData(null, function(err, result){
-        res.render('addleave', {
-            title: 'Log Leaves',
-            leaveTypeData: result
-        });
-    });
-});
-
-
-router.post('/addleave', function(req, res) {
-    console.log('req.body');
-    console.log("user id "+req.user.UserId);
-    console.log(req.body);
     let leavetype = req.body["leave-type"];
     let LeaveDate = req.body.datepickerstart;
     let LeaveReason = req.body.reason;
     let leaveStartDate = req.body.datepickerstart;
     let leaveEndDate = req.body.datepickerend;
-    // let UserId = req.user.UserId;
-    // let EmpId = req.user.EmpId
-    console.log("user info "+req.user);
+    var EndDate = moment(leaveEndDate).format('YYYY-MM-DD');
+    var StartDate = moment(leaveStartDate).format('YYYY-MM-DD');
+    let UserId = req.user.UserId;
+    let CreatedBy = req.user.UserId;
+    end = moment(EndDate),
+    days = end.diff(StartDate, 'days');
+    console.log("days calucation"+ days);
 
-    let laeveDifference = moment(leaveEndDate).format('YYYY-MM-DD')-moment(leaveStartDate).format('YYYY-MM-DD');
-
-    let insertbody = [leavetype,LeaveReason,moment(LeaveDate).format('YYYY-MM-DD')];//UserId=,UserId,,EmpId=,CreatedBy
-    let insertQuery = "insert into leaves(LeaveTypeId,Reason,LeaveDate) VALUES (?,?,?)";
-
+   for(var i=1; i<=days; i++)
+   {
+    let insertbody = [leavetype,UserId,LeaveReason,moment(LeaveDate).format('YYYY-MM-DD'),CreatedBy];
+    let insertQuery = "insert into leaves(LeaveTypeId,UserId,Reason,LeaveDate,CreatedBy) VALUES (?,?,?,?,?)";
+   
     connection.query(insertQuery, insertbody,(err, result) => {
         console.log(err)
-        console.log("data inserted"+result);
-    });
-    res.end()
 
-    // res.send("leave apply page.")
+        console.log("data inserted"+result);
+        res.redirect("/leave")
+    });
+    }
+    res.end()
 });
 
 module.exports = router;

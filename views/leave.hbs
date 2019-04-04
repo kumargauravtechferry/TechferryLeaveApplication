@@ -1,4 +1,4 @@
-{{!-- {{> header}}
+{{> header}}
 
 <style>
     @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,700');
@@ -213,7 +213,6 @@
 </style>
 </style>
 <main>
-
     <input id="tab1" type="radio" name="tabs" checked>
     <label for="tab1">Leave Log</label>
 
@@ -227,8 +226,45 @@
 
     <section id="content1">
         <div class="lwidth50">
-            <div class="form-style-5">
-                <form>
+            <div class="card pmd-card single-col-form">
+                 <form id="apply-leave" method="post" action="/dashboard/leave" novalidate="novalidate">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group pmd-textfield pmd-textfield-floating-label ">
+                                <label for="leave-type">Leave Type</label>
+                                <select name="leave-type" id="leave-type" class="form-control" title="Please select a Leave Type" required="">
+                                    {{#each leaveTypeData}}
+                                    <option value="{{LeaveTypeId}}">{{LeaveTypeName}}</option>
+                                    {{/each}}
+                                </select><span class="pmd-textfield-focused"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                                <label class="control-label" for="datepickerstart">Start Date</label>
+                                <input type="date" class="form-control" id="datepickerstart" name="datepickerstart"><span class="pmd-textfield-focused"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4" >
+                            <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                                <label class="control-label" for="datepickerend">End Date</label>
+                                <input type="date" class="form-control" id="datepickerend" name="datepickerend"><span class="pmd-textfield-focused"></span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                                <label>Reason</label>
+                                <textarea class="form-control" id="reason" name="reason"></textarea><span class="pmd-textfield-focused"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary pmd-ripple-effect pmd-btn-raised" name="applyleave" value="Apply Leave">Apply Leave</button> <a href="/dashboard" class="btn btn-outline-secondary pmd-ripple-effect">Cancel</a>
+                </div>
+            </form>
+                {{!-- <form>
                     <fieldset>
                         <legend><span class="number">1</span> Candidate Info</legend>
                         <input type="text" name="field1" placeholder="Your Name *">
@@ -260,7 +296,7 @@
                         <textarea name="field3" placeholder="About Your School"></textarea>
                     </fieldset>
                     <input type="submit" value="Apply" />
-                </form>
+                </form> --}}
             </div>
         </div>
         <div class="rwidth50">
@@ -278,8 +314,8 @@
 
 
 
-</main> --}}
-
+</main>
+{{!-- 
 <style>
     .login-form {
         width: 300px;
@@ -373,4 +409,4 @@
                 </div>
             </form>
         </div>
-    </div>
+    </div> --}}
