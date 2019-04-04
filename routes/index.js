@@ -12,8 +12,9 @@ router.get('/', function(req, res, next) {
     if (!req.isAuthenticated()) {
         return res.redirect('/login');
     }
-    //console.log(req.user)
-    res.render('dashboard', { title: 'Dashboard Page' , user: req.user});
+    var userRole = (req.user.RoleId == 1)?true:false ;
+    console.log(userRole)
+    res.render('dashboard', { title: 'Dashboard Page' , user: req.user, userRole: (req.user.RoleId == 1)?true:false });
 });
 router.get('/contact',isAuth.isAuthenticated, function(req, res, next) {
     res.render('contact', {
@@ -22,7 +23,8 @@ router.get('/contact',isAuth.isAuthenticated, function(req, res, next) {
 });
 router.get('/notification',isAuth.isAuthenticated, function(req, res, next) {
     res.render('notifications', {
-        title: 'Techferry | Notification'
+        title: 'Techferry | Notification',
+        user: req.user, userRole: (req.user.RoleId == 1)?true:false 
     });
 });
 
@@ -205,7 +207,8 @@ router.get('/addleave',isAuth.isAuthenticated, function(req, res, next) {
     getLeaveTypeData(null, function(err, result){
         res.render('addleave', {
             title: 'Techferry |  Add leave',
-            leaveTypeData: result
+            leaveTypeData: result,
+            user: req.user, userRole: (req.user.RoleId == 1)?true:false 
         });
     });
 });

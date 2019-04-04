@@ -17,8 +17,11 @@ router.get('/', function (req, res, next) {
     if (!req.isAuthenticated()) {
         return res.redirect('/login');
     }
-    //console.log(req.user)
-    res.render('dashboard', { title: 'Dashboard Page', user: req.user });
+    // console.log(req.user.RoleId)
+    // var userRole = (req.user.RoleId == 1)?true:false ;
+    // console.log(userRole)
+
+    res.render('dashboard', { title: 'Dashboard Page', user: req.user, userRole: (req.user.RoleId == 1)?true:false });
 });
 
 router.post('/', (req, res, next) => {
@@ -124,7 +127,7 @@ router.post('/viewEmployeeDetails', isAuth.isAuthenticated, function (req, res, 
 //From HR : Check the details/list of other users.
 router.get('/view-employees', isAuth.isAuthenticated,isAuth.requireRole(1), function (req, res, next) {
     res.render('view_employees', {
-        title: 'View Employees Leaves Page'
+        title: 'View Employees Leaves Page',user: req.user, userRole: (req.user.RoleId == 1)?true:false 
     });
 });
 
@@ -141,7 +144,7 @@ router.get('/add-employee', isAuth.isAuthenticated,isAuth.requireRole(1), functi
             status = res1;
             res.render('add-employee', {
                 designation,
-                status
+                status,user: req.user, userRole: (req.user.RoleId == 1)?true:false 
             });
         })
     }).catch((err) => {
@@ -343,7 +346,8 @@ insertIntoEmployeeAndFetchID: (employee, callback) => {
 router.get('/employee-details', isAuth.isAuthenticated,isAuth.requireRole(1), function (req, res) {
     res.render('employee-details', {
         title: 'Employees Details',
-        id: req.params.id
+        id: req.params.id,
+        user: req.user, userRole: (req.user.RoleId == 1)?true:false 
     });
 });
 
@@ -351,7 +355,7 @@ router.get('/employee-details', isAuth.isAuthenticated,isAuth.requireRole(1), fu
 router.get('/edit-employee', isAuth.isAuthenticated, isAuth.requireRole(1),function (req, res) {
     res.render('edit_employee', {
         title: 'Edit Employees Leaves Page',
-
+        user: req.user, userRole: (req.user.RoleId == 1)?true:false 
     });
 });
 
@@ -359,7 +363,8 @@ router.get('/edit-employee', isAuth.isAuthenticated, isAuth.requireRole(1),funct
 router.get('/view-employees/:id/prev', isAuth.isAuthenticated,isAuth.requireRole(1), function (req, res) {
     res.render('edit_employee_prev', {
         title: 'View Employees Leaves Previous Page',
-        id: req.params.id
+        id: req.params.id,
+        user: req.user, userRole: (req.user.RoleId == 1)?true:false 
     });
 });
 
@@ -370,7 +375,8 @@ router.get('/leave', isAuth.isAuthenticated,isAuth.requireRole(2), function (req
         console.log("resule data "+result)
         res.render('leave', {
             title: 'Log Leaves',
-            leaveTypeData: result
+            leaveTypeData: result,
+            user: req.user, userRole: (req.user.userId == 1)?true:false 
         });
     });
     // res.render('leave', {
