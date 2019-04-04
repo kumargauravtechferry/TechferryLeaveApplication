@@ -216,7 +216,7 @@ router.get('/addleave',isAuth.isAuthenticated, function(req, res, next) {
        
 
 
-router.post('/addleave', function(req, res) {
+router.post('/addleave',isAuth.requireRole(2), function(req, res) {
     console.log('req.body');
     console.log("user id "+req.user.UserId);
     console.log(req.body);
