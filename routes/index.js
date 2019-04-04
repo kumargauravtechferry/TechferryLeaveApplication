@@ -12,13 +12,14 @@ router.get('/', function(req, res, next) {
     if (!req.isAuthenticated()) {
         return res.redirect('/login');
     }
-    var userRole = (req.user.RoleId == 1)?true:false ;
-    console.log(userRole)
+    // var userRole = (req.user.RoleId == 1)?true:false ;
+    // console.log(userRole)
     res.render('dashboard', { title: 'Dashboard Page' , user: req.user, userRole: (req.user.RoleId == 1)?true:false });
 });
 router.get('/contact',isAuth.isAuthenticated, function(req, res, next) {
     res.render('contact', {
-        title: 'Techferry | Contact'
+        title: 'Techferry | Contact',
+        user: req.user, userRole: (req.user.RoleId == 1)?true:false
     });
 });
 router.get('/notification',isAuth.isAuthenticated, function(req, res, next) {

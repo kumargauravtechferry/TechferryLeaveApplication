@@ -20,7 +20,8 @@ router.get('/', function (req, res, next) {
     //console.log(req.user)
     res.render('dashboard', {
         title: 'Dashboard Page',
-        user: req.user
+        user: req.user,
+        userRole: (req.user.RoleId == 1) ? true : false
     });
 });
 
@@ -114,7 +115,9 @@ router.post('/view-employees', (req, res, next) => {
 //For Personal Previous Leaves
 router.get('/prev', isAuth.isAuthenticated, function (req, res, next) {
     res.render('previous_leaves', {
-        title: 'Previous Leaves Page'
+        title: 'Previous Leaves Page',
+        user: req.user,
+        userRole: (req.user.RoleId == 1) ? true : false
     });
 });
 
@@ -388,7 +391,7 @@ router.get('/leave', isAuth.isAuthenticated, isAuth.requireRole(2), function (re
             title: 'Log Leaves',
             leaveTypeData: result,
             user: req.user,
-            userRole: (req.user.userId == 1) ? true : false
+            userRole: (req.user.RoleId == 1) ? true : false
         });
     });
     // res.render('leave', {
