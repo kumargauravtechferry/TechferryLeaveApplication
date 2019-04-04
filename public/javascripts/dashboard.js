@@ -7,7 +7,7 @@ $(document).ready(function () {
         url: "/dashboard",
         async: true,
         success: function (resultData) {
-            console.log(resultData); 
+            console.log(resultData);
             $('.employeeName').html(resultData.Firstname + " " + resultData.Lastname);
             $('.employeeId').html(resultData.EmployeeId);
             $('.employeeEmail').html(resultData.Email);
@@ -36,7 +36,6 @@ $(document).ready(function () {
         success: function (res) {
 
             console.log(res);
-
             var event = [];
             for (var i = 0; i < res.length; i++) {
                 event.push({
@@ -97,3 +96,66 @@ $(document).ready(function () {
     });
 
 });
+
+
+
+function getHolidays() {
+    $.ajax({
+        type: 'POST',
+        url: "/dashboard/holidaysLeave",
+        async: true,
+        success: function (res) {
+
+            console.log(res);
+            createHolidayLeaveTable(res);
+            var event = [];
+            for (var i = 0; i < res.length; i++) {
+                event.push({
+                    title: res[i].name,
+                    start: res[i].leaveDate,
+                    color: res[i].type == 'holiday' ? '#000' : '#999',
+                    textColor: '#fff'
+                })
+            }
+
+            var curDate = moment().format('YYYY-MM-DD')
+            $('#calendar').fullCalendar({
+                defaultDate: curDate,
+                editable: false,
+                navLinks: false,
+                eventLimit: true, // allow "more" link when too many events
+                events: event
+            });
+
+        },
+        error: function (err) {
+
+        }
+    });
+
+}
+
+function createHolidayLeaveTable(arr) {
+    var html = ``;
+
+    html = `<table id="holidayLeave" class="table table-striped" cellspacing="0" width="100%"><thead><tr><th class="th-sm">Leave
+                    </th>
+                    <th class="th-sm">Leave Date
+                    </th>
+
+                </tr>
+            </thead>
+            <tbody>`
+    for (var i = 0; i < arr.length; i++) {
+        html += '<tr>';
+        html += '<td>' + arr[i].name + '</td>';
+        html += '<td>' + moment(arr[i].leaveDate).format('MMM - Do - YYYY') + '</td>';
+        html += '</tr>';
+    }
+    html += ` </tbody>
+        </table>`;
+
+    if ($('#holidayDayTable').length) {
+        $('#holidayDayTable')[0].innerHTML = html;
+    }
+}
