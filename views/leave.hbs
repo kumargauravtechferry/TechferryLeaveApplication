@@ -272,6 +272,23 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-12">
+                                <div class="col-md-6">
+                                    <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                                        <label class="control-label" for="Emplid-type">EmployeeId:-</label>
+                                        <label class="control-label" name="Emplid-type" for="Emplid-type"
+                                             id="lblEmpId">
+                                            {{EmployeeId}}
+                                        </label>
+                                        <select name="leave-type" id="Empid-type" class="form-control"
+                                            title="Please select a Leave Type" required="">
+                                            {{#each EmpidData}}
+                                            <option value="{{Id}}">{{EmployeeId}}</option>
+                                            {{/each}}
+                                        </select><span class="pmd-textfield-focused"></span>
+                                    </div>
+
+                                </div>
+
                                 <div class="form-group pmd-textfield pmd-textfield-floating-label ">
                                     <label for="leave-type">Leave Type</label>
                                     <select name="leave-type" id="leave-type" class="form-control"
@@ -325,16 +342,14 @@
     <section id="content3">
 
     </section>
-
-
-
 </main>
-
 <script src="../javascripts/dashboard.js"></script>
-
 <script>
     $(document).ready(function () {
         getHolidays();
+        $("select#Empid-type").change(function () {
+            var value = $(this).children("option:selected").text();;
+            document.getElementById("lblEmpId").innerHTML = value;
+        });
     });
-
 </script>

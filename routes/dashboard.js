@@ -500,19 +500,24 @@ router.get('/leave', isAuth.isAuthenticated, isAuth.requireRole(2), function (re
 
     getLeaveTypeData(null, function (err, result) {
         console.log("resule data " + result)
-        res.render('leave', {
-            title: 'Log Leaves',
-            leaveTypeData: result,
-            user: req.user,
-            userRole: (req.user.RoleId == 1) ? true : false
+        var leavedata =  result;
+        getEmployeeIdData(null,function(error, result)
+        {
+            console.log("result data "+ result)
+            var EmpidData = result
+                res.render('leave', {
+                    title: 'Log Leaves',
+                    leaveTypeData: leavedata,
+                    EmpidData: EmpidData,
+                    user: req.user,
+                    userRole: (req.user.RoleId == 1) ? true : false
+                });
+            
         });
-    });
-    // res.render('leave', {
-    //     title: 'View Employees Leaves Previous Page',
-    //     id: req.params.id
-    // });
-});
+        
 
+    });
+});
 var getLeaveTypeData = function (params, callbackFn) {
 
     var leaveTypeData = [];
@@ -529,14 +534,29 @@ var getLeaveTypeData = function (params, callbackFn) {
     });
 };
 
+var getEmployeeIdData = function(param, callbackFn){
+    var EmpidData = [];
+    connection.query("SELECT Id, EmployeeId FROM employee", function(error, rows, columns)
+    {
+        if(rows.length !=0)
+        {
+            EmpidData = rows;
+        }
+        else{
+            EmpidData = [];
+        }
+        callbackFn(undefined, EmpidData);
+    });
+};
+
 router.post('/leave', isAuth.requireRole(2), function (req, res) {
-//router.post('/leave', function (req, res) {
     _ativityId = 1;
     _activityType = "leave";
     _activityBy = req.user.UserId;
     _activityFor = req.user.UserId; //req.user.employeeId;
     _activityDate = moment(Date.now()).format('YYYY/MM/DD hh:mm:ss') //"2019-04-04 00:00:00"//moment(new Date()).format('YYYY-MM-DD');
-
+//document.getElementById('lblEmpId').textContent
+console.log("user information "+ req.user);
     let leavetype = req.body["leave-type"];
     let LeaveDate = req.body.datepickerstart;
     let LeaveReason = req.body.reason;
@@ -548,23 +568,7 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
     let CreatedBy = req.user.UserId;
     end = moment(EndDate),
     days = end.diff(StartDate, 'days');
-
-    var st = new Date(StartDate); //YYYY-MM-DD
-    var en= new Date(EndDate); //YYYY-MM-DD
-    
-    var getDateArray = function(s, e) {
-        var arr = new Array();
-        var dt = new Date(s);
-        while (dt <= e) {
-            arr.push(new Date(dt));
-            dt.setDate(dt.getDate() + 1);
-        }
-        return arr;
-    }
-    
-    var dateArr = getDateArray(st, en);
-
-    console.log("start date and end date array "+ dateArr);
+console.log("Employee id value "+_activityFor);
    // console.log("days calucation" + days);
 
    // console.log("details- leavetype-{0},LeaveDate-{1}, LeaveReason -{2},req.body- {3}, req.user -{4} " + leavetype, LeaveDate, LeaveReason, req.body, req.user);
