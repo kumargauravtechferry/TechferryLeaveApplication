@@ -285,10 +285,6 @@ router.post('/addEmp', isAuth.isAuthenticated, multer({dest: "./uploads/"}).sing
     // image_name = empId + '.' + pic;
     let password = Math.floor((Math.random() * 10000000000) + 1).toString(16);
     //Firstname , Lastname ,  Email , Password , DOB , Gender , MaritalSatus , ContactNumber , EmergencyNumber , BloodGroup , Photo
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 
     //Address Table
     let address1 = req.body.address1;
@@ -518,21 +514,6 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
     let UserId = req.user.UserId;
     let CreatedBy = req.user.UserId;
     end = moment(EndDate),
-<<<<<<< Updated upstream
-        days = end.diff(StartDate, 'days');
-    console.log("days calucation" + days);
-
-    for (var i = 1; i <= days; i++) {
-        let insertbody = [leavetype, UserId, LeaveReason, moment(LeaveDate).format('YYYY-MM-DD'), CreatedBy];
-        let insertQuery = "insert into leaves(LeaveTypeId,UserId,Reason,LeaveDate,CreatedBy) VALUES (?,?,?,?,?)";
-
-        connection.query(insertQuery, insertbody, (err, result) => {
-            console.log(err)
-
-            console.log("data inserted" + result);
-            res.redirect("/leave")
-        });
-=======
     days = end.diff(StartDate, 'days');
 
     var st = new Date(StartDate); //YYYY-MM-DD
@@ -562,7 +543,6 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
         leaveDate = leaveDate.format('YYYY-MM-DD');
         insertQuery += `(${leavetype}, ${UserId}, '${LeaveReason}', '${leaveDate}', ${CreatedBy})`;
         insertQuery += ((i+1) == days) ? `` : `,`;
->>>>>>> Stashed changes
     }
     insertQuery += `;`;
 

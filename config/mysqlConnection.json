@@ -2,7 +2,7 @@
     "db": {
         "host": "127.0.0.1",
         "user": "root",
-        "password": "shubhi",
+        "password": "12345",
         "database": "leaveapp"
     }
 }
