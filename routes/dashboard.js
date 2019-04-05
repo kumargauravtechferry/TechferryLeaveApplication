@@ -40,6 +40,7 @@ router.get('/', function (req, res, next) {
         title: 'Dashboard Page',
         user: req.user,
         id: req.user.UserId,
+        edit_detail: false,
         userRole: (req.user.RoleId == 1) ? true : false
     });
 });
@@ -400,7 +401,7 @@ router.post('/addEmp', isAuth.isAuthenticated, multer({ dest: "./uploads/" }).si
                                         <p>Your account has been created.</p>
                                         <p>Your Login details are</p>
                                         <p>User Email  : ${email}</p>
-                                        </p> Passowrd  : ${password}</p>
+                                        </p> Password  : ${password}</p>
                                         <br>
                                         <p>Cheers!</p>
                                     </div>`
@@ -491,6 +492,7 @@ router.get('/view-employees/:id', isAuth.isAuthenticated, isAuth.requireRole(1),
         title: 'View Employees Leaves Previous Page',
         id: req.params.id,
         user: req.user,
+        edit_detail: true,
         userRole: (req.user.RoleId == 1) ? true : false
     });
 });
