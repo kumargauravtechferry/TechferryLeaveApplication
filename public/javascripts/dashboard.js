@@ -7,12 +7,12 @@ $(document).ready(function () {
         type: 'Post',
         url: "/dashboard",
         async: true,
-        data :{
+        data: {
             id: id
         },
         success: function (resultData) {
             //console.log(resultData); 
-            console.log(resultData.Photo); 
+            console.log(resultData.Photo);
 
             var image = new Image();
             image = resultData.Photo;
@@ -22,14 +22,14 @@ $(document).ready(function () {
             $('.employeeName').html(resultData.Firstname + " " + resultData.Lastname);
             $('.employeeId').html(resultData.EmployeeId);
             $('.employeeEmail').html(resultData.Email);
-            $('.empAddress').html(resultData.Street1 + ", " + resultData.Street2 + ", " + resultData.City + ", " + resultData.State+ "-" + resultData.Zip);
-            $('.empDob').html(resultData.DOB);
+            $('.empAddress').html(resultData.Street1 + ", " + resultData.Street2 + ", " + resultData.City + ", " + resultData.State + "-" + resultData.Zip);
+            $('.empDob').html(moment(resultData.DOB).format('YYYY - MMM - Do'));
             $('.empGender').html(resultData.Gender);
             $('.empMStatus').html(resultData.MaritalSatus);
             $('.empContactNumber').html(resultData.ContactNumber);
             $('.empEmergencyContactNumber').html(resultData.EmergencyNumber);
             $('.empBloodGroup').html(resultData.BloodGroup);
-            $('.empJoiningDate').html(resultData.JoinedDate);
+            $('.empJoiningDate').html(moment(resultData.JoinedDate).format('YYYY - MMM - Do'));
             $('.empStatus').html(resultData.StatusName);
             $('.empAvailableLeaves').html(resultData.AvailableLeaves);
             $('.empDesignation').html(" (" + resultData.Designation + ")");
@@ -51,7 +51,7 @@ $(document).ready(function () {
             for (var i = 0; i < res.length; i++) {
                 event.push({
                     title: res[i].name,
-                    start: res[i].leaveDate,
+                    start: moment(res[i].leaveDate).format('YYYY-MM-DD HH:mm:ss'),
                     color: res[i].type == 'holiday' ? '#000' : '#999',
                     textColor: '#fff'
                 })
