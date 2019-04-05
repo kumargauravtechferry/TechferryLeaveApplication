@@ -13,6 +13,16 @@ var multer = require("multer");
 var smtpTransport = require('../service/nodeMailer')
 
 
+//#region  Define model
+let _ativityId;
+let _activityType;
+let _activityBy;
+let _activityFor;
+let _activityDate;
+
+//#endregion
+
+
 /* GET users listing. */
 //For Personal Details
 router.get('/', function (req, res, next) {
@@ -529,6 +539,12 @@ var getLeaveTypeData = function (params, callbackFn) {
 };
 
 router.post('/leave', isAuth.requireRole(2), function (req, res) {
+//router.post('/leave', function (req, res) {
+    _ativityId = 1;
+    _activityType = "leave";
+    _activityBy = req.user.UserId;
+    _activityFor = req.user.UserId; //req.user.employeeId;
+    _activityDate = moment(Date.now()).format('YYYY/MM/DD hh:mm:ss') //"2019-04-04 00:00:00"//moment(new Date()).format('YYYY-MM-DD');
 
     let leavetype = req.body["leave-type"];
     let LeaveDate = req.body.datepickerstart;
@@ -540,21 +556,53 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
     let UserId = req.user.UserId;
     let CreatedBy = req.user.UserId;
     end = moment(EndDate),
-        days = end.diff(StartDate, 'days');
-    console.log("days calucation" + days);
+    days = end.diff(StartDate, 'days');
 
-    for (var i = 1; i <= days; i++) {
-        let insertbody = [leavetype, UserId, LeaveReason, moment(LeaveDate).format('YYYY-MM-DD'), CreatedBy];
-        let insertQuery = "insert into leaves(LeaveTypeId,UserId,Reason,LeaveDate,CreatedBy) VALUES (?,?,?,?,?)";
-
-        connection.query(insertQuery, insertbody, (err, result) => {
-            console.log(err)
-
-            console.log("data inserted" + result);
-            res.redirect("/leave")
-        });
+    var st = new Date(StartDate); //YYYY-MM-DD
+    var en= new Date(EndDate); //YYYY-MM-DD
+    
+    var getDateArray = function(s, e) {
+        var arr = new Array();
+        var dt = new Date(s);
+        while (dt <= e) {
+            arr.push(new Date(dt));
+            dt.setDate(dt.getDate() + 1);
+        }
+        return arr;
     }
-    res.end()
+    
+    var dateArr = getDateArray(st, en);
+
+    console.log("start date and end date array "+ dateArr);
+   // console.log("days calucation" + days);
+
+   // console.log("details- leavetype-{0},LeaveDate-{1}, LeaveReason -{2},req.body- {3}, req.user -{4} " + leavetype, LeaveDate, LeaveReason, req.body, req.user);
+    
+    let insertQuery = `insert into leaves(LeaveTypeId,UserId,Reason,LeaveDate,CreatedBy) VALUES`;
+
+    for(let i = 0; i < days; i++){
+        let leaveDate = moment(LeaveDate,'YYYY-MM-DD').add(i,'days');
+        leaveDate = leaveDate.format('YYYY-MM-DD');
+        insertQuery += `(${leavetype}, ${UserId}, '${LeaveReason}', '${leaveDate}', ${CreatedBy})`;
+        insertQuery += ((i+1) == days) ? `` : `,`;
+    }
+    insertQuery += `;`;
+
+    console.log(insertQuery);
+5
+    let insertactivityBody = [_activityType, _activityBy, _activityFor, _activityDate]
+
+    let insertActivityQuery = "insert into activitytable(ActivityType,ActivityBy,ActivityFor,ActivityDate)  VALUES (?,?,?,?)";
+
+    connection.query(insertQuery, (err, result) => {
+
+        connection.query(insertActivityQuery, insertactivityBody, (error, result1) => {
+            console.log(error);
+            console.log("activity data inserted " + result1);
+            res.redirect("/dashboard")
+        });
+    });
+    //res.end()
 });
 
 
