@@ -41,7 +41,9 @@ router.get('/', function (req, res, next) {
         user: req.user,
         id: req.user.UserId,
         edit_detail: false,
-        userRole: (req.user.RoleId == 1) ? true : false
+        userRole: (req.user.RoleId == 1) ? true : false,
+        buttonText: "Leave Log",
+        buttonUrl: "/dashboard/leave"
     });
 });
 
@@ -136,7 +138,8 @@ router.post('/view-employees', isAuth.requireRole(1), (req, res, next) => {
     where UserId = u.UserId) as TotalLeaves from User as u
     inner join Employee as e on u.EmpId = e.Id
     inner join EmployeeStatus as s on e.StatusId = s.StatusId
-    inner join Designation as d on u.DesignationId = d.DesignationId`;
+    inner join Designation as d on u.DesignationId = d.DesignationId
+    where u.UserId <> ${req.user.UserId}`;
 
     connection.query(connectionCommand, function (err, rows) {
         if (err)
@@ -481,13 +484,13 @@ router.get('/employee-details', isAuth.isAuthenticated, isAuth.requireRole(1), f
 });
 
 //From HR : Edit the details of one user.
-router.get('/edit-employee', isAuth.isAuthenticated, isAuth.requireRole(1), function (req, res) {
-    res.render('edit_employee', {
-        title: 'Edit Employees Leaves Page',
-        user: req.user,
-        userRole: (req.user.RoleId == 1) ? true : false
-    });
-});
+// router.get('/edit-employee', isAuth.isAuthenticated, isAuth.requireRole(1), function (req, res) {
+//     res.render('edit_employee', {
+//         title: 'Edit Employees Leaves Page',
+//         user: req.user,
+//         userRole: (req.user.RoleId == 1) ? true : false
+//     });
+// });
 
 //From HR : Check the details of one user.
 router.get('/view-employees/:id', isAuth.isAuthenticated, isAuth.requireRole(1), function (req, res) {
@@ -496,7 +499,9 @@ router.get('/view-employees/:id', isAuth.isAuthenticated, isAuth.requireRole(1),
         id: req.params.id,
         user: req.user,
         edit_detail: true,
-        userRole: (req.user.RoleId == 1) ? true : false
+        //userRole: (req.user.RoleId == 1) ? true : false,
+        buttonText: "Edit Employee Details",
+        buttonUrl: "/dashboard/view-employees/" + req.params.id + "/edit-employee"
     });
 });
 
@@ -598,6 +603,14 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
         });
     });
     //res.end()
+});
+
+router.get('/view-employees/:id/edit-employee', isAuth.requireRole(2), function (req, res){
+    res.render('edit-employee');
+});
+
+router.get('/edit-employee', isAuth.requireRole(2), function (req, res){
+    res.render('edit-employee');
 });
 
 

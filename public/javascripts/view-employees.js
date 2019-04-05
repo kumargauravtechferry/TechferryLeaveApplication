@@ -55,9 +55,9 @@ $(document).ready(function () {
                     </div>
                 </div>`;
 
-                $('.empList').append(card);
+                
             }
-
+            $('.empList').append(card);
 
         },
         error: function (err) {
