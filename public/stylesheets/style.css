@@ -663,3 +663,11 @@ a.applyLeaveBtn {
     font-size: 15px;
     border-top: 3px solid blue !important;
 }
+
+.dropdown-profile{
+    top:35px
+}
+
+.dropdown-profile-menu{
+    top:17px;
+}
