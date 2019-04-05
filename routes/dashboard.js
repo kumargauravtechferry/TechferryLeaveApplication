@@ -51,7 +51,7 @@ router.post('/', isAuth.isAuthenticated, isAuth.requireRole(2), (req, res, next)
     console.log('here')
     var connectionCommand = `Select e.EmployeeId, u.Firstname, u.Lastname, u.Email, u.DOB, u.Gender, u.MaritalSatus, u.ContactNumber, u.EmergencyNumber,
     u.BloodGroup, u.Photo, e.JoinedDate, e.AvailableLeaves,
-    a.Street1, a.Street2, a.City, a.State, s.StatusName, d.Designation from User as u
+    a.Street1, a.Street2, a.City, a.State, a.Zip, s.StatusName, d.Designation from User as u
     inner join Employee as e on u.EmpId = e.Id
     inner join Address as a on u.AddressId = a.AddressId
     inner join EmployeeStatus as s on e.StatusId = s.StatusId
@@ -182,6 +182,20 @@ router.get('/add-employee', isAuth.isAuthenticated, isAuth.requireRole(1), funct
     status = '';
 
 
+    //getcurrent date
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth() + 1; //January is 0!
+    var yyyy = today.getFullYear();
+    if (dd < 10) {
+        dd = '0' + dd
+    }
+    if (mm < 10) {
+        mm = '0' + mm
+    }
+
+    today = yyyy + '-' + mm + '-' + dd;
+    //document.getElementById("datefield").setAttribute("max", today);
 
     connectionPromiseDesignation.then((result) => {
         designation = result;
@@ -195,7 +209,8 @@ router.get('/add-employee', isAuth.isAuthenticated, isAuth.requireRole(1), funct
         res.render('add-employee', {
             designation,
             status,
-            empId
+            empId,
+            today
         });
     }).catch((err) => {
         console.log("error: " + err);
@@ -246,22 +261,22 @@ var connectionPromiseFetchEmployeeId = new Promise(function (resolve, reject) {
 function convertImgToDataURLviaCanvas(url, callback, outputFormat) {
     var img = new Image();
     img.crossOrigin = 'Anonymous';
-    img.onload = function() {
-      var canvas = document.createElement('CANVAS');
-      var ctx = canvas.getContext('2d');
-      var dataURL;
-      canvas.height = this.height;
-      canvas.width = this.width;
-      ctx.drawImage(this, 0, 0);
-      dataURL = canvas.toDataURL(outputFormat);
-      callback(dataURL);
-      canvas = null;
+    img.onload = function () {
+        var canvas = document.createElement('CANVAS');
+        var ctx = canvas.getContext('2d');
+        var dataURL;
+        canvas.height = this.height;
+        canvas.width = this.width;
+        ctx.drawImage(this, 0, 0);
+        dataURL = canvas.toDataURL(outputFormat);
+        callback(dataURL);
+        canvas = null;
     };
     img.src = url;
-  }
+}
 
 //Add Employee Post Request multer({dest: "./uploads/"})
-router.post('/addEmp', isAuth.isAuthenticated, multer({dest: "./uploads/"}).single("pic"), function (req, res, next) {
+router.post('/addEmp', isAuth.isAuthenticated, multer({ dest: "./uploads/" }).single("pic"), function (req, res, next) {
 
     console.log(JSON.stringify(req.body));
 
@@ -334,16 +349,6 @@ router.post('/addEmp', isAuth.isAuthenticated, multer({dest: "./uploads/"}).sing
 
                 employeeId = result1.insertId;
 
-                //let img_path = `public/images/profile/${image_name}`;
-
-                // picture.mv(img_path, (err3 ) => {
-                //     if (err3) {
-
-                //         console.log("image error: " + err3);
-                //         connection.rollback(function () {
-                //             throw err3;
-                //         });
-                //     }
 
                 let g = 'M';
                 if (gender == "M") {
@@ -418,27 +423,13 @@ router.post('/addEmp', isAuth.isAuthenticated, multer({dest: "./uploads/"}).sing
                             });
                         });
                     });
-                    // });
                 });
 
 
             });
         });
 
-        // insertIntoAddressAndFetchID(addressParams, (addId) => {
-
-        //     if (addId != null) {
-        //         addressId = addId;
-        //         insertIntoEmployeeAndFetchID(empParams, (empId) => {
-
-        //             if (empParams != null) {
-        //                 employeeId = empId;
-        //             }
-
-        //         });
-        //     }
-
-        // });
+       
 
     });
 });

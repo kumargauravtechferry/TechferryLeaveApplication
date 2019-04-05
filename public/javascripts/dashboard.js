@@ -17,11 +17,12 @@ $(document).ready(function () {
             var image = new Image();
             image = resultData.Photo;
             $('.empPhoto').attr("src", "data:image/png;base64," + (resultData.Photo).toString());
+            $('.profile-image-round').attr("src", "data:image/png;base64," + (resultData.Photo).toString());
 
             $('.employeeName').html(resultData.Firstname + " " + resultData.Lastname);
             $('.employeeId').html(resultData.EmployeeId);
             $('.employeeEmail').html(resultData.Email);
-            $('.empAddress').html(resultData.Street1 + " " + resultData.Street1 + " " + resultData.Street1 + " " + resultData.Street1);
+            $('.empAddress').html(resultData.Street1 + ", " + resultData.Street2 + ", " + resultData.City + ", " + resultData.State+ "-" + resultData.Zip);
             $('.empDob').html(resultData.DOB);
             $('.empGender').html(resultData.Gender);
             $('.empMStatus').html(resultData.MaritalSatus);

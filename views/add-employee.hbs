@@ -250,34 +250,34 @@
                                 <input type="text" name="lastName" placeholder="Enter Last Name" required>
                             </div>
                             <div class="col-sm-6">
-                                <input type="email" name="email" placeholder="Enter Email Address" required>
+                                <input type="email" name="email" placeholder="Enter Email Address" pattern="^.+?@techferry.com$" oninvalid="setCustomValidity('User must have a techferry email address')" onchange="try{setCustomValidity('')}catch(e){}" required>
                             </div>
                             <div class="col-sm-6">
-                                <input name="dob" placeholder="Date of Birth" type="text" onfocus="(this.type='date')" onblur="(this.type='text')" required>
+                                <input name="dob" placeholder="Date of Birth" type="text" onfocus="(this.type='date')" onblur="(this.type='text')"  max="{{today}}" required>
                             </div>
                             <div class="col-sm-6">
-                                <select id="gender" name="gender">
-                                    <option value="-1">-- Select Gender --</option>
+                                <select id="gender" name="gender" required>
+                                    <option value="">-- Select Gender --</option>
                                     <option value="M">Male</option>
                                     <option value="F">Female</option>
                                 </select>
                             </div>
                             <div class="col-sm-6">
-                                <select id="maritalStatus" name="maritalStatus">
-                                    <option value="-1">-- Select Marital Status --</option>
-                                    <option value="married">Married</option>
-                                    <option value="unmarried">Unmarried</option>
+                                <select id="maritalStatus" name="maritalStatus" required>
+                                    <option value="">-- Select Marital Status --</option>
+                                    <option value="Married">Married</option>
+                                    <option value="Unmarried">Unmarried</option>
                                 </select>
                             </div>
                             <div class="col-sm-6">
-                                <input type="text" name="contactNumber" placeholder="Enter Contact Number" required>
+                                <input type="number" name="contactNumber" placeholder="Enter Contact Number" minlength="10" maxlength="10" required>
                             </div>
                             <div class="col-sm-6">
-                                <input type="text" name="emergencyNumber" placeholder="Enter Emergency Contact Number" required>
+                                <input type="number" name="emergencyNumber" placeholder="Enter Emergency Contact Number" minlength="10" maxlength="10" required>
                             </div>
                             <div class="col-sm-6">
-                                <select id="bloodGroup" name="bloodGroup">
-                                    <option value="-1">-- Select Blood Group --</option>
+                                <select id="bloodGroup" name="bloodGroup" required>
+                                    <option value="">-- Select Blood Group --</option>
                                     <option value="A+">A+</option>
                                     <option value="O+">O+</option>
                                     <option value="B+">B+</option>
@@ -289,8 +289,8 @@
                                 </select>
                             </div>
                             <div class="col-sm-6">
-                                <select id="designation" name="designation">
-                                    <option value="-1">-- Select Designation --</option>
+                                <select id="designation" name="designation" required>
+                                    <option value="">-- Select Designation --</option>
                                     {{#each designation}}
                                         <option value="{{this.DesignationId}}">{{this.Designation}}</option>
                                     {{/each}}
@@ -307,8 +307,8 @@
                                 <input type="text" name="city" placeholder="Enter City" required>
                             </div>
                             <div class="col-sm-6">
-                                <select id="stateslist" name="stateslist">
-                                    <option value="-1">-- Select State --</option>
+                                <select id="stateslist" name="stateslist" required>
+                                    <option value="">-- Select State --</option>
                                     <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
                                     <option value="Andhra Pradesh">Andhra Pradesh</option>
                                     <option value="Arunachal Pradesh">Arunachal Pradesh</option>
@@ -347,7 +347,7 @@
                                 </select>
                             </div>
                             <div class="col-sm-6">
-                                <input type="number" name="zip" placeholder="Enter Zip Code" required>
+                                <input type="number" name="zip" placeholder="Enter Zip Code"  min="100000" max="999999" oninvalid="setCustomValidity('Zip code must have 6 digits')" onchange="try{setCustomValidity('')}catch(e){}" required>
                             </div>
                             <div class="col-sm-6">
                                 <select id="country" name="country" readonly>
@@ -359,8 +359,8 @@
                                 <input type="text" id="employeeId" name="employeeId" value="{{empId}}" required readonly>
                             </div>
                             <div class="col-sm-6">
-                                <select id="status" name="status">
-                                    <option value="-1">-- Select Employee Status --</option>
+                                <select id="status" name="status" required>
+                                    <option value="">-- Select Employee Status --</option>
                                     {{#each status}}
                                         <option value="{{this.StatusId}}">{{this.StatusName}}</option>
                                     {{/each}}
@@ -370,7 +370,7 @@
                                 <input type="text" name="joiningDate" placeholder="Enter Joining Date" onfocus="(this.type='date')" onblur="(this.type='text')" required>
                             </div>
                             <div class="col-sm-6">
-                                <input type="number" name="availableLeaves" placeholder="Enter Available Leaves" required>
+                                <input type="number" name="availableLeaves" placeholder="Enter Available Leaves" value="0" min="0" required>
                             </div>
                             <div class="col-sm-6">
                                 <input type="file" name="pic" accept="image/*" required>
