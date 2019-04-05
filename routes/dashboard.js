@@ -7,8 +7,10 @@ var moment = require("moment");
 var fs = require('fs');
 const fileUpload = require('express-fileupload');
 var busboy = require('connect-busboy');
-
+var crypto = require('crypto');
+var config = require('../config/config');
 var multer = require("multer");
+var smtpTransport = require('../service/nodeMailer')
 
 
 /* GET users listing. */
@@ -23,16 +25,20 @@ router.get('/', function (req, res, next) {
     if (!req.isAuthenticated()) {
         return res.redirect('/login');
     }
-    //console.log(req.user)
+    console.log('req.user')
     res.render('dashboard', {
         title: 'Dashboard Page',
         user: req.user,
+        id: req.user.UserId,
         userRole: (req.user.RoleId == 1) ? true : false
     });
 });
 
 router.post('/', isAuth.isAuthenticated, isAuth.requireRole(2), (req, res, next) => {
-    //console.log(req.user);
+    // console.log(req.user);
+    var id = req.body.id;
+    console.log(id)
+    console.log('here')
     var connectionCommand = `Select e.EmployeeId, u.Firstname, u.Lastname, u.Email, u.DOB, u.Gender, u.MaritalSatus, u.ContactNumber, u.EmergencyNumber,
     u.BloodGroup, u.Photo, e.JoinedDate, e.AvailableLeaves,
     a.Street1, a.Street2, a.City, a.State, s.StatusName, d.Designation from User as u
@@ -40,7 +46,7 @@ router.post('/', isAuth.isAuthenticated, isAuth.requireRole(2), (req, res, next)
     inner join Address as a on u.AddressId = a.AddressId
     inner join EmployeeStatus as s on e.StatusId = s.StatusId
     inner join Designation as d on u.DesignationId = d.DesignationId
-    WHERE u.Email = "${req.user.Email}"`;
+    WHERE u.UserId = "${id}"`;
     connection.query(connectionCommand, function (err, rows) {
         if (err)
             return res.send(err);
@@ -109,7 +115,7 @@ router.post('/fetchLeaves', (req, res, next) => {
 });
 
 router.post('/view-employees', isAuth.requireRole(1), (req, res, next) => {
-    //console.log(req.user);
+    // console.log(req.user);
 
     var connectionCommand = `Select u.UserId, e.EmployeeId, u.FirstName, u.LastName, u.Email, u.ContactNumber, u.Photo,
     u.Photo, e.AvailableLeaves,
@@ -335,7 +341,11 @@ router.post('/addEmp', isAuth.isAuthenticated, multer({dest: "./uploads/"}).sing
                 } else {
                     g = 'F';
                 }
-                let userParams = [firstName, lastName, email, password, dob, g, maritalStatus, contactNumber, emergencyNumber, bloodGroup, "../images/profile/", designation];
+
+                // passowrd encyption
+                var encpassword = isAuth.EncryptPassword(password);
+                 
+                let userParams = [firstName, lastName, email, encpassword, dob, g, maritalStatus, contactNumber, emergencyNumber, bloodGroup,picUpload, designation];
 
                 // send the player's details to the database
                 connection.query(`insert into user(EmpId, AddressId, Firstname , Lastname ,  Email , Password , DOB , Gender , MaritalSatus , ContactNumber , EmergencyNumber , BloodGroup , Photo , UpdatedOn , CreatedOn, DesignationId) VALUES (${employeeId}, ${addressId}, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now(), now(), ?)`, userParams, function (err2, result2) {
@@ -361,6 +371,38 @@ router.post('/addEmp', isAuth.isAuthenticated, multer({dest: "./uploads/"}).sing
                                     throw err;
                                 });
                             }
+                            var data = {
+                                to: email,
+                                from: 'rduvedi@techferry.com',
+                                template: '../views/email.hbs',
+                                subject: 'Your Account has been created!',
+                                // context: {
+                                //   url: 'http://localhost:3000/reset_password?token=' + token,
+                                //   name: 'test'
+                                // },
+                                html:`<div>
+                                        <h3>Dear ${firstName} ${firstName},</h3>
+                                        <p>Your account has been created.</p>
+                                        <p>Your Login details are</p>
+                                        <p>User Email  : ${email}</p>
+                                        </p> Passowrd  : ${password}</p>
+                                        <br>
+                                        <p>Cheers!</p>
+                                    </div>`
+                            }
+                            smtpTransport.sendMail(data, function(err) {
+                                if (!err) {
+                                //     var statusMessage = `<div class="title_message"><h2>Check Your inbox.</h2></div><div class="title_message"><span>We have send password reset instructions into your <label class="email_label">${email}</label> mail id. please Check your Mail.  </span></div>`;
+                                // //   return res.json({ message: 'Kindly check your email for further instructions' });
+                                //     res.render('forgotPassword', {title: 'Forgot Password', status_Message_flag: true, statusMessage: statusMessage})
+                                res.send({
+                                    message: "SUCCESS!!"
+                                });
+                                } else {
+                                //   return done(err);
+                                console.log(err)
+                                }
+                                });
                             res.send({
                                 message: "SUCCESS!!"
                             });
@@ -514,5 +556,7 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
     }
     res.end()
 });
+
+
 
 module.exports = router;

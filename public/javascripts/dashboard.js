@@ -1,11 +1,15 @@
 $(document).ready(function () {
 
     //var myKeyVals = "";
-
+    var id = document.getElementById("userId").value;
+    console.log(id)
     $.ajax({
-        type: 'POST',
+        type: 'Post',
         url: "/dashboard",
         async: true,
+        data :{
+            id: id
+        },
         success: function (resultData) {
             //console.log(resultData); 
             console.log(resultData.Photo); 
