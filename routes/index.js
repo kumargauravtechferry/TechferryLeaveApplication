@@ -135,70 +135,113 @@ function EncryptPassword(password){
 }
 
 router.post('/change_password/:id',function(req,res,next){
-    var password = req.body.password;
-    var confirm_password = req.body.Confirm_password;
     var token = req.params.id;
-    connection.query("SELECT * FROM `user` WHERE `token` = '" + token + "'",function(err,rows){
-        if (err)
-            next(false)
-            // return done(err);
-        if (!rows.length) {
-            // return next(err)
-            var statusMessage = `<span>Sorry, this link is no longer valid. <p>click here  for</p> <a href="/login">login</a></span>`;
-            res.render('sucessPage', {title: 'Oops! 404 ', status_Message_flag: true, statusMessage: statusMessage})
-            // return done(null, false, {message:'No User Found.'}); // req.flash is the way to set flashdata using connect-flash
-        } else{
-            if(password == confirm_password){
-                var encryptPass = EncryptPassword(password);
-        
-                connection.query("UPDATE user SET password= '"+ encryptPass +"' WHERE `token` = '" + token + "'",function(err,rows){
-                    if (err)
-                        // next(false)
-                        res.send(err)
-                    if (!rows) {
-                        return next(err)
-                    } else{
-                        connection.query("UPDATE user SET token= Null WHERE `token` = '" + token + "'",function(err,rows){
-                            if (err)
-                                res.send(err)
-                            if (!rows) {
-                                res.redirect('/login')
-                            } else{
-                                var statusMessage = `<span>You can now sign in with your new passowrd <p>click here  for </p> <a href="/login">login</a></span>`;
-                                res.render('sucessPage', {title: 'Password Changed!', status_Message_flag: true, statusMessage: statusMessage})
-                            }
-                        });
-                    }
-                        
-                
-                });
-            } else{
-                console.log('here')
-                // res.send('Passowrd does not match');
-                req.statusMessage = 'false'
-                res.redirect('/reset_password?token='+token)
-            //    , statusError:false, statusMessage:'Passowrd does not match'
-            }
+    if(token == 'reset'){
+        if (!req.isAuthenticated()) {
+            return res.render('error-page');
+        }else{
+            var password = req.body.password;
+            var old_password = req.body.oldpassword;
+            var ency_old_password = EncryptPassword(old_password);
+            var enc_password = EncryptPassword(password);
+                if (!((req.user.Password).toString() == ency_old_password))
+                {
+                        res.render('reset_password',{Reset_container: true,statusErrorMessage: 'Wrong passowrd!'})
+                } else{
+                    connection.query("update `user` set Password = '" + enc_password + "'WHERE `Email` = '" + req.user.Email + "'",function(err,rows){
+                        if(!err){
+                            // res.send('sucess')
+                            res.render('reset_password',{Reset_container: true,statusMessage: 'password changed sucessfully!'})
+                        }else{
+                            
+                            res.render('reset_password',{Reset_container: true,statusErrorMessage: 'please try once!'})
+                        }
+                        console.log(err)
+                    });
+                }
+
         }
-    });
+        // condition for reset password when user is login 
 
 
+    } else{
+        var password = req.body.password;
+        var confirm_password = req.body.Confirm_password;
+    
+        connection.query("SELECT * FROM `user` WHERE `token` = '" + token + "'",function(err,rows){
+            if (err)
+                next(false)
+                // return done(err);
+            if (!rows.length) {
+                // return next(err)
+                var statusMessage = `<span>Sorry, this link is no longer valid. <p>click here  for</p> <a href="/login">login</a></span>`;
+                res.render('sucessPage', {title: 'Oops! 404 ', status_Message_flag: true, statusMessage: statusMessage})
+                // return done(null, false, {message:'No User Found.'}); // req.flash is the way to set flashdata using connect-flash
+            } else{
+                if(password == confirm_password){
+                    var encryptPass = EncryptPassword(password);
+            
+                    connection.query("UPDATE user SET password= '"+ encryptPass +"' WHERE `token` = '" + token + "'",function(err,rows){
+                        if (err)
+                            // next(false)
+                            res.send(err)
+                        if (!rows) {
+                            return next(err)
+                        } else{
+                            connection.query("UPDATE user SET token= Null WHERE `token` = '" + token + "'",function(err,rows){
+                                if (err)
+                                    res.send(err)
+                                if (!rows) {
+                                    res.redirect('/login')
+                                } else{
+                                    var statusMessage = `<span>You can now sign in with your new passowrd <p>click here  for </p> <a href="/login">login</a></span>`;
+                                    res.render('sucessPage', {title: 'Password Changed!', status_Message_flag: true, statusMessage: statusMessage})
+                                }
+                            });
+                        }
+                            
+                    
+                    });
+                } else{
+                    console.log('here')
+                    // res.send('Passowrd does not match');
+                    req.statusMessage = 'false'
+                    res.redirect('/reset_password?token='+token)
+                //    , statusError:false, statusMessage:'Passowrd does not match'
+                }
+            }
+        });
+    }
 });
 
 router.get('/change_password/:id',function(req, res, next){
-    var token = req.params.token;
-    connection.query("SELECT * FROM `user` WHERE `token` = '" + token + "'",function(err,rows){
-        if (err)
-            next(false)
-            // return done(err);
-        if (!rows.length) {
-            // return next(err)
-            var statusMessage = `<span>Sorry, this link is no longer valid. <p>click here  for</p> <a href="/login">login</a></span>`;
-            res.render('sucessPage', { title: 'Oops! 404 ',status_Message_flag: true, statusMessage: statusMessage})
-            // return done(null, false, {message:'No User Found.'}); // req.flash is the way to set flashdata using connect-flash
+    var token = req.params.id;
+    if (token == 'reset'){
+        //reset password when user is login
+        if (!req.isAuthenticated()) {
+            return res.redirect('/login');
+        }else{
+            res.render('reset_password',{Reset_container: true,url: '/change_password/reset'})
         }
-    });
+    }
+    else{
+        connection.query("SELECT * FROM `user` WHERE `token` = '" + token + "'",function(err,rows){
+            if (err) 
+                next(false)
+                // return done(err);
+            if (!rows.length) {
+                // return next(err)
+                var statusMessage = `<span>Sorry, this link is no longer valid. <p>click here  for</p> <a href="/login">login</a></span>`;
+                res.render('sucessPage', { title: 'Oops! 404 ',status_Message_flag: true, statusMessage: statusMessage})
+                // return done(null, false, {message:'No User Found.'}); // req.flash is the way to set flashdata using connect-flash
+            }
+        });
+    }
 })
+
+// router.get('/change_password', function(req,res,next){
+
+// });
 
 router.get('/sucessPage',function(req, res, next){
     res.render('sucessPage',{title: 'Sucess!', statusMessage: ''} )
