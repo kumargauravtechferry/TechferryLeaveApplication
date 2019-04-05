@@ -248,15 +248,15 @@ var connectionPromiseFetchEmployeeId = new Promise(function (resolve, reject) {
     connection.query(`SELECT e.employeeId FROM user as u
     inner join Employee as e on e.id = u.empId
     ORDER BY u.userId DESC LIMIT 1`, function (err, rows) {
-            if (err) {
-                reject(null);
-            } else if (!rows.length) {
-                reject(null);
-            } else {
-                var empId = (rows[0].employeeId).substring(3);
-                resolve(empId);
-            }
-        });
+        if (err) {
+            reject(null);
+        } else if (!rows.length) {
+            reject(null);
+        } else {
+            var empId = (rows[0].employeeId).substring(3);
+            resolve(empId);
+        }
+    });
 });
 
 function convertImgToDataURLviaCanvas(url, callback, outputFormat) {
@@ -277,7 +277,9 @@ function convertImgToDataURLviaCanvas(url, callback, outputFormat) {
 }
 
 //Add Employee Post Request multer({dest: "./uploads/"})
-router.post('/addEmp', isAuth.isAuthenticated, multer({ dest: "./uploads/" }).single("pic"), function (req, res, next) {
+router.post('/addEmp', isAuth.isAuthenticated, multer({
+    dest: "./uploads/"
+}).single("pic"), function (req, res, next) {
 
     console.log(JSON.stringify(req.body));
 
@@ -360,8 +362,8 @@ router.post('/addEmp', isAuth.isAuthenticated, multer({ dest: "./uploads/" }).si
 
                 // passowrd encyption
                 var encpassword = isAuth.EncryptPassword(password);
-                 
-                let userParams = [firstName, lastName, email, encpassword, dob, g, maritalStatus, contactNumber, emergencyNumber, bloodGroup,picUpload, designation];
+
+                let userParams = [firstName, lastName, email, encpassword, dob, g, maritalStatus, contactNumber, emergencyNumber, bloodGroup, picUpload, designation];
 
                 // send the player's details to the database
                 connection.query(`insert into user(EmpId, AddressId, Firstname , Lastname ,  Email , Password , DOB , Gender , MaritalSatus , ContactNumber , EmergencyNumber , BloodGroup , Photo , UpdatedOn , CreatedOn, DesignationId) VALUES (${employeeId}, ${addressId}, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now(), now(), ?)`, userParams, function (err2, result2) {
@@ -396,7 +398,7 @@ router.post('/addEmp', isAuth.isAuthenticated, multer({ dest: "./uploads/" }).si
                                 //   url: 'http://localhost:3000/reset_password?token=' + token,
                                 //   name: 'test'
                                 // },
-                                html:`<div>
+                                html: `<div>
                                         <h3>Dear ${firstName} ${firstName},</h3>
                                         <p>Your account has been created.</p>
                                         <p>Your Login details are</p>
@@ -406,21 +408,22 @@ router.post('/addEmp', isAuth.isAuthenticated, multer({ dest: "./uploads/" }).si
                                         <p>Cheers!</p>
                                     </div>`
                             }
-                            smtpTransport.sendMail(data, function(err) {
+                            smtpTransport.sendMail(data, function (err) {
                                 if (!err) {
-                                //     var statusMessage = `<div class="title_message"><h2>Check Your inbox.</h2></div><div class="title_message"><span>We have send password reset instructions into your <label class="email_label">${email}</label> mail id. please Check your Mail.  </span></div>`;
-                                // //   return res.json({ message: 'Kindly check your email for further instructions' });
-                                //     res.render('forgotPassword', {title: 'Forgot Password', status_Message_flag: true, statusMessage: statusMessage})
-                                res.send({
-                                    message: "SUCCESS!!"
-                                });
+                                    //     var statusMessage = `<div class="title_message"><h2>Check Your inbox.</h2></div><div class="title_message"><span>We have send password reset instructions into your <label class="email_label">${email}</label> mail id. please Check your Mail.  </span></div>`;
+                                    // //   return res.json({ message: 'Kindly check your email for further instructions' });
+                                    //     res.render('forgotPassword', {title: 'Forgot Password', status_Message_flag: true, statusMessage: statusMessage})
+                                    res.send({
+                                        message: "SUCCESS!!"
+                                    });
                                 } else {
-                                //   return done(err);
-                                console.log(err)
+                                    //   return done(err);
+                                    console.log(err)
                                 }
-                                });
+                            });
                             res.send({
                                 message: "SUCCESS!!"
+
                             });
                         });
                     });
@@ -430,7 +433,7 @@ router.post('/addEmp', isAuth.isAuthenticated, multer({ dest: "./uploads/" }).si
             });
         });
 
-       
+
 
     });
 });
@@ -502,19 +505,23 @@ router.get('/leave', isAuth.isAuthenticated, isAuth.requireRole(2), function (re
 
     getLeaveTypeData(null, function (err, result) {
         console.log("resule data " + result)
-        res.render('leave', {
-            title: 'Log Leaves',
-            leaveTypeData: result,
-            user: req.user,
-            userRole: (req.user.RoleId == 1) ? true : false
-        });
-    });
-    // res.render('leave', {
-    //     title: 'View Employees Leaves Previous Page',
-    //     id: req.params.id
-    // });
-});
+        var leavedata = result;
+        getEmployeeIdData(null, function (error, result) {
+            console.log("result data " + result)
+            var EmpidData = result
+            res.render('leave', {
+                title: 'Log Leaves',
+                leaveTypeData: leavedata,
+                EmpidData: EmpidData,
+                user: req.user,
+                userRole: (req.user.RoleId == 1) ? true : false
+            });
 
+        });
+
+
+    });
+});
 var getLeaveTypeData = function (params, callbackFn) {
 
     var leaveTypeData = [];
@@ -522,8 +529,7 @@ var getLeaveTypeData = function (params, callbackFn) {
         if (rows.length != 0) {
             leaveTypeData = rows;
 
-        }
-        else {
+        } else {
             leaveTypeData = [];
         }
 
@@ -531,14 +537,26 @@ var getLeaveTypeData = function (params, callbackFn) {
     });
 };
 
+var getEmployeeIdData = function (param, callbackFn) {
+    var EmpidData = [];
+    connection.query("SELECT Id, EmployeeId FROM employee", function (error, rows, columns) {
+        if (rows.length != 0) {
+            EmpidData = rows;
+        } else {
+            EmpidData = [];
+        }
+        callbackFn(undefined, EmpidData);
+    });
+};
+
 router.post('/leave', isAuth.requireRole(2), function (req, res) {
-//router.post('/leave', function (req, res) {
     _ativityId = 1;
     _activityType = "leave";
     _activityBy = req.user.UserId;
     _activityFor = req.user.UserId; //req.user.employeeId;
     _activityDate = moment(Date.now()).format('YYYY/MM/DD hh:mm:ss') //"2019-04-04 00:00:00"//moment(new Date()).format('YYYY-MM-DD');
-
+    //document.getElementById('lblEmpId').textContent
+    console.log("user information " + req.user);
     let leavetype = req.body["leave-type"];
     let LeaveDate = req.body.datepickerstart;
     let LeaveReason = req.body.reason;
@@ -549,40 +567,24 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
     let UserId = req.user.UserId;
     let CreatedBy = req.user.UserId;
     end = moment(EndDate),
-    days = end.diff(StartDate, 'days');
+        days = end.diff(StartDate, 'days');
+    console.log("Employee id value " + _activityFor);
+    // console.log("days calucation" + days);
 
-    var st = new Date(StartDate); //YYYY-MM-DD
-    var en= new Date(EndDate); //YYYY-MM-DD
-    
-    var getDateArray = function(s, e) {
-        var arr = new Array();
-        var dt = new Date(s);
-        while (dt <= e) {
-            arr.push(new Date(dt));
-            dt.setDate(dt.getDate() + 1);
-        }
-        return arr;
-    }
-    
-    var dateArr = getDateArray(st, en);
+    // console.log("details- leavetype-{0},LeaveDate-{1}, LeaveReason -{2},req.body- {3}, req.user -{4} " + leavetype, LeaveDate, LeaveReason, req.body, req.user);
 
-    console.log("start date and end date array "+ dateArr);
-   // console.log("days calucation" + days);
-
-   // console.log("details- leavetype-{0},LeaveDate-{1}, LeaveReason -{2},req.body- {3}, req.user -{4} " + leavetype, LeaveDate, LeaveReason, req.body, req.user);
-    
     let insertQuery = `insert into leaves(LeaveTypeId,UserId,Reason,LeaveDate,CreatedBy) VALUES`;
 
-    for(let i = 0; i < days; i++){
-        let leaveDate = moment(LeaveDate,'YYYY-MM-DD').add(i,'days');
+    for (let i = 0; i < days; i++) {
+        let leaveDate = moment(LeaveDate, 'YYYY-MM-DD').add(i, 'days');
         leaveDate = leaveDate.format('YYYY-MM-DD');
         insertQuery += `(${leavetype}, ${UserId}, '${LeaveReason}', '${leaveDate}', ${CreatedBy})`;
-        insertQuery += ((i+1) == days) ? `` : `,`;
+        insertQuery += ((i + 1) == days) ? `` : `,`;
     }
     insertQuery += `;`;
 
     console.log(insertQuery);
-5
+    5
     let insertactivityBody = [_activityType, _activityBy, _activityFor, _activityDate]
 
     let insertActivityQuery = "insert into activitytable(ActivityType,ActivityBy,ActivityFor,ActivityDate)  VALUES (?,?,?,?)";

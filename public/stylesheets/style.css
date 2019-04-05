@@ -586,18 +586,6 @@ td {
     color: blue;
 }
 
-.fc-ltr .fc-basic-view .fc-day-top .fc-day-number {
-    float: none !important;
-    font-size: 20px;
-    padding: 10px;
-    text-align: center;
-}
-
-.fc .fc-row .fc-content-skeleton table, .fc .fc-row .fc-content-skeleton td, .fc .fc-row .fc-helper-skeleton td {
-    padding: 30px;
-    text-align: center;
-}
-
 .fc-day-header {
     font-size: 18px;
     background-color: #0062cc;
@@ -664,10 +652,10 @@ a.applyLeaveBtn {
     border-top: 3px solid blue !important;
 }
 
-.dropdown-profile{
-    top:35px
+.dropdown-profile {
+    top: 35px
 }
 
-.dropdown-profile-menu{
-    top:17px;
+.dropdown-profile-menu {
+    top: 17px;
 }
