@@ -40,7 +40,7 @@ router.get('/', function (req, res, next) {
         title: 'Dashboard Page',
         user: req.user,
         id: req.user.UserId,
-        edit_detail: false,
+        edit_detail: (req.user.RoleId == 1) ? true : false,
         userRole: (req.user.RoleId == 1) ? true : false,
         buttonText: "Leave Log",
         buttonUrl: "/dashboard/leave"
@@ -498,7 +498,7 @@ router.get('/view-employees/:id', isAuth.isAuthenticated, isAuth.requireRole(1),
         title: 'View Employees Leaves Previous Page',
         id: req.params.id,
         user: req.user,
-        edit_detail: true,
+        edit_detail: (req.user.RoleId == 1) ? true : false,
         //userRole: (req.user.RoleId == 1) ? true : false,
         buttonText: "Edit Employee Details",
         buttonUrl: "/dashboard/view-employees/" + req.params.id + "/edit-employee"
@@ -610,7 +610,9 @@ router.get('/view-employees/:id/edit-employee', isAuth.requireRole(2), function 
 });
 
 router.get('/edit-employee', isAuth.requireRole(2), function (req, res){
-    res.render('edit-employee');
+    res.render('edit-employee',{
+        userRole: (req.user.RoleId == 1) ? true : false,
+    });
 });
 
 
