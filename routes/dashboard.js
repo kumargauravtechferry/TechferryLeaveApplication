@@ -589,7 +589,6 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
     insertQuery += `;`;
 
     console.log(insertQuery);
-    5
     let insertactivityBody = [_activityType, _activityBy, _activityFor, _activityDate]
 
     let insertActivityQuery = "insert into activitytable(ActivityType,ActivityBy,ActivityFor,ActivityDate)  VALUES (?,?,?,?)";
@@ -602,7 +601,6 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
             res.redirect("/dashboard")
         });
     });
-    //res.end()
 });
 
 router.get('/view-employees/:id/edit-employee', isAuth.requireRole(2), function (req, res){

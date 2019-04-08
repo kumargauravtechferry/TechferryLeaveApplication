@@ -202,7 +202,8 @@ router.post('/change_password/:id',function(req,res,next){
                             
                     
                     });
-                } else{
+                } 
+                else{
                     console.log('here')
                     // res.send('Passowrd does not match');
                     req.statusMessage = 'false'
