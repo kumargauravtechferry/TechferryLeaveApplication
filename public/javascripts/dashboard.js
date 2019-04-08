@@ -11,10 +11,13 @@ $(document).ready(function () {
 
     var leaveID = id;
 
-    bindClickEvents();
+    setTimeout(function () {
+        bindClickEvents();
+    }, 100);
 
-    if (urlCheckPart != "dashboard") {
-        leaveID = urlCheckPart;
+
+    if (urlCheckPart[urlCheckPart.length - 1] != "dashboard") {
+        leaveID = urlCheckPart[urlCheckPart.length - 1];
     }
 
     $.ajax({
@@ -112,15 +115,15 @@ $(document).ready(function () {
 
                 if (colctr == 5) {
                     dummyTableRow += `<tr>
-                    <td>${moment(res[i].LeaveDate).format('DD-MM-YYYY')}</td>
+                    <td data-leaveid="${res[i].LeaveId}">${moment(res[i].LeaveDate).format('DD-MM-YYYY')}</td>
                     <td>${res[i].LeaveTypeName}</td>
                     <td>${res[i].LeaveValue}</td>
                     <td>${res[i].Reason}</td>
-                    <td><button type="button" class="btn btn-warning btn-sm editLeave">Edit</button><button type="button" class="btn btn-danger btn-sm deleteLeave" style="margin-left: 15px;">Delete</button></td>
+                    <td><button type="button" class="btn btn-warning btn-sm editLeave">Edit</button><button type="button" class="btn btn-danger btn-sm deleteLeave" style="margin-left: 15px;" data-toggle="modal" data-target="#deleteLeaveModal" data-id="${i}">Delete</button></td>
                 </tr>`;
                 } else {
                     dummyTableRow += `<tr>
-                    <td>${moment(res[i].LeaveDate).format('DD-MM-YYYY')}</td>
+                    <td data-leaveid="${res[i].LeaveId}">${moment(res[i].LeaveDate).format('DD-MM-YYYY')}</td>
                     <td>${res[i].LeaveTypeName}</td>
                     <td>${res[i].LeaveValue}</td>
                     <td>${res[i].Reason}</td>
@@ -220,10 +223,88 @@ function createHolidayLeaveTable(arr) {
     }
 }
 
-function bindClickEvents(){
-    
-    $('.deleteLeave').click(function(){
+function bindClickEvents() {
+
+    var indexId = 0;
+
+    $('.deleteLeave').click(function () {
+        var index = $(this).data('id');
+        indexId = index;
+        index = parseInt(index) + 1;
+        console.log(index);
+
+        //var row = $(".empLeavesTableBody").find('tr').eq(index);
+        var leaveDate = $('.leavesTable tr:nth-child(' + index + ') td:nth-child(1)').html();
+        //console.log(cell);
         
+        $("#leaveDate").html(leaveDate);
+
+
     });
 
+    // $('#deleteLeaveModal').on('show.bs.modal', function(e) {
+
+    //     //get data-id attribute of the clicked element
+    //     var bookId = $(e.relatedTarget).data('id');
+
+    //     console.log(bookId);
+
+    //     //populate the textbox
+    //     $('#bookId').html(bookId);
+    // });
+
+    $('.deleteLeaveYesButton').click(function () {
+        var index = indexId;
+        index = parseInt(index) + 1;
+        console.log(index);
+
+        //var row = $(".empLeavesTableBody").find('tr').eq(index);
+        var leaveDate = $('.leavesTable tr:nth-child(' + index + ') td:nth-child(1)').html();
+        var leaveReason = $('.leavesTable tr:nth-child(' + index + ') td:nth-child(4)').html();
+        var leaveValue = $('.leavesTable tr:nth-child(' + index + ') td:nth-child(3)').html();
+        var leaveTableId = $('.leavesTable tr:nth-child(' + index + ') td:nth-child(1)').data('leaveid');
+        //console.log(cell);
+        
+        $("#leaveDate").html(leaveDate);
+
+        var id = document.getElementById("userId").value;
+        //console.log(id);
+
+        var url = window.location.href;
+        //console.log(url);
+        var urlCheckPart = url.split("/");
+
+        var leaveID = id;
+
+        if (urlCheckPart[urlCheckPart.length - 1] != "dashboard") {
+            leaveID = urlCheckPart[urlCheckPart.length - 1];
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: "/dashboard/deleteLeave",
+            async: true,
+            data: {
+                id: leaveID,
+                leaveDate: leaveDate,
+                leaveReason: leaveReason,
+                leaveTableId: leaveTableId,
+                leaveValue: leaveValue
+            },
+            success: function (res) {
+
+                //console.log(res);
+
+                if(res){
+                    window.location.reload();
+                }
+                
+
+            },
+            error: function (err) {
+
+            }
+        });
+
+    });
 }

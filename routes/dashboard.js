@@ -112,7 +112,7 @@ router.post('/fetchLeaves', (req, res, next) => {
 
     console.log("URL::::::" +req.originalUrl);
 
-    var connectionCommand = `Select l.LeaveDate, lt.LeaveTypeName, lt.LeaveValue, l.Reason from Leaves as l
+    var connectionCommand = `Select l.LeaveId, l.LeaveDate, lt.LeaveTypeName, lt.LeaveValue, l.Reason from Leaves as l
     inner join LeavesType as lt on l.LeaveTypeId = lt.LeaveTypeId
     inner join user as u on u.UserId = l.UserId
     where u.UserId = "${req.body.id}"`;
@@ -610,41 +610,61 @@ router.get('/view-employees/:id/edit-employee', isAuth.requireRole(2), function 
 });
 
 router.get('/edit-employee', isAuth.requireRole(2), function (req, res){
-    res.render('/edit-employee',{
+    res.render('edit-employee',{
         userRole: (req.user.RoleId == 1) ? true : false,
     });
-    connection.query('select Firstname, Lastname, Email, Password, AddressId, DOB, Gender, MaritalSatus, ContactNumber, EmergencyNumber, BloodGroup, Photo, UpdatedOn, CreatedOn, token, DesignationId from user where userId = ' + req.user.userId, function (error, rows, columns) {
-        if(err) throw err
+   
 
-        // if user not found
-        if (rows.length <= 0)
-        {
-            req.flash('error ','user not found with userId= '+req.user.userId)
-            res.redirect('/dashboard')
+});
+
+//Add Employee Post Request multer({dest: "./uploads/"})
+router.post('/deleteLeave', isAuth.requireRole(2), function (req, res, next) {
+
+    console.log(JSON.stringify(req.body));
+
+    var leaveTableId = req.body.leaveTableId;
+
+    console.log(leaveTableId);
+
+    
+
+    connection.beginTransaction(function (err) {
+        if (err) {
+            throw err;
         }
-        else
-        {
-            // if user found
-                // render to dashboard/EditEmp template file
-                res.render('/EditEmp', {
-                    title: 'Edit User', 
-                     //data: rows[0],
-                     id: rows[0].UserId,
-                     Firstname: rows[0].naFme,
-                     Lastname: rows[0].age,
-                     Email: rows[0].Email,
-                     AddressId:  rows[0].AddressId,
-                     DOB:  rows[0].DOB,
-                     Gender:  rows[0].Gender,
-                     MaritalSatus:  rows[0].MaritalSatus,
-                     ContactNumber:  rows[0].ContactNumber,
-                     EmergencyNumber:  rows[0].EmergencyNumber,
-                     BloodGroup:  rows[0].BloodGroup,
-                     Photo:  rows[0].Photo,
-                     token:  rows[0].token,
-                     DesignationId:  rows[0].DesignationId
+
+        connection.query(`DELETE FROM Leaves where LeaveId = ?`, leaveTableId, function (err, result) {
+            if (err) {
+                connection.rollback(function () {
+                    console.log(err);
+                    throw err;
                 });
-        };
+            }
+
+            connection.query(`UPDATE Employee SET AvailableLeaves = AvailableLeaves + ${req.body.leaveValue} WHERE Id = (Select EmpId from User where UserId = ${req.body.id})`,  function (err2, result2) {
+                if (err2) {
+                    connection.rollback(function () {
+                        console.log(err2);
+                        throw err2;
+                    });
+                }
+
+                var activityArray = ["Leave Delete", req.body.UserId, req.body.id]
+    
+                connection.query(`insert into activitytable(ActivityType,ActivityBy,ActivityFor,ActivityDate)  VALUES (?,?,?, now())`, activityArray, function (err3, result3) {
+                    if (err3) {
+                        connection.rollback(function () {
+                            console.log(err3);
+                            throw err3;
+                        });
+                    }
+        
+                    return res.send(true);
+
+                });
+    
+            });
+        });
     });
 
 });
