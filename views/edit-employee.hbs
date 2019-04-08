@@ -1,157 +1,3 @@
-{{!-- {{> header}}
-
-
-<style>
-    #team {
-        background: #eee !important;
-    }
-
-    .btn-primary:hover,
-    .btn-primary:focus {
-        background-color: #108d6f;
-        border-color: #108d6f;
-        box-shadow: none;
-        outline: none;
-    }
-
-    .btn-primary {
-        color: #fff;
-        background-color: #007b5e;
-        border-color: #007b5e;
-    }
-
-    section {
-        padding: 60px 0;
-    }
-
-    section .section-title {
-        text-align: center;
-        color: #007b5e;
-        margin-bottom: 50px;
-        text-transform: uppercase;
-    }
-
-    #team .card {
-        border: none;
-        background: #ffffff;
-        width: 100%;
-    }
-
-    .image-flip:hover .backside,
-    .image-flip.hover .backside {
-        cursor: pointer;
-        -webkit-transform: rotateY(0deg);
-        -moz-transform: rotateY(0deg);
-        -o-transform: rotateY(0deg);
-        -ms-transform: rotateY(0deg);
-        transform: rotateY(0deg);
-        border-radius: .25rem;
-        width: 100%;
-    }
-
-    .image-flip:hover .frontside,
-    .image-flip.hover .frontside {
-        cursor: pointer;
-        -webkit-transform: rotateY(180deg);
-        -moz-transform: rotateY(180deg);
-        -o-transform: rotateY(180deg);
-        transform: rotateY(180deg);
-        width: 100%;
-    }
-
-    .mainflip {
-        -webkit-transition: 1s;
-        -webkit-transform-style: preserve-3d;
-        -ms-transition: 1s;
-        -moz-transition: 1s;
-        -moz-transform: perspective(1000px);
-        -moz-transform-style: preserve-3d;
-        -ms-transform-style: preserve-3d;
-        transition: 1s;
-        transform-style: preserve-3d;
-        position: relative;
-        width: 100%;
-    }
-
-    .frontside {
-        position: relative;
-        -webkit-transform: rotateY(0deg);
-        -ms-transform: rotateY(0deg);
-        z-index: 2;
-        margin-bottom: 30px;
-        width: 100%;
-    }
-
-    .backside {
-        position: absolute;
-        width: 100%;
-        top: 0;
-        left: 0;
-        background: white;
-        -webkit-transform: rotateY(-180deg);
-        -moz-transform: rotateY(-180deg);
-        -o-transform: rotateY(-180deg);
-        -ms-transform: rotateY(-180deg);
-        transform: rotateY(-180deg);
-        -webkit-box-shadow: 5px 7px 9px -4px rgb(158, 158, 158);
-        -moz-box-shadow: 5px 7px 9px -4px rgb(158, 158, 158);
-        box-shadow: 5px 7px 9px -4px rgb(158, 158, 158);
-    }
-
-    .frontside,
-    .backside {
-        -webkit-backface-visibility: hidden;
-        -moz-backface-visibility: hidden;
-        -ms-backface-visibility: hidden;
-        backface-visibility: hidden;
-        -webkit-transition: 1s;
-        -webkit-transform-style: preserve-3d;
-        -moz-transition: 1s;
-        -moz-transform-style: preserve-3d;
-        -o-transition: 1s;
-        -o-transform-style: preserve-3d;
-        -ms-transition: 1s;
-        -ms-transform-style: preserve-3d;
-        transition: 1s;
-        transform-style: preserve-3d;
-    }
-
-    .frontside .card,
-    .backside .card {
-        min-height: 312px;
-    }
-
-    .backside .card a {
-        font-size: 18px;
-        color: #007b5e !important;
-    }
-
-    .frontside .card .card-title,
-    .backside .card .card-title {
-        color: #007b5e !important;
-    }
-
-    .frontside .card .card-body img {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-    }
-</style> --}}
-
-{{!-- <!-- Team -->
-<section id="team" class="pb-5">
-    <div class="container">
-        <h5 class="section-title h1">Edit Employee Details</h5>
-        <div class="row empList" style="padding-top:30px;">
-            
-        </div>
-    </div>
-</section> --}}
-<!-- Team -->
-
-{{!-- <script src="../javascripts/view-employees.js"></script> --}}
-
-
 {{> header}}
 
 <style>
@@ -378,57 +224,83 @@
         float: left;
     }
 
-    h5{
+    h5 {
         text-align: center;
     }
 </style>
-</style>
-<h5>Edit Employee</h5>
+
+<h5>Edit Employee {{userDetails.UserId}}</h5>
 <main>
 
-   <section id="content1" style="display:block; border-top: none;">
+    <section id="content1" style="display:block; border-top: none;">
         <div class="lwidth100">
             <div class="form-style-5">
-                <form action="/dashboard/addEmp" method="POST"  enctype="multipart/form-data">
+                <form action="/dashboard/updateEmp" method="POST" enctype="multipart/form-data">
 
                     <fieldset>
                         <legend><span class="number">*</span> Basic Info</legend>
+
                         <div class="row">
-                            <div class="col-sm-6">
-                                <input type="text" name="firstName" placeholder="Enter First Name" required>
+
+                            <div class="col-sm-6" style="display: none;">
+                                <input type="text" name="userId" placeholder="" value="{{userDetails.UserId}}" readonly>
+
+                                <input type="text" name="userinfo" placeholder="" value="{{user}}" readonly>
+                                <input type="text" name="userImg" value="{{userDetails.Photo}}" readonly>
                             </div>
                             <div class="col-sm-6">
-                                <input type="text" name="lastName" placeholder="Enter Last Name" required>
+                                <img class="empPhoto" src="data:image/png;base64,{{userDetails.Photo}}"
+                                    alt="employee photo" />
                             </div>
                             <div class="col-sm-6">
-                                <input type="email" name="email" placeholder="Enter Email Address" pattern="^.+?@techferry.com$" oninvalid="setCustomValidity('User must have a techferry email address')" onchange="try{setCustomValidity('')}catch(e){}" required>
+                                <input type="file" name="pic" accept="image/*">
                             </div>
                             <div class="col-sm-6">
-                                <input name="dob" placeholder="Date of Birth" type="text" onfocus="(this.type='date')" onblur="(this.type='text')"  max="{{today}}" required>
+                                <input type="text" name="firstName" placeholder="Enter First Name"
+                                    value="{{userDetails.FirstName}}" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <input type="text" name="lastName" placeholder="Enter Last Name"
+                                    value="{{userDetails.LastName}}" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <input type="email" name="email" placeholder="Enter Email Address"
+                                    pattern="^.+?@techferry.com$" value="{{userDetails.Email}}"
+                                    oninvalid="setCustomValidity('User must have a techferry email address')"
+                                    onchange="try{setCustomValidity('')}catch(e){}" readonly>
+                            </div>
+                            <div class="col-sm-6">
+                                <input name="dob" placeholder="Date of Birth" value="{{userDetails.dob}}" type="text"
+                                    onfocus="(this.type='date')" onblur="(this.type='text')" max="{{today}}" required>
                             </div>
                             <div class="col-sm-6">
                                 <select id="gender" name="gender" required>
-                                    <option value="">-- Select Gender --</option>
+                                    <option value="{{userDetails.Gender}}" selected="selected">{{userDetails.Gender}}
+                                    </option>
                                     <option value="M">Male</option>
                                     <option value="F">Female</option>
                                 </select>
                             </div>
                             <div class="col-sm-6">
                                 <select id="maritalStatus" name="maritalStatus" required>
-                                    <option value="">-- Select Marital Status --</option>
+                                    <option value="{{userDetails.MaritalSatus}}" selected="selected">
+                                        {{userDetails.MaritalSatus}}</option>
                                     <option value="Married">Married</option>
                                     <option value="Unmarried">Unmarried</option>
                                 </select>
                             </div>
                             <div class="col-sm-6">
-                                <input type="number" name="contactNumber" placeholder="Enter Contact Number" minlength="10" maxlength="10" required>
+                                <input type="number" name="contactNumber" placeholder="Enter Contact Number"
+                                    value="{{userDetails.ContactNumber}}" minlength="10" maxlength="10" required>
                             </div>
                             <div class="col-sm-6">
-                                <input type="number" name="emergencyNumber" placeholder="Enter Emergency Contact Number" minlength="10" maxlength="10" required>
+                                <input type="number" name="emergencyNumber" placeholder="Enter Emergency Contact Number"
+                                    value="{{userDetails.EmergencyNumber}}" minlength="10" maxlength="10" required>
                             </div>
                             <div class="col-sm-6">
                                 <select id="bloodGroup" name="bloodGroup" required>
-                                    <option value="">-- Select Blood Group --</option>
+                                    <option value="{{userDetails.BloodGroup}}" selected="selected">
+                                        {{userDetails.BloodGroup}}</option>
                                     <option value="A+">A+</option>
                                     <option value="O+">O+</option>
                                     <option value="B+">B+</option>
@@ -441,25 +313,29 @@
                             </div>
                             <div class="col-sm-6">
                                 <select id="designation" name="designation" required>
-                                    <option value="">-- Select Designation --</option>
-                                    {{#each designation}}
-                                        <option value="{{this.DesignationId}}">{{this.Designation}}</option>
-                                    {{/each}}
+                                    {{!-- <option value="" selected="selected">
+                                        {{userDetails.Designation}}</option> --}}
+                                    {{!-- {{#each designation}}
+                                    <option value="{{this.DesignationId}}">{{this.Designation}}</option>
+                                    {{/each}} --}}
                                 </select>
                             </div>
                             <legend><span class="number">*</span> Address of Employee</legend>
                             <div class="col-sm-12">
-                                <input type="text" name="address1" placeholder="Enter Address Line 1" required>
+                                <input type="text" name="address1" placeholder="Enter Address Line 1"
+                                    value="{{userDetails.Street1}}" required>
                             </div>
                             <div class="col-sm-12">
-                                <input type="text" name="address2" placeholder="Enter Address Line 2">
+                                <input type="text" name="address2" placeholder="Enter Address Line 2"
+                                    value="{{userDetails.Street2}}">
                             </div>
                             <div class="col-sm-6">
-                                <input type="text" name="city" placeholder="Enter City" required>
+                                <input type="text" name="city" placeholder="Enter City" value="{{userDetails.City}}"
+                                    required>
                             </div>
                             <div class="col-sm-6">
                                 <select id="stateslist" name="stateslist" required>
-                                    <option value="">-- Select State --</option>
+                                    <option value="{{userDetails.State}}">{{userDetails.State}}</option>
                                     <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
                                     <option value="Andhra Pradesh">Andhra Pradesh</option>
                                     <option value="Arunachal Pradesh">Arunachal Pradesh</option>
@@ -498,7 +374,10 @@
                                 </select>
                             </div>
                             <div class="col-sm-6">
-                                <input type="number" name="zip" placeholder="Enter Zip Code"  min="100000" max="999999" oninvalid="setCustomValidity('Zip code must have 6 digits')" onchange="try{setCustomValidity('')}catch(e){}" required>
+                                <input type="number" name="zip" placeholder="Enter Zip Code" min="100000" max="999999"
+                                    oninvalid="setCustomValidity('Zip code must have 6 digits')"
+                                    value="{{userDetails.Zip}}" onchange="try{setCustomValidity('')}catch(e){}"
+                                    required>
                             </div>
                             <div class="col-sm-6">
                                 <select id="country" name="country" readonly>
@@ -507,29 +386,35 @@
                             </div>
                             <legend><span class="number">*</span> Official Info</legend>
                             <div class="col-sm-6">
-                                <input type="text" id="employeeId" name="employeeId" value="{{empId}}" required readonly>
+                                <input type="text" id="employeeId" name="employeeId" value="{{userDetails.EmployeeId}}"
+                                    required readonly>
                             </div>
                             <div class="col-sm-6">
                                 <select id="status" name="status" required>
-                                    <option value="">-- Select Employee Status --</option>
-                                    {{#each status}}
-                                        <option value="{{this.StatusId}}">{{this.StatusName}}</option>
-                                    {{/each}}
+                                    <option value="{{userDetails.StatusId}}">{{userDetails.StatusId}}</option>
+
                                 </select>
                             </div>
                             <div class="col-sm-6">
-                                <input type="text" name="joiningDate" placeholder="Enter Joining Date" onfocus="(this.type='date')" onblur="(this.type='text')" required>
+                                <input type="text" name="joiningDate" placeholder="Enter Joining Date"
+                                    onfocus="(this.type='date')" onblur="(this.type='text')"
+                                    value={{userDetails.JoinedDate}} required>
                             </div>
                             <div class="col-sm-6">
-                                <input type="number" name="availableLeaves" placeholder="Enter Available Leaves" value="0" min="0" required>
+                                <input type="number" name="availableLeaves" placeholder="Enter Available Leaves"
+                                    value="0" min="0" value="{{userDetails.AvailableLeaves}}" required>
                             </div>
-                            <div class="col-sm-6">
-                                <input type="file" name="pic" accept="image/*" required>
+
+                            <div class="col-sm-6" style="display: none;">
+                                <div id="empDesignation">{{userDetails.Designation}}</div>
+
+                                <div id="empStatus">{{userDetails.StatusId}}</div>
                             </div>
+
                         </div>
 
-                        
-                    <input type="submit" value="Apply" />
+
+                        <input type="submit" value="Update" />
                 </form>
             </div>
         </div>
@@ -538,3 +423,6 @@
         </div>
     </section>
 </main>
+
+
+<script src="/javascripts/view-employees.js"></script>

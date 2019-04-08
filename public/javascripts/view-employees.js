@@ -55,7 +55,7 @@ $(document).ready(function () {
                     </div>
                 </div>`;
 
-                
+
             }
             $('.empList').append(card);
 
@@ -65,17 +65,64 @@ $(document).ready(function () {
         }
     });
 
+    $.ajax({
+        type: 'GET',
+        url: "/dashboard/getDesignation",
+        async: true,
+        success: function (res) {
+            console.log('req ', )
+            console.log(res);
+            var post = $('#empDesignation')[0].innerHTML;
+            var statusId = parseInt($('#empStatus')[0].innerHTML);
+            console.log('post', post);
+            console.log('statusId', statusId)
 
-    setTimeout(function(){
+            var designations = res.designation;
+            var html = ``;
+            for (var i = 0; i < designations.length; i++) {
+                if (designations[i].Designation == "Software Engineer") {
+                    html += `<option value = "` + designations[i].DesignationId + `" selected="selected"> ` + designations[i].Designation + `</option>`;
+                } else {
+                    html += `<option value = "` + designations[i].Designation + `"> ` + designations[i].Designation + `</option>`;
+                }
+
+            }
+
+
+            $('#designation')[0].innerHTML = html;
+
+            var shtml = ``;
+            var status = res.status;
+            for (var i = 0; i < status.length; i++) {
+                if (status[i].StatusId == statusId) {
+                    shtml += `<option value = "` + status[i].StatusId + `" selected="selected"> ` + status[i].StatusName + `</option>`;
+                } else {
+                    shtml += `<option value = "` + status[i].StatusId + `"> ` + status[i].StatusName + `</option>`;
+                }
+
+            }
+
+
+            $('#status')[0].innerHTML = shtml;
+
+        },
+        error: function (err) {
+            alert(err);
+        }
+    });
+
+
+
+    setTimeout(function () {
         bindClickEvents();
     }, 10);
 
-    
+
 
 });
 
-function bindClickEvents(){
-    $('.viewEmpDetails').click(function(){
+function bindClickEvents() {
+    $('.viewEmpDetails').click(function () {
 
         var params = {
             userId: $(this).attr("name")
@@ -87,16 +134,15 @@ function bindClickEvents(){
             data: params,
             async: true,
             success: function (res) {
-    
+
                 //console.log(res);
-    
-                
-    
+
+
+
             },
             error: function (err) {
-    
+
             }
         });
     });
 }
-

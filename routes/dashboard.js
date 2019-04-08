@@ -110,9 +110,9 @@ router.post('/holidaysLeave', (req, res, next) => {
 router.post('/fetchLeaves', (req, res, next) => {
     //console.log(req.user);
 
-    console.log("URL::::::" +req.originalUrl);
+    console.log("URL::::::" + req.originalUrl);
 
-    var connectionCommand = `Select l.LeaveId, l.LeaveDate, lt.LeaveTypeName, lt.LeaveValue, l.Reason from Leaves as l
+    var connectionCommand = `Select l.LeaveDate, lt.LeaveTypeName, lt.LeaveValue, l.Reason from Leaves as l
     inner join LeavesType as lt on l.LeaveTypeId = lt.LeaveTypeId
     inner join user as u on u.UserId = l.UserId
     where u.UserId = "${req.body.id}"`;
@@ -224,6 +224,30 @@ router.get('/add-employee', isAuth.isAuthenticated, isAuth.requireRole(1), funct
 
 
 });
+
+router.get('/getDesignation', isAuth.isAuthenticated, isAuth.requireRole(1), function (req, res, next) {
+    designation = '';
+    status = '';
+
+    connectionPromiseDesignation.then((result) => {
+        designation = result;
+        return connectionPromiseDStatus;
+    }).then((res1) => {
+        status = res1;
+        return connectionPromiseFetchEmployeeId;
+    }).then((res2) => {
+
+        res.send({
+            designation,
+            status
+
+        });
+    }).catch((err) => {
+        console.log("error: " + err);
+    });
+
+});
+
 
 var connectionPromiseDesignation = new Promise(function (resolve, reject) {
     connection.query(`Select * from Designation`, function (err, rows) {
@@ -443,6 +467,8 @@ router.post('/addEmp', isAuth.isAuthenticated, multer({
     });
 });
 
+
+
 //let stateslist = req.body.stateslist;
 insertIntoAddressAndFetchID: (employee, callback) => {
 
@@ -504,6 +530,33 @@ router.get('/view-employees/:id', isAuth.isAuthenticated, isAuth.requireRole(1),
         //userRole: (req.user.RoleId == 1) ? true : false,
         buttonText: "Edit Employee Details",
         buttonUrl: "/dashboard/view-employees/" + req.params.id + "/edit-employee"
+    });
+});
+
+router.get('/view-employees/:id/edit-employee', isAuth.requireRole(2), function (req, res) {
+    // res.render('edit-employee', {
+    //     id: req.params.id,
+    //     user: req.user
+    // });
+    console.log('req.params.id', req.params.id)
+    var connectionCommand = `Select u.UserId, e.EmployeeId, e.StatusId, DATE_FORMAT(e.JoinedDate, "%Y-%m-%d") as JoinedDate, e.AvailableLeaves, u.FirstName, u.LastName, u.Email, u.Gender, u.MaritalSatus, u.BloodGroup, DATE_FORMAT(u.DOB, "%Y-%m-%d") as dob, u.ContactNumber, u.EmergencyNumber, u.Photo, e.AvailableLeaves, s.StatusName, d.Designation, d.DesignationId, a.AddressId, a.Street1, a.Street2, a.City, a.State, a.Zip from User as u inner join Employee as e on u.EmpId = e.Id inner join Address as a on u.AddressId = a.AddressId inner join EmployeeStatus as s on e.StatusId = s.StatusId inner join Designation as d on u.DesignationId = d.DesignationId where u.UserId = ${req.params.id}`;
+
+    // console.log('connectionCommand', connectionCommand)
+
+    connection.query(connectionCommand, function (err, rows) {
+        if (err)
+            return res.send(err);
+        if (!rows.length) {
+            //return done(null, false, req.flash('loginMessage', 'No User Found.')); // req.flash is the way to set flashdata using connect-flash
+            return res.send(null);
+        } else {
+            // return res.send(rows);
+            console.log('rows', rows)
+            res.render('edit-employee', {
+                userDetails: rows[0],
+                user: req.user
+            });
+        }
     });
 });
 
@@ -580,15 +633,25 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
 
     // console.log("details- leavetype-{0},LeaveDate-{1}, LeaveReason -{2},req.body- {3}, req.user -{4} " + leavetype, LeaveDate, LeaveReason, req.body, req.user);
 
-    let insertQuery = `insert into leaves(LeaveTypeId,UserId,Reason,LeaveDate,CreatedBy) VALUES`;
+    let insertQuery = `
+                                            insert into leaves(LeaveTypeId, UserId, Reason, LeaveDate, CreatedBy) VALUES `;
 
     for (let i = 0; i < days; i++) {
         let leaveDate = moment(LeaveDate, 'YYYY-MM-DD').add(i, 'days');
         leaveDate = leaveDate.format('YYYY-MM-DD');
-        insertQuery += `(${leavetype}, ${UserId}, '${LeaveReason}', '${leaveDate}', ${CreatedBy})`;
-        insertQuery += ((i + 1) == days) ? `` : `,`;
+        insertQuery += `($ {
+                                                leavetype
+                                            }, $ {
+                                                UserId
+                                            }, '${LeaveReason}', '${leaveDate}', $ {
+                                                CreatedBy
+                                            })
+                                            `;
+        insertQuery += ((i + 1) == days) ? `
+                                            ` : `, `;
     }
-    insertQuery += `;`;
+    insertQuery += `;
+                                            `;
 
     console.log(insertQuery);
     let insertactivityBody = [_activityType, _activityBy, _activityFor, _activityDate]
@@ -605,70 +668,167 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
     });
 });
 
-router.get('/view-employees/:id/edit-employee', isAuth.requireRole(2), function (req, res){
-    res.render('edit-employee');
-});
 
-router.get('/edit-employee', isAuth.requireRole(2), function (req, res){
-    res.render('edit-employee',{
+
+router.get('/edit-employee', isAuth.requireRole(2), function (req, res) {
+    res.render('/edit-employee', {
         userRole: (req.user.RoleId == 1) ? true : false,
     });
-   
+    connection.query('select Firstname, Lastname, Email, Password, AddressId, DOB, Gender, MaritalSatus, ContactNumber, EmergencyNumber, BloodGroup, Photo, UpdatedOn, CreatedOn, token, DesignationId from user where userId = ' + req.user.userId, function (error, rows, columns) {
+        if (error) throw error
+
+        // if user not found
+        if (rows.length <= 0) {
+            req.flash('error ', 'user not found with userId= ' + req.user.userId)
+            res.redirect('/dashboard')
+        } else {
+            // if user found
+            // render to dashboard/EditEmp template file
+            res.render('/EditEmp', {
+                title: 'Edit User',
+                //data: rows[0],
+                id: rows[0].UserId,
+                Firstname: rows[0].naFme,
+                Lastname: rows[0].age,
+                Email: rows[0].Email,
+                AddressId: rows[0].AddressId,
+                DOB: rows[0].DOB,
+                Gender: rows[0].Gender,
+                MaritalSatus: rows[0].MaritalSatus,
+                ContactNumber: rows[0].ContactNumber,
+                EmergencyNumber: rows[0].EmergencyNumber,
+                BloodGroup: rows[0].BloodGroup,
+                Photo: rows[0].Photo,
+                token: rows[0].token,
+                DesignationId: rows[0].DesignationId
+            });
+        };
+    });
 
 });
 
+
 //Add Employee Post Request multer({dest: "./uploads/"})
-router.post('/deleteLeave', isAuth.requireRole(2), function (req, res, next) {
+router.post('/updateEmp', isAuth.isAuthenticated, multer({
+    dest: "./uploads/"
+}).single("pic"), function (req, res, next) {
 
     console.log(JSON.stringify(req.body));
 
-    var leaveTableId = req.body.leaveTableId;
+    //User Table Data
+    let userId = req.body.userId;
+    let firstName = req.body.firstName;
+    let lastName = req.body.lastName;
+    let email = req.body.email;
+    let dob = req.body.dob;
+    let gender = req.body.gender;
+    let maritalStatus = req.body.maritalStatus;
+    let contactNumber = req.body.contactNumber;
+    let emergencyNumber = req.body.emergencyNumber;
+    let bloodGroup = req.body.bloodGroup;
+    let designation = req.body.designation;
 
-    console.log(leaveTableId);
+    let g = 'M';
+    if (gender == "M") {
+        g = 'M';
+    } else {
+        g = 'F';
+    }
 
-    
+    let picture = req.body.pic;
+    let picUpload;
+    console.log('picture', picture)
+    if (picture === undefined) {
+        picUpload = req.body.userImg;
+    } else {
+        picUpload = new Buffer(fs.readFileSync(req.file.path)).toString("base64");
+    }
+
+    //Address Table
+    let address1 = req.body.address1;
+    let address2 = req.body.address2;
+    let city = req.body.city;
+    let stateslist = req.body.stateslist;
+    let zip = req.body.zip;
+    //Employee Table 
+    let joiningDate = req.body.joiningDate;
+    let availableLeaves = req.body.availableLeaves;
+    let status = req.body.status;
+
 
     connection.beginTransaction(function (err) {
         if (err) {
             throw err;
         }
 
-        connection.query(`DELETE FROM Leaves where LeaveId = ?`, leaveTableId, function (err, result) {
+        var query = `update user set Firstname =  '${firstName}'  , Lastname = '${lastName}' , Email = '${email}',  DOB  = '${dob}', Gender = '${g}' , MaritalSatus = '${maritalStatus}' , ContactNumber = '${contactNumber}' , EmergencyNumber = '${emergencyNumber}', BloodGroup = '${bloodGroup}', Photo = '${picUpload}', UpdatedOn = now(), DesignationId = ${designation} WHERE UserId = ${userId} `;
+        console.log('query', query);
+        connection.query(query, [], function (err, result) {
             if (err) {
+                console.log('err', err)
                 connection.rollback(function () {
-                    console.log(err);
                     throw err;
                 });
             }
 
-            connection.query(`UPDATE Employee SET AvailableLeaves = AvailableLeaves + ${req.body.leaveValue} WHERE Id = (Select EmpId from User where UserId = ${req.body.id})`,  function (err2, result2) {
-                if (err2) {
+            // console.log('user details', result);
+            // addressId = result.insertId;
+            var query2 = `update Employee  
+                            inner join user on user.EmpId = Employee.Id
+                            set Employee.StatusId = ${status}, Employee.JoinedDate = '${joiningDate}' , Employee.AvailableLeaves = ${availableLeaves}, Employee.UpdatedOn = now() where user.UserId = ${userId}`;
+
+            console.log('query2', query2)
+
+            connection.query(query2, [], function (err1, result1) {
+                if (err1) {
+                    console.log('err1', err1)
                     connection.rollback(function () {
-                        console.log(err2);
-                        throw err2;
+                        throw err1;
                     });
                 }
 
-                var activityArray = ["Leave Delete", req.body.UserId, req.body.id]
-    
-                connection.query(`insert into activitytable(ActivityType,ActivityBy,ActivityFor,ActivityDate)  VALUES (?,?,?, now())`, activityArray, function (err3, result3) {
-                    if (err3) {
+                var query3 = `update Address 
+                 inner join user on user.EmpId = Address.AddressId  
+                 set Address.Street1 = '${address1}', Address.Street2 = '${address2}', Address.City = '${city}', Address.State = '${stateslist}', Address.Zip = ${zip}, Address.UpdatedOn = now() where user.UserId = ${userId}`;
+
+                console.log('query3', query3);
+                // send the player's details to the database
+                connection.query(query3, [], function (err2, result2) {
+                    if (err2) {
+
+                        console.log("error::::" + err2);
                         connection.rollback(function () {
-                            console.log(err3);
-                            throw err3;
+                            throw err2;
                         });
                     }
-        
-                    return res.send(true);
+
+                    // userId = result2.insertId;
+
+                    connection.commit(function (err) {
+                        if (err) {
+                            console.log('err commit', err)
+                            connection.rollback(function () {
+                                throw err;
+                            });
+                        }
+
+
+                        res.render('success', {
+                            title: 'User Updated',
+                            user: req.body.userinfo,
+                            userRole: true
+                        });
+                    });
 
                 });
-    
+
+
             });
         });
+
+
+
     });
-
 });
-
-
 
 module.exports = router;
