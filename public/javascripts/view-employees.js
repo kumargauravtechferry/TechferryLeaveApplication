@@ -80,10 +80,10 @@ $(document).ready(function () {
             var designations = res.designation;
             var html = ``;
             for (var i = 0; i < designations.length; i++) {
-                if (designations[i].Designation == "Software Engineer") {
+                if (designations[i].Designation == post) {
                     html += `<option value = "` + designations[i].DesignationId + `" selected="selected"> ` + designations[i].Designation + `</option>`;
                 } else {
-                    html += `<option value = "` + designations[i].Designation + `"> ` + designations[i].Designation + `</option>`;
+                    html += `<option value = "` + designations[i].DesignationId + `"> ` + designations[i].Designation + `</option>`;
                 }
 
             }

@@ -735,10 +735,10 @@ router.post('/updateEmp', isAuth.isAuthenticated, multer({
         g = 'F';
     }
 
-    let picture = req.body.pic;
+    let picture = req.file;
     let picUpload;
     console.log('picture', picture)
-    if (picture === undefined) {
+    if (picture === undefined || picture == {}) {
         picUpload = req.body.userImg;
     } else {
         picUpload = new Buffer(fs.readFileSync(req.file.path)).toString("base64");
