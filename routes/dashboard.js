@@ -77,7 +77,7 @@ router.post('/fetchHolidays', isAuth.requireRole(2), (req, res, next) => {
     //console.log(req.user);
     var connectionCommand = `(Select HolidayDate as leaveDate, HolidayName as name, 'holiday' as type from Holidays)
     union all
-    (Select LeaveDate as leaveDate, Reason as name, 'leave' as type from Leaves where UserId = ${req.user.UserId});`;
+    (Select LeaveDate as leaveDate, Reason as name, 'leave' as type from Leaves where UserId = ${req.body.id});`;
     connection.query(connectionCommand, function (err, rows) {
         if (err)
             return res.send(err);
@@ -110,10 +110,12 @@ router.post('/holidaysLeave', (req, res, next) => {
 router.post('/fetchLeaves', (req, res, next) => {
     //console.log(req.user);
 
+    console.log("URL::::::" +req.originalUrl);
+
     var connectionCommand = `Select l.LeaveDate, lt.LeaveTypeName, lt.LeaveValue, l.Reason from Leaves as l
     inner join LeavesType as lt on l.LeaveTypeId = lt.LeaveTypeId
     inner join user as u on u.UserId = l.UserId
-    where email = "${req.user.Email}"`;
+    where u.UserId = "${req.body.id}"`;
 
     connection.query(connectionCommand, function (err, rows) {
         if (err)

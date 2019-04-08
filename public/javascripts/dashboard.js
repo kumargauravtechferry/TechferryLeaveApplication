@@ -2,7 +2,21 @@ $(document).ready(function () {
 
     //var myKeyVals = "";
     var id = document.getElementById("userId").value;
-    console.log(id)
+    console.log(id);
+
+    var url = window.location.href;
+    //console.log(url);
+    var urlCheckPart = url.split("/");
+    //console.log(urlCheckPart[urlCheckPart.length - 1]);
+
+    var leaveID = id;
+
+    bindClickEvents();
+
+    if (urlCheckPart != "dashboard") {
+        leaveID = urlCheckPart;
+    }
+
     $.ajax({
         type: 'Post',
         url: "/dashboard",
@@ -12,7 +26,7 @@ $(document).ready(function () {
         },
         success: function (resultData) {
             //console.log(resultData); 
-            console.log(resultData.Photo);
+            //console.log(resultData.Photo);
 
             var image = new Image();
             image = resultData.Photo;
@@ -44,6 +58,9 @@ $(document).ready(function () {
         type: 'POST',
         url: "/dashboard/fetchHolidays",
         async: true,
+        data: {
+            id: id
+        },
         success: function (res) {
 
             console.log(res);
@@ -76,28 +93,51 @@ $(document).ready(function () {
         type: 'POST',
         url: "/dashboard/fetchLeaves",
         async: true,
+        data: {
+            id: id
+        },
         success: function (res) {
 
             //console.log(res);
 
             var leavesTaken = 0;
 
+            var colctr = $('.leavesTable').columnCount();
+
             var dummyTableRow = '';
             $('.empLeavesTableBody').empty();
 
             for (var i = 0; i < res.length; i++) {
                 leavesTaken += res[i].LeaveValue;
-                dummyTableRow += `<tr>
-                                <td>${moment(res[i].LeaveDate).format('DD-MM-YYYY')}</td>
-                                <td>${res[i].LeaveTypeName}</td>
-                                <td>${res[i].LeaveValue}</td>
-                                <td>${res[i].Reason}</td>
-                            </tr>`;
+
+                if (colctr == 5) {
+                    dummyTableRow += `<tr>
+                    <td>${moment(res[i].LeaveDate).format('DD-MM-YYYY')}</td>
+                    <td>${res[i].LeaveTypeName}</td>
+                    <td>${res[i].LeaveValue}</td>
+                    <td>${res[i].Reason}</td>
+                    <td><button type="button" class="btn btn-warning btn-sm editLeave">Edit</button><button type="button" class="btn btn-danger btn-sm deleteLeave" style="margin-left: 15px;">Delete</button></td>
+                </tr>`;
+                } else {
+                    dummyTableRow += `<tr>
+                    <td>${moment(res[i].LeaveDate).format('DD-MM-YYYY')}</td>
+                    <td>${res[i].LeaveTypeName}</td>
+                    <td>${res[i].LeaveValue}</td>
+                    <td>${res[i].Reason}</td>
+                </tr>`;
+                }
+
             }
 
 
             $('.empLeavesTaken').html(leavesTaken);
             $('.empLeavesTableBody').append(dummyTableRow);
+
+            // var rowctr = $('.leavesTable').rowCount();
+            // var colctr = $('.leavesTable').columnCount();
+
+            // console.log('No of Rows:' + rowctr);
+            // console.log('No of Columns:' + colctr);
 
 
         },
@@ -107,6 +147,15 @@ $(document).ready(function () {
     });
 
 });
+
+$.fn.rowCount = function () {
+    return $('tr', $(this).find('tbody')).length;
+};
+
+$.fn.columnCount = function () {
+    return $('th', $(this).find('thead')).length;
+};
+
 
 
 
@@ -169,4 +218,12 @@ function createHolidayLeaveTable(arr) {
     if ($('#holidayDayTable').length) {
         $('#holidayDayTable')[0].innerHTML = html;
     }
+}
+
+function bindClickEvents(){
+    
+    $('.deleteLeave').click(function(){
+        
+    });
+
 }
