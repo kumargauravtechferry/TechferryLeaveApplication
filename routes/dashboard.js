@@ -608,9 +608,43 @@ router.get('/view-employees/:id/edit-employee', isAuth.requireRole(2), function 
 });
 
 router.get('/edit-employee', isAuth.requireRole(2), function (req, res){
-    res.render('edit-employee',{
+    res.render('/edit-employee',{
         userRole: (req.user.RoleId == 1) ? true : false,
     });
+    connection.query('select Firstname, Lastname, Email, Password, AddressId, DOB, Gender, MaritalSatus, ContactNumber, EmergencyNumber, BloodGroup, Photo, UpdatedOn, CreatedOn, token, DesignationId from user where userId = ' + req.user.userId, function (error, rows, columns) {
+        if(err) throw err
+
+        // if user not found
+        if (rows.length <= 0)
+        {
+            req.flash('error ','user not found with userId= '+req.user.userId)
+            res.redirect('/dashboard')
+        }
+        else
+        {
+            // if user found
+                // render to dashboard/EditEmp template file
+                res.render('/EditEmp', {
+                    title: 'Edit User', 
+                     //data: rows[0],
+                     id: rows[0].UserId,
+                     Firstname: rows[0].naFme,
+                     Lastname: rows[0].age,
+                     Email: rows[0].Email,
+                     AddressId:  rows[0].AddressId,
+                     DOB:  rows[0].DOB,
+                     Gender:  rows[0].Gender,
+                     MaritalSatus:  rows[0].MaritalSatus,
+                     ContactNumber:  rows[0].ContactNumber,
+                     EmergencyNumber:  rows[0].EmergencyNumber,
+                     BloodGroup:  rows[0].BloodGroup,
+                     Photo:  rows[0].Photo,
+                     token:  rows[0].token,
+                     DesignationId:  rows[0].DesignationId
+                });
+        };
+    });
+
 });
 
 
