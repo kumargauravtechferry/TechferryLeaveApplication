@@ -437,7 +437,7 @@ router.post('/addEmp', isAuth.isAuthenticated, multer({
                                     //   name: 'test'
                                     // },
                                     html: `<div>
-                                            <h3>Dear ${firstName} ${firstName},</h3>
+                                            <h3>Dear ${firstName},</h3>
                                             <p>Your account has been created.</p>
                                             <p>Your Login details are</p>
                                             <p>User Email  : ${email}</p>

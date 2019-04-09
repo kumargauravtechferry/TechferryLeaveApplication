@@ -252,6 +252,12 @@
     .table-striped tbody tr:nth-of-type(odd) {
         background-color: rgba(0, 123, 255, 0.03);
     }
+
+    .leaveDateSection {
+        padding: 20px;
+        border: 1px solid #ccc !important;
+        border-radius: 5px;
+    }
 </style>
 </style>
 <main>
@@ -287,7 +293,7 @@
 
                             </div>
 
-                            <div class="form-group pmd-textfield pmd-textfield-floating-label ">
+                            {{!-- <div class="form-group pmd-textfield pmd-textfield-floating-label ">
                                 <label for="leave-type">Leave Type</label>
                                 <select name="leave-type" id="leave-type" class="form-control"
                                     title="Please select a Leave Type" required="">
@@ -295,7 +301,7 @@
                                     <option value="{{LeaveTypeId}}">{{LeaveTypeName}}</option>
                                     {{/each}}
                                 </select><span class="pmd-textfield-focused"></span>
-                            </div>
+                            </div> --}}
                         </div>
                         <div class="col-md-6">
                             <div class="form-group pmd-textfield pmd-textfield-floating-label">
@@ -309,6 +315,32 @@
                                 <label class="control-label" for="datepickerend">End Date</label>
                                 <input type="date" class="form-control" id="datepickerend" name="datepickerend"><span
                                     class="pmd-textfield-focused"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-12 multipleDateSection" style="display:none;">
+                            <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                                <label>Please Select Leave Type</label>
+                                <div class="leaveDateSection">
+                                    {{!-- <div class="row">
+                                        <div class="col-md-5">
+                                            <input type="date" class="form-control" id=""
+                                    name=""><span class="pmd-textfield-focused"></span>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <select name="leave-type" id="leave-type" class="form-control"
+                                                title="Please select a Leave Type" required="">
+                                                {{#each leaveTypeData}}
+                                                <option value="{{LeaveTypeId}}">{{LeaveTypeName}}</option>
+                                                {{/each}}
+                                            </select><span class="pmd-textfield-focused"></span>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button class="form-control btn btn-danger" id="deleteLeaveRow"
+                                                name="deleteLeaveRow">Delete</button>
+                                        </div>
+                                    </div> --}}
+                                </div>
+
                             </div>
                         </div>
                         <div class="col-md-12">
@@ -341,6 +373,7 @@
     </section>
 </main>
 <script src="../javascripts/dashboard.js"></script>
+<script src="../javascripts/addLeave.js"></script>
 <script>
     $(document).ready(function () {
         getHolidays();
