@@ -112,7 +112,7 @@ router.post('/fetchLeaves', (req, res, next) => {
 
     console.log("URL::::::" + req.originalUrl);
 
-    var connectionCommand = `Select l.LeaveDate, lt.LeaveTypeName, lt.LeaveValue, l.Reason from Leaves as l
+    var connectionCommand = `Select l.LeaveId, l.LeaveDate, lt.LeaveTypeName, lt.LeaveValue, l.Reason from Leaves as l
     inner join LeavesType as lt on l.LeaveTypeId = lt.LeaveTypeId
     inner join user as u on u.UserId = l.UserId
     where u.UserId = "${req.body.id}"`;
@@ -828,7 +828,135 @@ router.post('/updateEmp', isAuth.isAuthenticated, multer({
 
 
 
+
     });
+});
+
+router.get('/fetchLeaveTypes', isAuth.requireRole(2), function (req, res, next) {
+    connection.query(`SELECT * FROM LeavesType`, function (err, rows) {
+        if (err) {
+            console.log("Error: " + err);
+           return res.send(null);
+        } else if(rows.length == 0){
+            console.log("No row found!");
+            return res.send(null);
+        } else{
+            console.log(rows);
+            return res.send(rows);
+        }
+    });
+});
+
+
+//Update the leave by HR
+router.post('/updateLeave', isAuth.requireRole(2), function (req, res, next) {
+
+    console.log(JSON.stringify(req.body));
+
+    var leaveTableId = req.body.leaveTableId;
+
+    console.log(leaveTableId);
+
+    
+
+    connection.beginTransaction(function (err) {
+        if (err) {
+            throw err;
+        }
+
+        var leaveArray = [req.body.leaveDate, req.body.id, req.body.leaveReason, req.body.leaveType, req.body.leaveTableId];
+
+        connection.query(`UPDATE Leaves SET LeaveDate = ?, UpdatedBy = ?, UpdatedOn = now(), Reason = ?, LeaveTypeId = ? where LeaveId = ?`, leaveArray, function (err, result) {
+            if (err) {
+                connection.rollback(function () {
+                    console.log(err);
+                    throw err;
+                });
+            }
+
+            connection.query(`UPDATE Employee SET AvailableLeaves = AvailableLeaves + ${req.body.leaveOldValue} - (Select LeaveValue from LeavesType where LeaveTypeId = ${req.body.leaveType}) WHERE Id = (Select EmpId from User where UserId = ${req.body.id})`,  function (err2, result2) {
+                if (err2) {
+                    connection.rollback(function () {
+                        console.log(err2);
+                        throw err2;
+                    });
+                }
+
+                var activityArray = ["Update Leave", req.body.userid, req.body.id]
+    
+                connection.query(`insert into activitytable(ActivityType,ActivityBy,ActivityFor,ActivityDate)  VALUES (?,?,?, now())`, activityArray, function (err3, result3) {
+                    if (err3) {
+                        connection.rollback(function () {
+                            console.log(err3);
+                            throw err3;
+                        });
+                    }
+        
+                    return res.send(true);
+
+                });
+    
+            });
+        });
+    });
+
+});
+
+//Update the leave by HR
+router.post('/deleteLeave', isAuth.requireRole(2), function (req, res, next) {
+
+    console.log(JSON.stringify(req.body));
+
+    var leaveTableId = req.body.leaveTableId;
+    var userid = req.body.userid;
+    var id = req.body.id;
+    var leaveDate = req.body.leaveDate;
+    var leaveReason = req.body.leaveReason;
+    var leaveValue = req.body.leaveValue;
+
+    console.log(leaveTableId);
+
+    connection.beginTransaction(function (err) {
+        if (err) {
+            throw err;
+        }
+
+        var leaveArray = [req.body.leaveDate, req.body.id, req.body.leaveReason, req.body.leaveType, req.body.leaveTableId];
+
+        connection.query(`DELETE FROM Leaves where LeaveId = ${leaveTableId} `, function (err, result) {
+            if (err) {
+                connection.rollback(function () {
+                    console.log(err);
+                    throw err;
+                });
+            }
+
+            connection.query(`UPDATE Employee SET AvailableLeaves = AvailableLeaves + ${req.body.leaveValue} WHERE Id = (Select EmpId from User where UserId = ${req.body.id})`,  function (err2, result2) {
+                if (err2) {
+                    connection.rollback(function () {
+                        console.log(err2);
+                        throw err2;
+                    });
+                }
+
+                var activityArray = ["Update Leave", req.body.userid, req.body.id]
+    
+                connection.query(`insert into activitytable(ActivityType,ActivityBy,ActivityFor,ActivityDate)  VALUES (?,?,?, now())`, activityArray, function (err3, result3) {
+                    if (err3) {
+                        connection.rollback(function () {
+                            console.log(err3);
+                            throw err3;
+                        });
+                    }
+        
+                    return res.send(true);
+
+                });
+    
+            });
+        });
+    });
+
 });
 
 module.exports = router;

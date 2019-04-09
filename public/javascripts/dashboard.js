@@ -119,7 +119,7 @@ $(document).ready(function () {
                     <td>${res[i].LeaveTypeName}</td>
                     <td>${res[i].LeaveValue}</td>
                     <td>${res[i].Reason}</td>
-                    <td><button type="button" class="btn btn-warning btn-sm editLeave">Edit</button><button type="button" class="btn btn-danger btn-sm deleteLeave" style="margin-left: 15px;" data-toggle="modal" data-target="#deleteLeaveModal" data-id="${i}">Delete</button></td>
+                    <td><button type="button" class="btn btn-warning btn-sm editLeave" data-toggle="modal" data-target="#updateLeaveModal" data-id="${i}">Edit</button><button type="button" class="btn btn-danger btn-sm deleteLeave" style="margin-left: 15px;" data-toggle="modal" data-target="#deleteLeaveModal" data-id="${i}">Delete</button></td>
                 </tr>`;
                 } else {
                     dummyTableRow += `<tr>
@@ -226,6 +226,7 @@ function createHolidayLeaveTable(arr) {
 function bindClickEvents() {
 
     var indexId = 0;
+    var indexUpdateId = 0;
 
     $('.deleteLeave').click(function () {
         var index = $(this).data('id');
@@ -251,7 +252,52 @@ function bindClickEvents() {
 
     //     //populate the textbox
     //     $('#bookId').html(bookId);
-    // });
+    // }); editLeave
+
+    $('.editLeave').click(function () {
+        var index = $(this).data('id');
+        indexUpdateId = index;
+        index = parseInt(index) + 1;
+        console.log(index);
+
+        var leaveDate = $('.leavesTable tr:nth-child(' + index + ') td:nth-child(1)').html();
+        var leaveReason = $('.leavesTable tr:nth-child(' + index + ') td:nth-child(4)').html();
+        var leaveType = $('.leavesTable tr:nth-child(' + index + ') td:nth-child(2)').html();
+        var leaveTableId = $('.leavesTable tr:nth-child(' + index + ') td:nth-child(1)').data('leaveid');
+
+        $.ajax({
+            type: 'GET',
+            url: "/dashboard/fetchLeaveTypes",
+            async: true,
+            success: function (res) {
+                console.log(res);
+
+                var dummyRow = '';
+
+                for(var i = 0; i < res.length; i++){
+                    if(res[i].LeaveTypeName == leaveType){
+                        dummyRow += '<option value="' + res[i].LeaveTypeId + '" selected>' + res[i].LeaveTypeName + '</option>';
+                    } else{
+                        dummyRow += '<option value="' + res[i].LeaveTypeId + '">' + res[i].LeaveTypeName + '</option>';
+                    }
+                    
+                }
+
+                $('#leaveType').append(dummyRow);
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+
+        
+
+        $('#leaveDateUpdate').val(moment(leaveDate,'DD-MM-YYYY').format('YYYY-MM-DD'));
+        $('#reason').val(leaveReason);
+
+    });
+
+
 
     $('.deleteLeaveYesButton').click(function () {
         var index = indexId;
@@ -285,11 +331,72 @@ function bindClickEvents() {
             url: "/dashboard/deleteLeave",
             async: true,
             data: {
+                userid: id,
                 id: leaveID,
                 leaveDate: leaveDate,
                 leaveReason: leaveReason,
                 leaveTableId: leaveTableId,
                 leaveValue: leaveValue
+            },
+            success: function (res) {
+
+                //console.log(res);
+
+                if(res){
+                    window.location.reload();
+                }
+                
+
+            },
+            error: function (err) {
+
+            }
+        });
+
+    });
+
+
+
+    $('.updateLeaveYesButton').click(function () {
+        var index = indexUpdateId;
+        index = parseInt(index) + 1;
+        console.log(index);
+
+        //var row = $(".empLeavesTableBody").find('tr').eq(index);
+        var leaveDate = $('#leaveDateUpdate').val();
+        var leaveReason = $('#reason').val();
+        var leaveType = $('#leaveType').val();
+        var leaveTableId = $('.leavesTable tr:nth-child(' + index + ') td:nth-child(1)').data('leaveid');
+        var leaveOldValue = $('.leavesTable tr:nth-child(' + index + ') td:nth-child(3)').html();
+        //console.log(cell);
+        
+        //$("#leaveDate").html(leaveDate);
+
+        var id = document.getElementById("userId").value;
+        //console.log(id);
+
+        var url = window.location.href;
+        //console.log(url);
+        var urlCheckPart = url.split("/");
+
+        var leaveID = id;
+
+        if (urlCheckPart[urlCheckPart.length - 1] != "dashboard") {
+            leaveID = urlCheckPart[urlCheckPart.length - 1];
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: "/dashboard/updateLeave",
+            async: true,
+            data: {
+                userid: id,
+                id: leaveID,
+                leaveDate: leaveDate,
+                leaveReason: leaveReason,
+                leaveTableId: leaveTableId,
+                leaveType: leaveType,
+                leaveOldValue: leaveOldValue
             },
             success: function (res) {
 
