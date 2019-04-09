@@ -277,15 +277,15 @@ var connectionPromiseFetchEmployeeId = new Promise(function (resolve, reject) {
     connection.query(`SELECT e.employeeId FROM user as u
     inner join Employee as e on e.id = u.empId
     ORDER BY u.userId DESC LIMIT 1`, function (err, rows) {
-        if (err) {
-            reject(null);
-        } else if (!rows.length) {
-            reject(null);
-        } else {
-            var empId = (rows[0].employeeId).substring(3);
-            resolve(empId);
-        }
-    });
+            if (err) {
+                reject(null);
+            } else if (!rows.length) {
+                reject(null);
+            } else {
+                var empId = (rows[0].employeeId).substring(3);
+                resolve(empId);
+            }
+        });
 });
 
 function convertImgToDataURLviaCanvas(url, callback, outputFormat) {
@@ -412,58 +412,66 @@ router.post('/addEmp', isAuth.isAuthenticated, multer({
                             });
                         }
 
-                        connection.commit(function (err) {
-                            if (err) {
+                        var activityTableEntry = ["Add Employee", req.user.UserId, userId]
+
+                        connection.query('insert into activitytable(ActivityType,ActivityBy,ActivityFor,ActivityDate)  VALUES (?,?,?, now())', activityTableEntry, function (err1, result1) {
+                            if (err1) {
                                 connection.rollback(function () {
-                                    throw err;
+                                    throw err1;
                                 });
                             }
-                            var data = {
-                                to: email,
-                                from: 'rduvedi@techferry.com',
-                                template: '../views/email.hbs',
-                                subject: 'Your Account has been created!',
-                                // context: {
-                                //   url: 'http://localhost:3000/reset_password?token=' + token,
-                                //   name: 'test'
-                                // },
-                                html: `<div>
-                                        <h3>Dear ${firstName} ${firstName},</h3>
-                                        <p>Your account has been created.</p>
-                                        <p>Your Login details are</p>
-                                        <p>User Email  : ${email}</p>
-                                        </p> Password  : ${password}</p>
-                                        <br>
-                                        <p>Cheers!</p>
-                                    </div>`
-                            }
-                            smtpTransport.sendMail(data, function (err) {
-                                if (!err) {
-                                    //     var statusMessage = `<div class="title_message"><h2>Check Your inbox.</h2></div><div class="title_message"><span>We have send password reset instructions into your <label class="email_label">${email}</label> mail id. please Check your Mail.  </span></div>`;
-                                    // //   return res.json({ message: 'Kindly check your email for further instructions' });
-                                    //     res.render('forgotPassword', {title: 'Forgot Password', status_Message_flag: true, statusMessage: statusMessage})
-                                    res.send({
-                                        message: "SUCCESS!!"
-                                    });
-                                } else {
-                                    //   return done(err);
-                                    console.log(err)
-                                }
-                            });
-                            res.send({
-                                message: "SUCCESS!!"
 
+                            connection.commit(function (err) {
+                                if (err) {
+                                    connection.rollback(function () {
+                                        throw err;
+                                    });
+                                }
+                                var data = {
+                                    to: email,
+                                    from: 'rduvedi@techferry.com',
+                                    template: '../views/email.hbs',
+                                    subject: 'Your Account has been created!',
+                                    // context: {
+                                    //   url: 'http://localhost:3000/reset_password?token=' + token,
+                                    //   name: 'test'
+                                    // },
+                                    html: `<div>
+                                            <h3>Dear ${firstName} ${firstName},</h3>
+                                            <p>Your account has been created.</p>
+                                            <p>Your Login details are</p>
+                                            <p>User Email  : ${email}</p>
+                                            </p> Password  : ${password}</p>
+                                            <br>
+                                            <p>Cheers!</p>
+                                        </div>`
+                                }
+                                smtpTransport.sendMail(data, function (err) {
+                                    if (!err) {
+                                        //     var statusMessage = `<div class="title_message"><h2>Check Your inbox.</h2></div><div class="title_message"><span>We have send password reset instructions into your <label class="email_label">${email}</label> mail id. please Check your Mail.  </span></div>`;
+                                        // //   return res.json({ message: 'Kindly check your email for further instructions' });
+                                        //     res.render('forgotPassword', {title: 'Forgot Password', status_Message_flag: true, statusMessage: statusMessage})
+                                        res.redirect('/dashboard/view-employees');
+                                        // res.send({
+                                        //     message: "SUCCESS!!"
+                                        // });
+                                    } else {
+                                        //   return done(err);
+                                        console.log(err)
+                                    }
+                                });
+                                res.redirect('/dashboard/view-employees');
+                                // res.send({
+                                //     message: "SUCCESS!!"
+    
+                                // });
                             });
+
                         });
                     });
                 });
-
-
             });
         });
-
-
-
     });
 });
 
@@ -836,11 +844,11 @@ router.get('/fetchLeaveTypes', isAuth.requireRole(2), function (req, res, next) 
     connection.query(`SELECT * FROM LeavesType`, function (err, rows) {
         if (err) {
             console.log("Error: " + err);
-           return res.send(null);
-        } else if(rows.length == 0){
+            return res.send(null);
+        } else if (rows.length == 0) {
             console.log("No row found!");
             return res.send(null);
-        } else{
+        } else {
             console.log(rows);
             return res.send(rows);
         }
@@ -857,7 +865,7 @@ router.post('/updateLeave', isAuth.requireRole(2), function (req, res, next) {
 
     console.log(leaveTableId);
 
-    
+
 
     connection.beginTransaction(function (err) {
         if (err) {
@@ -874,7 +882,7 @@ router.post('/updateLeave', isAuth.requireRole(2), function (req, res, next) {
                 });
             }
 
-            connection.query(`UPDATE Employee SET AvailableLeaves = AvailableLeaves + ${req.body.leaveOldValue} - (Select LeaveValue from LeavesType where LeaveTypeId = ${req.body.leaveType}) WHERE Id = (Select EmpId from User where UserId = ${req.body.id})`,  function (err2, result2) {
+            connection.query(`UPDATE Employee SET AvailableLeaves = AvailableLeaves + ${req.body.leaveOldValue} - (Select LeaveValue from LeavesType where LeaveTypeId = ${req.body.leaveType}) WHERE Id = (Select EmpId from User where UserId = ${req.body.id})`, function (err2, result2) {
                 if (err2) {
                     connection.rollback(function () {
                         console.log(err2);
@@ -883,7 +891,7 @@ router.post('/updateLeave', isAuth.requireRole(2), function (req, res, next) {
                 }
 
                 var activityArray = ["Update Leave", req.body.userid, req.body.id]
-    
+
                 connection.query(`insert into activitytable(ActivityType,ActivityBy,ActivityFor,ActivityDate)  VALUES (?,?,?, now())`, activityArray, function (err3, result3) {
                     if (err3) {
                         connection.rollback(function () {
@@ -891,11 +899,11 @@ router.post('/updateLeave', isAuth.requireRole(2), function (req, res, next) {
                             throw err3;
                         });
                     }
-        
+
                     return res.send(true);
 
                 });
-    
+
             });
         });
     });
@@ -931,7 +939,7 @@ router.post('/deleteLeave', isAuth.requireRole(2), function (req, res, next) {
                 });
             }
 
-            connection.query(`UPDATE Employee SET AvailableLeaves = AvailableLeaves + ${req.body.leaveValue} WHERE Id = (Select EmpId from User where UserId = ${req.body.id})`,  function (err2, result2) {
+            connection.query(`UPDATE Employee SET AvailableLeaves = AvailableLeaves + ${req.body.leaveValue} WHERE Id = (Select EmpId from User where UserId = ${req.body.id})`, function (err2, result2) {
                 if (err2) {
                     connection.rollback(function () {
                         console.log(err2);
@@ -940,7 +948,7 @@ router.post('/deleteLeave', isAuth.requireRole(2), function (req, res, next) {
                 }
 
                 var activityArray = ["Update Leave", req.body.userid, req.body.id]
-    
+
                 connection.query(`insert into activitytable(ActivityType,ActivityBy,ActivityFor,ActivityDate)  VALUES (?,?,?, now())`, activityArray, function (err3, result3) {
                     if (err3) {
                         connection.rollback(function () {
@@ -948,11 +956,11 @@ router.post('/deleteLeave', isAuth.requireRole(2), function (req, res, next) {
                             throw err3;
                         });
                     }
-        
+
                     return res.send(true);
 
                 });
-    
+
             });
         });
     });
