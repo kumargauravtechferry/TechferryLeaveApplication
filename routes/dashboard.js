@@ -717,7 +717,7 @@ router.post('/updateEmp', isAuth.isAuthenticated, multer({
     console.log(JSON.stringify(req.body));
 
     //User Table Data
-    let userId = req.body.userId;
+    let userId = req.user.UserId;
     let firstName = req.body.firstName;
     let lastName = req.body.lastName;
     let email = req.body.email;
@@ -762,7 +762,7 @@ router.post('/updateEmp', isAuth.isAuthenticated, multer({
             throw err;
         }
 
-        var query = `update user set Firstname =  '${firstName}'  , Lastname = '${lastName}' , Email = '${email}',  DOB  = '${dob}', Gender = '${g}' , MaritalSatus = '${maritalStatus}' , ContactNumber = '${contactNumber}' , EmergencyNumber = '${emergencyNumber}', BloodGroup = '${bloodGroup}', Photo = '${picUpload}', UpdatedOn = now(), DesignationId = ${designation} WHERE UserId = ${userId} `;
+        var query = `update user set Firstname =  '${firstName}'  , Lastname = '${lastName}' , Email = '${email}',  DOB  = '${dob}', Gender = '${g}' , MaritalSatus = '${maritalStatus}' , ContactNumber = '${contactNumber}' , EmergencyNumber = '${emergencyNumber}', BloodGroup = '${bloodGroup}', Photo = '${picUpload}', UpdatedOn = now(), DesignationId = ${designation} WHERE UserId =${userId} `;
         console.log('query', query);
         connection.query(query, [], function (err, result) {
             if (err) {
