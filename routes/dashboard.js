@@ -412,58 +412,66 @@ router.post('/addEmp', isAuth.isAuthenticated, multer({
                             });
                         }
 
-                        connection.commit(function (err) {
-                            if (err) {
+                        var activityTableEntry = ["Add Employee", req.user.UserId, userId]
+
+                        connection.query('insert into activitytable(ActivityType,ActivityBy,ActivityFor,ActivityDate)  VALUES (?,?,?, now())', activityTableEntry, function (err1, result1) {
+                            if (err1) {
                                 connection.rollback(function () {
-                                    throw err;
+                                    throw err1;
                                 });
                             }
-                            var data = {
-                                to: email,
-                                from: 'rduvedi@techferry.com',
-                                template: '../views/email.hbs',
-                                subject: 'Your Account has been created!',
-                                // context: {
-                                //   url: 'http://localhost:3000/reset_password?token=' + token,
-                                //   name: 'test'
-                                // },
-                                html: `<div>
-                                        <h3>Dear ${firstName} ${firstName},</h3>
-                                        <p>Your account has been created.</p>
-                                        <p>Your Login details are</p>
-                                        <p>User Email  : ${email}</p>
-                                        </p> Password  : ${password}</p>
-                                        <br>
-                                        <p>Cheers!</p>
-                                    </div>`
-                            }
-                            smtpTransport.sendMail(data, function (err) {
-                                if (!err) {
-                                    //     var statusMessage = `<div class="title_message"><h2>Check Your inbox.</h2></div><div class="title_message"><span>We have send password reset instructions into your <label class="email_label">${email}</label> mail id. please Check your Mail.  </span></div>`;
-                                    // //   return res.json({ message: 'Kindly check your email for further instructions' });
-                                    //     res.render('forgotPassword', {title: 'Forgot Password', status_Message_flag: true, statusMessage: statusMessage})
-                                    res.send({
-                                        message: "SUCCESS!!"
-                                    });
-                                } else {
-                                    //   return done(err);
-                                    console.log(err)
-                                }
-                            });
-                            res.send({
-                                message: "SUCCESS!!"
 
+                            connection.commit(function (err) {
+                                if (err) {
+                                    connection.rollback(function () {
+                                        throw err;
+                                    });
+                                }
+                                var data = {
+                                    to: email,
+                                    from: 'rduvedi@techferry.com',
+                                    template: '../views/email.hbs',
+                                    subject: 'Your Account has been created!',
+                                    // context: {
+                                    //   url: 'http://localhost:3000/reset_password?token=' + token,
+                                    //   name: 'test'
+                                    // },
+                                    html: `<div>
+                                            <h3>Dear ${firstName},</h3>
+                                            <p>Your account has been created.</p>
+                                            <p>Your Login details are</p>
+                                            <p>User Email  : ${email}</p>
+                                            </p> Password  : ${password}</p>
+                                            <br>
+                                            <p>Cheers!</p>
+                                        </div>`
+                                }
+                                smtpTransport.sendMail(data, function (err) {
+                                    if (!err) {
+                                        //     var statusMessage = `<div class="title_message"><h2>Check Your inbox.</h2></div><div class="title_message"><span>We have send password reset instructions into your <label class="email_label">${email}</label> mail id. please Check your Mail.  </span></div>`;
+                                        // //   return res.json({ message: 'Kindly check your email for further instructions' });
+                                        //     res.render('forgotPassword', {title: 'Forgot Password', status_Message_flag: true, statusMessage: statusMessage})
+                                        res.redirect('/dashboard/view-employees');
+                                        // res.send({
+                                        //     message: "SUCCESS!!"
+                                        // });
+                                    } else {
+                                        //   return done(err);
+                                        console.log(err)
+                                    }
+                                });
+                                res.redirect('/dashboard/view-employees');
+                                // res.send({
+                                //     message: "SUCCESS!!"
+
+                                // });
                             });
+
                         });
                     });
                 });
-
-
             });
         });
-
-
-
     });
 });
 
@@ -536,9 +544,19 @@ router.get('/view-employees/:id', isAuth.isAuthenticated, isAuth.requireRole(1),
 });
 
 router.get('/view-employees/:id/edit-employee', isAuth.requireRole(2), function (req, res) {
+    <<
+    << << < HEAD
 
     // console.log('req.params.id', req.params.id)
-    var connectionCommand = `Select u.UserId, e.EmployeeId, e.StatusId, DATE_FORMAT(e.JoinedDate, "%Y-%m-%d") as JoinedDate, e.AvailableLeaves, u.FirstName, u.LastName, u.Email, u.Gender, u.MaritalSatus, u.BloodGroup, DATE_FORMAT(u.DOB, "%Y-%m-%d") as dob, u.ContactNumber, u.EmergencyNumber, u.Photo, e.AvailableLeaves, s.StatusName, d.Designation, d.DesignationId, a.AddressId, a.Street1, a.Street2, a.City, a.State, a.Zip from User as u inner join Employee as e on u.EmpId = e.Id inner join Address as a on u.AddressId = a.AddressId inner join EmployeeStatus as s on e.StatusId = s.StatusId inner join Designation as d on u.DesignationId = d.DesignationId where u.UserId = ${req.params.id}`;
+    var connectionCommand = `Select u.UserId, e.EmployeeId, e.StatusId, DATE_FORMAT(e.JoinedDate, "%Y-%m-%d") as JoinedDate, e.AvailableLeaves, u.FirstName, u.LastName, u.Email, u.Gender, u.MaritalSatus, u.BloodGroup, DATE_FORMAT(u.DOB, "%Y-%m-%d") as dob, u.ContactNumber, u.EmergencyNumber, u.Photo, e.AvailableLeaves, s.StatusName, d.Designation, d.DesignationId, a.AddressId, a.Street1, a.Street2, a.City, a.State, a.Zip from User as u inner join Employee as e on u.EmpId = e.Id inner join Address as a on u.AddressId = a.AddressId inner join EmployeeStatus as s on e.StatusId = s.StatusId inner join Designation as d on u.DesignationId = d.DesignationId where u.UserId = ${req.params.id}`; ===
+    === =
+    // res.render('edit-employee', {
+    //     id: req.params.id,
+    //     user: req.user
+    // });
+    console.log('req.params.id', req.params.id)
+    var connectionCommand = `Select u.UserId, e.EmployeeId, e.StatusId, DATE_FORMAT(e.JoinedDate, "%Y-%m-%d") as JoinedDate, e.AvailableLeaves, u.FirstName, u.LastName, u.Email, u.Gender, u.MaritalSatus, u.BloodGroup, DATE_FORMAT(u.DOB, "%Y-%m-%d") as dob, u.ContactNumber, u.EmergencyNumber, u.Photo, e.AvailableLeaves, s.StatusName, d.Designation, d.DesignationId, a.AddressId, a.Street1, a.Street2, a.City, a.State, a.Zip,  CONCAT(u.FirstName, ' ', u.LastName) AS NAME    from User as u inner join Employee as e on u.EmpId = e.Id inner join Address as a on u.AddressId = a.AddressId inner join EmployeeStatus as s on e.StatusId = s.StatusId inner join Designation as d on u.DesignationId = d.DesignationId where u.UserId = ${req.params.id}`; >>>
+    >>> > 14 f1deaa7f37c0a2f63bfc38cdbac8bb43b740b2
 
     // console.log('connectionCommand', connectionCommand)
 
@@ -576,7 +594,7 @@ router.get('/leave', isAuth.isAuthenticated, isAuth.requireRole(2), function (re
                 user: req.user,
                 userRole: (req.user.RoleId == 1) ? true : false
             });
-
+            console.log("EmpidData ---" + EmpidData);
         });
 
 
@@ -599,7 +617,7 @@ var getLeaveTypeData = function (params, callbackFn) {
 
 var getEmployeeIdData = function (param, callbackFn) {
     var EmpidData = [];
-    connection.query("SELECT Id, EmployeeId FROM employee", function (error, rows, columns) {
+    connection.query("Select CONCAT(u.FirstName, ' ', u.LastName, ' - [',e.EmployeeId,']') AS NAME , e.EmployeeId   from User as u   inner join Employee as e   on u.Empid = e.id", function (error, rows, columns) {
         if (rows.length != 0) {
             EmpidData = rows;
         } else {
@@ -1017,10 +1035,8 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
 
 
 router.get('/edit-employee', isAuth.requireRole(2), function (req, res) {
-    res.render('/edit-employee', {
-        userRole: (req.user.RoleId == 1) ? true : false,
-    });
-    connection.query('select Firstname, Lastname, Email, Password, AddressId, DOB, Gender, MaritalSatus, ContactNumber, EmergencyNumber, BloodGroup, Photo, UpdatedOn, CreatedOn, token, DesignationId from user where userId = ' + req.user.userId, function (error, rows, columns) {
+
+    connection.query(`Select u.UserId, e.EmployeeId, e.StatusId, DATE_FORMAT(e.JoinedDate, "%Y-%m-%d") as JoinedDate, e.AvailableLeaves, u.FirstName, u.LastName, u.Email, u.Gender, u.MaritalSatus, u.BloodGroup, DATE_FORMAT(u.DOB, "%Y-%m-%d") as dob, u.ContactNumber, u.EmergencyNumber, u.Photo, e.AvailableLeaves, s.StatusName, d.Designation, d.DesignationId, a.AddressId, a.Street1, a.Street2, a.City, a.State, a.Zip,  CONCAT(u.FirstName, ' ', u.LastName , ' [',e.EmployeeId,']') AS NAME    from User as u inner join Employee as e on u.EmpId = e.Id inner join Address as a on u.AddressId = a.AddressId inner join EmployeeStatus as s on e.StatusId = s.StatusId inner join Designation as d on u.DesignationId = d.DesignationId where u.UserId= ` + req.user.RoleId, function (error, rows, columns) {
         if (error) throw error
 
         // if user not found
@@ -1029,24 +1045,32 @@ router.get('/edit-employee', isAuth.requireRole(2), function (req, res) {
             res.redirect('/dashboard')
         } else {
             // if user found
-            // render to dashboard/EditEmp template file
-            res.render('/EditEmp', {
-                title: 'Edit User',
-                //data: rows[0],
+            // render to dashboard/edit_employee template file
+            res.render('edit_employee', {
+                userRole: (req.user.RoleId == 1) ? true : false,
                 id: rows[0].UserId,
-                Firstname: rows[0].naFme,
-                Lastname: rows[0].age,
+                Firstname: rows[0].FirstName,
+                Lastname: rows[0].LastName,
                 Email: rows[0].Email,
                 AddressId: rows[0].AddressId,
-                DOB: rows[0].DOB,
+                DOB: rows[0].dob,
                 Gender: rows[0].Gender,
-                MaritalSatus: rows[0].MaritalSatus,
+                MaritalStatus: rows[0].MaritalSatus,
                 ContactNumber: rows[0].ContactNumber,
                 EmergencyNumber: rows[0].EmergencyNumber,
                 BloodGroup: rows[0].BloodGroup,
                 Photo: rows[0].Photo,
-                token: rows[0].token,
-                DesignationId: rows[0].DesignationId
+                // token: JoinedDateows[0].token,
+                DesignationId: rows[0].DesignationId,
+                First_lastName: rows[0].NAME,
+                Street1: rows[0].Street1,
+                Street2: rows[0].Street2,
+                City: rows[0].City,
+                State: rows[0].State,
+                Zip: rows[0].Zip,
+                JoinedDate: rows[0].JoinedDate,
+                EmployeeId: rows[0].EmployeeId
+
             });
         };
     });
@@ -1062,7 +1086,7 @@ router.post('/updateEmp', isAuth.isAuthenticated, multer({
     console.log(JSON.stringify(req.body));
 
     //User Table Data
-    let userId = req.body.userId;
+    let userId = req.user.UserId;
     let firstName = req.body.firstName;
     let lastName = req.body.lastName;
     let email = req.body.email;
@@ -1107,7 +1131,7 @@ router.post('/updateEmp', isAuth.isAuthenticated, multer({
             throw err;
         }
 
-        var query = `update user set Firstname =  '${firstName}'  , Lastname = '${lastName}' , Email = '${email}',  DOB  = '${dob}', Gender = '${g}' , MaritalSatus = '${maritalStatus}' , ContactNumber = '${contactNumber}' , EmergencyNumber = '${emergencyNumber}', BloodGroup = '${bloodGroup}', Photo = '${picUpload}', UpdatedOn = now(), DesignationId = ${designation} WHERE UserId = ${userId} `;
+        var query = `update user set Firstname =  '${firstName}'  , Lastname = '${lastName}' , Email = '${email}',  DOB  = '${dob}', Gender = '${g}' , MaritalSatus = '${maritalStatus}' , ContactNumber = '${contactNumber}' , EmergencyNumber = '${emergencyNumber}', BloodGroup = '${bloodGroup}', Photo = '${picUpload}', UpdatedOn = now(), DesignationId = ${designation} WHERE UserId =${userId} `;
         console.log('query', query);
         connection.query(query, [], function (err, result) {
             if (err) {
