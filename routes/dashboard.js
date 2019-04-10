@@ -547,7 +547,7 @@ router.get('/view-employees/:id/edit-employee', isAuth.requireRole(2), function 
     //     user: req.user
     // });
     console.log('req.params.id', req.params.id)
-    var connectionCommand = `Select u.UserId, e.EmployeeId, e.StatusId, DATE_FORMAT(e.JoinedDate, "%Y-%m-%d") as JoinedDate, e.AvailableLeaves, u.FirstName, u.LastName, u.Email, u.Gender, u.MaritalSatus, u.BloodGroup, DATE_FORMAT(u.DOB, "%Y-%m-%d") as dob, u.ContactNumber, u.EmergencyNumber, u.Photo, e.AvailableLeaves, s.StatusName, d.Designation, d.DesignationId, a.AddressId, a.Street1, a.Street2, a.City, a.State, a.Zip from User as u inner join Employee as e on u.EmpId = e.Id inner join Address as a on u.AddressId = a.AddressId inner join EmployeeStatus as s on e.StatusId = s.StatusId inner join Designation as d on u.DesignationId = d.DesignationId where u.UserId = ${req.params.id}`;
+    var connectionCommand = `Select u.UserId, e.EmployeeId, e.StatusId, DATE_FORMAT(e.JoinedDate, "%Y-%m-%d") as JoinedDate, e.AvailableLeaves, u.FirstName, u.LastName, u.Email, u.Gender, u.MaritalSatus, u.BloodGroup, DATE_FORMAT(u.DOB, "%Y-%m-%d") as dob, u.ContactNumber, u.EmergencyNumber, u.Photo, e.AvailableLeaves, s.StatusName, d.Designation, d.DesignationId, a.AddressId, a.Street1, a.Street2, a.City, a.State, a.Zip,  CONCAT(u.FirstName, ' ', u.LastName) AS NAME    from User as u inner join Employee as e on u.EmpId = e.Id inner join Address as a on u.AddressId = a.AddressId inner join EmployeeStatus as s on e.StatusId = s.StatusId inner join Designation as d on u.DesignationId = d.DesignationId where u.UserId = ${req.params.id}`;
 
     // console.log('connectionCommand', connectionCommand)
 
@@ -584,7 +584,7 @@ router.get('/leave', isAuth.isAuthenticated, isAuth.requireRole(2), function (re
                 user: req.user,
                 userRole: (req.user.RoleId == 1) ? true : false
             });
-
+console.log("EmpidData ---" + EmpidData);
         });
 
 
@@ -607,7 +607,7 @@ var getLeaveTypeData = function (params, callbackFn) {
 
 var getEmployeeIdData = function (param, callbackFn) {
     var EmpidData = [];
-    connection.query("SELECT Id, EmployeeId FROM employee", function (error, rows, columns) {
+    connection.query("Select CONCAT(u.FirstName, ' ', u.LastName, ' - [',e.EmployeeId,']') AS NAME , e.EmployeeId   from User as u   inner join Employee as e   on u.Empid = e.id", function (error, rows, columns) {
         if (rows.length != 0) {
             EmpidData = rows;
         } else {
@@ -621,7 +621,7 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
     _ativityId = 1;
     _activityType = "leave";
     _activityBy = req.user.UserId;
-    _activityFor = req.user.UserId; //req.user.employeeId;
+    _activityFor = req.body["Emplid-type"]; //req.user.employeeId;
     _activityDate = moment(Date.now()).format('YYYY/MM/DD hh:mm:ss') //"2019-04-04 00:00:00"//moment(new Date()).format('YYYY-MM-DD');
     //document.getElementById('lblEmpId').textContent
     console.log("user information " + req.user);
@@ -641,25 +641,15 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
 
     // console.log("details- leavetype-{0},LeaveDate-{1}, LeaveReason -{2},req.body- {3}, req.user -{4} " + leavetype, LeaveDate, LeaveReason, req.body, req.user);
 
-    let insertQuery = `
-                                            insert into leaves(LeaveTypeId, UserId, Reason, LeaveDate, CreatedBy) VALUES `;
+    let insertQuery = `insert into leaves(LeaveTypeId, UserId, Reason, LeaveDate, CreatedBy) VALUES `;
 
     for (let i = 0; i < days; i++) {
         let leaveDate = moment(LeaveDate, 'YYYY-MM-DD').add(i, 'days');
         leaveDate = leaveDate.format('YYYY-MM-DD');
-        insertQuery += `($ {
-                                                leavetype
-                                            }, $ {
-                                                UserId
-                                            }, '${LeaveReason}', '${leaveDate}', $ {
-                                                CreatedBy
-                                            })
-                                            `;
-        insertQuery += ((i + 1) == days) ? `
-                                            ` : `, `;
+        insertQuery += `('${leavetype}', '${req.body["Emplid-type"].split("-0").pop()}', '${LeaveReason}', '${leaveDate}', $ {CreatedBy})`;
+        insertQuery += ((i + 1) == days) ? `` : `, `;
     }
-    insertQuery += `;
-                                            `;
+    insertQuery += `;`;
 
     console.log(insertQuery);
     let insertactivityBody = [_activityType, _activityBy, _activityFor, _activityDate]
@@ -676,13 +666,9 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
     });
 });
 
-
-
 router.get('/edit-employee', isAuth.requireRole(2), function (req, res) {
-    res.render('/edit-employee', {
-        userRole: (req.user.RoleId == 1) ? true : false,
-    });
-    connection.query('select Firstname, Lastname, Email, Password, AddressId, DOB, Gender, MaritalSatus, ContactNumber, EmergencyNumber, BloodGroup, Photo, UpdatedOn, CreatedOn, token, DesignationId from user where userId = ' + req.user.userId, function (error, rows, columns) {
+ 
+    connection.query(`Select u.UserId, e.EmployeeId, e.StatusId, DATE_FORMAT(e.JoinedDate, "%Y-%m-%d") as JoinedDate, e.AvailableLeaves, u.FirstName, u.LastName, u.Email, u.Gender, u.MaritalSatus, u.BloodGroup, DATE_FORMAT(u.DOB, "%Y-%m-%d") as dob, u.ContactNumber, u.EmergencyNumber, u.Photo, e.AvailableLeaves, s.StatusName, d.Designation, d.DesignationId, a.AddressId, a.Street1, a.Street2, a.City, a.State, a.Zip,  CONCAT(u.FirstName, ' ', u.LastName , ' [',e.EmployeeId,']') AS NAME    from User as u inner join Employee as e on u.EmpId = e.Id inner join Address as a on u.AddressId = a.AddressId inner join EmployeeStatus as s on e.StatusId = s.StatusId inner join Designation as d on u.DesignationId = d.DesignationId where u.UserId= ` + req.user.RoleId , function (error, rows, columns) {
         if (error) throw error
 
         // if user not found
@@ -691,30 +677,37 @@ router.get('/edit-employee', isAuth.requireRole(2), function (req, res) {
             res.redirect('/dashboard')
         } else {
             // if user found
-            // render to dashboard/EditEmp template file
-            res.render('/EditEmp', {
-                title: 'Edit User',
-                //data: rows[0],
+            // render to dashboard/edit_employee template file
+            res.render('edit_employee', {
+               userRole: (req.user.RoleId == 1) ? true : false,
                 id: rows[0].UserId,
-                Firstname: rows[0].naFme,
-                Lastname: rows[0].age,
+                Firstname: rows[0].FirstName,
+                Lastname: rows[0].LastName,
                 Email: rows[0].Email,
                 AddressId: rows[0].AddressId,
-                DOB: rows[0].DOB,
+                DOB: rows[0].dob,
                 Gender: rows[0].Gender,
-                MaritalSatus: rows[0].MaritalSatus,
+                MaritalStatus: rows[0].MaritalSatus,
                 ContactNumber: rows[0].ContactNumber,
                 EmergencyNumber: rows[0].EmergencyNumber,
                 BloodGroup: rows[0].BloodGroup,
-                Photo: rows[0].Photo,
-                token: rows[0].token,
-                DesignationId: rows[0].DesignationId
-            });
+                Photo:rows[0].Photo,
+               // token: JoinedDateows[0].token,
+                DesignationId: rows[0].DesignationId,
+                First_lastName :rows[0].NAME,
+                Street1:rows[0].Street1,
+                Street2:rows[0].Street2,
+                City:rows[0].City,
+                State:rows[0].State,
+                Zip:rows[0].Zip,
+                JoinedDate:rows[0].JoinedDate,
+                EmployeeId:rows[0].EmployeeId
+
+                       });
         };
     });
 
 });
-
 
 //Add Employee Post Request multer({dest: "./uploads/"})
 router.post('/updateEmp', isAuth.isAuthenticated, multer({

@@ -26,11 +26,8 @@ router.post('/', function(req, res, next) {
     passport.authenticate('local-login', function(err, user, info) {
       if (err) { return next(err); }
       if(info){
-
         req.flash('status_Message', info.message);
-
       }
-
       if (!user) { 
         console.log(info.message)
           return res.redirect('/login'); 

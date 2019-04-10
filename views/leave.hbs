@@ -275,12 +275,12 @@
                                 <div class="form-group pmd-textfield pmd-textfield-floating-label">
                                     <label class="control-label" for="Emplid-type">EmployeeId:-</label>
                                     <label class="control-label" name="Emplid-type" for="Emplid-type" id="lblEmpId">
-                                        {{EmployeeId}}
+                                        {{NAME}}
                                     </label>
                                     <select name="Emplid-type" id="Empid-type" class="form-control"
                                         title="Please select a Leave Type" required="">
                                         {{#each EmpidData}}
-                                        <option value="{{Id}}">{{EmployeeId}}</option>
+                                        <option value="{{EmployeeId}}">{{NAME}}</option>
                                         {{/each}}
                                     </select><span class="pmd-textfield-focused"></span>
                                 </div>
