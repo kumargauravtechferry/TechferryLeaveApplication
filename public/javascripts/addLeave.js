@@ -1,6 +1,8 @@
 var leavesType = [];
 var leavesStringForDropDown = '';
 
+
+
 $(document).ready(function () {
 
     $('#datepickerstart').change(function () {
@@ -68,7 +70,12 @@ function showDateRows(startDate, endDate) {
 
     for (var i = 0; i <= diff; i++) {
         let leaveDate = moment(start, 'MM/DD/YYYY').add(i, 'days').format('YYYY-MM-DD');
-        dummyRow += `<div class="row leaveData${i}" style="padding-bottom:10px;">
+// Find Day of teh Week
+var date = moment(leaveDate);
+var dow = date.day();
+console.log('dow',dow);
+if(dow != 0 && dow != 6)
+{        dummyRow += `<div class="row leaveData${i}" style="padding-bottom:10px;">
         <div class="col-md-5">
             <input type="date" class="form-control" id="leaveDate${i}"
     name="leaveDate" value="${leaveDate}" readonly><span class="pmd-textfield-focused"></span>
@@ -85,7 +92,7 @@ function showDateRows(startDate, endDate) {
         </div>
     </div>`;
     }
-
+    }
     $('.leaveDateSection').append(dummyRow);
 
     $('.multipleDateSection').show();

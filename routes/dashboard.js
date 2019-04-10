@@ -547,14 +547,7 @@ router.get('/view-employees/:id', isAuth.isAuthenticated, isAuth.requireRole(1),
 router.get('/view-employees/:id/edit-employee', isAuth.requireRole(2), function (req, res) {
 
 
-    // console.log('req.params.id', req.params.id)
-    var connectionCommand = `Select u.UserId, e.EmployeeId, e.StatusId, DATE_FORMAT(e.JoinedDate, "%Y-%m-%d") as JoinedDate, e.AvailableLeaves, u.FirstName, u.LastName, u.Email, u.Gender, u.MaritalSatus, u.BloodGroup, DATE_FORMAT(u.DOB, "%Y-%m-%d") as dob, u.ContactNumber, u.EmergencyNumber, u.Photo, e.AvailableLeaves, s.StatusName, d.Designation, d.DesignationId, a.AddressId, a.Street1, a.Street2, a.City, a.State, a.Zip from User as u inner join Employee as e on u.EmpId = e.Id inner join Address as a on u.AddressId = a.AddressId inner join EmployeeStatus as s on e.StatusId = s.StatusId inner join Designation as d on u.DesignationId = d.DesignationId where u.UserId = ${req.params.id}`;
 
-    // res.render('edit-employee', {
-    //     id: req.params.id,
-    //     user: req.user
-    // });
-    console.log('req.params.id', req.params.id)
     var connectionCommand = `Select u.UserId, e.EmployeeId, e.StatusId, DATE_FORMAT(e.JoinedDate, "%Y-%m-%d") as JoinedDate, e.AvailableLeaves, u.FirstName, u.LastName, u.Email, u.Gender, u.MaritalSatus, u.BloodGroup, DATE_FORMAT(u.DOB, "%Y-%m-%d") as dob, u.ContactNumber, u.EmergencyNumber, u.Photo, e.AvailableLeaves, s.StatusName, d.Designation, d.DesignationId, a.AddressId, a.Street1, a.Street2, a.City, a.State, a.Zip,  CONCAT(u.FirstName, ' ', u.LastName) AS NAME    from User as u inner join Employee as e on u.EmpId = e.Id inner join Address as a on u.AddressId = a.AddressId inner join EmployeeStatus as s on e.StatusId = s.StatusId inner join Designation as d on u.DesignationId = d.DesignationId where u.UserId = ${req.params.id}`;
 
     // console.log('connectionCommand', connectionCommand)
@@ -732,7 +725,7 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
     var leaveType = [];
 
     if (leaveType1.constructor === Array) {
-        leaveType = leaveDate1;
+        leaveType = leaveType1;
     } else {
         leaveType.push(leaveType1);
     }

@@ -1,3 +1,8 @@
 node_modules
 node_modules/*
 ./node_modules/*
+uploads/
+config/
+config/*
+config
+./config/*
