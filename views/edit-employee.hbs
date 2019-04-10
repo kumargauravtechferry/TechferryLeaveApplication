@@ -254,6 +254,9 @@
                                     readonly>
                                 <input type="text" id="userMaritalStatus" name="userMaritalStatus"
                                     value="{{userDetails.MaritalSatus}}" readonly>
+
+                                <input type="text" id="userBloodGroup" name="userBloodGroup"
+                                    value="{{userDetails.BloodGroup}}" readonly>
                             </div>
                             <div class="col-sm-6">
                                 <img class="empPhoto" src="data:image/png;base64,{{userDetails.Photo}}"
@@ -306,8 +309,8 @@
                             </div>
                             <div class="col-sm-6">
                                 <select id="bloodGroup" name="bloodGroup" required>
-                                    <option value="{{userDetails.BloodGroup}}" selected="selected">
-                                        {{userDetails.BloodGroup}}</option>
+                                    {{!-- <option value="{{userDetails.BloodGroup}}" selected="selected">
+                                        {{userDetails.BloodGroup}}</option> --}}
                                     <option value="A+">A+</option>
                                     <option value="O+">O+</option>
                                     <option value="B+">B+</option>

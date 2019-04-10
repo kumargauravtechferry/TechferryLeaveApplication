@@ -116,6 +116,9 @@ $(document).ready(function () {
             var getMaritalStatus = $('#userMaritalStatus').val();
             $('#maritalStatus').val(getMaritalStatus);
 
+            var getBloodGroup = $('#userBloodGroup').val();
+            $('#bloodGroup').val(getBloodGroup);
+
         },
         error: function (err) {
             alert(err);

@@ -216,7 +216,8 @@ router.get('/add-employee', isAuth.isAuthenticated, isAuth.requireRole(1), funct
             designation,
             status,
             empId,
-            today
+            today,
+            userRole: req.user.RoleId
         });
     }).catch((err) => {
         console.log("error: " + err);
@@ -544,19 +545,17 @@ router.get('/view-employees/:id', isAuth.isAuthenticated, isAuth.requireRole(1),
 });
 
 router.get('/view-employees/:id/edit-employee', isAuth.requireRole(2), function (req, res) {
-    <<
-    << << < HEAD
+
 
     // console.log('req.params.id', req.params.id)
-    var connectionCommand = `Select u.UserId, e.EmployeeId, e.StatusId, DATE_FORMAT(e.JoinedDate, "%Y-%m-%d") as JoinedDate, e.AvailableLeaves, u.FirstName, u.LastName, u.Email, u.Gender, u.MaritalSatus, u.BloodGroup, DATE_FORMAT(u.DOB, "%Y-%m-%d") as dob, u.ContactNumber, u.EmergencyNumber, u.Photo, e.AvailableLeaves, s.StatusName, d.Designation, d.DesignationId, a.AddressId, a.Street1, a.Street2, a.City, a.State, a.Zip from User as u inner join Employee as e on u.EmpId = e.Id inner join Address as a on u.AddressId = a.AddressId inner join EmployeeStatus as s on e.StatusId = s.StatusId inner join Designation as d on u.DesignationId = d.DesignationId where u.UserId = ${req.params.id}`; ===
-    === =
+    var connectionCommand = `Select u.UserId, e.EmployeeId, e.StatusId, DATE_FORMAT(e.JoinedDate, "%Y-%m-%d") as JoinedDate, e.AvailableLeaves, u.FirstName, u.LastName, u.Email, u.Gender, u.MaritalSatus, u.BloodGroup, DATE_FORMAT(u.DOB, "%Y-%m-%d") as dob, u.ContactNumber, u.EmergencyNumber, u.Photo, e.AvailableLeaves, s.StatusName, d.Designation, d.DesignationId, a.AddressId, a.Street1, a.Street2, a.City, a.State, a.Zip from User as u inner join Employee as e on u.EmpId = e.Id inner join Address as a on u.AddressId = a.AddressId inner join EmployeeStatus as s on e.StatusId = s.StatusId inner join Designation as d on u.DesignationId = d.DesignationId where u.UserId = ${req.params.id}`;
+
     // res.render('edit-employee', {
     //     id: req.params.id,
     //     user: req.user
     // });
     console.log('req.params.id', req.params.id)
-    var connectionCommand = `Select u.UserId, e.EmployeeId, e.StatusId, DATE_FORMAT(e.JoinedDate, "%Y-%m-%d") as JoinedDate, e.AvailableLeaves, u.FirstName, u.LastName, u.Email, u.Gender, u.MaritalSatus, u.BloodGroup, DATE_FORMAT(u.DOB, "%Y-%m-%d") as dob, u.ContactNumber, u.EmergencyNumber, u.Photo, e.AvailableLeaves, s.StatusName, d.Designation, d.DesignationId, a.AddressId, a.Street1, a.Street2, a.City, a.State, a.Zip,  CONCAT(u.FirstName, ' ', u.LastName) AS NAME    from User as u inner join Employee as e on u.EmpId = e.Id inner join Address as a on u.AddressId = a.AddressId inner join EmployeeStatus as s on e.StatusId = s.StatusId inner join Designation as d on u.DesignationId = d.DesignationId where u.UserId = ${req.params.id}`; >>>
-    >>> > 14 f1deaa7f37c0a2f63bfc38cdbac8bb43b740b2
+    var connectionCommand = `Select u.UserId, e.EmployeeId, e.StatusId, DATE_FORMAT(e.JoinedDate, "%Y-%m-%d") as JoinedDate, e.AvailableLeaves, u.FirstName, u.LastName, u.Email, u.Gender, u.MaritalSatus, u.BloodGroup, DATE_FORMAT(u.DOB, "%Y-%m-%d") as dob, u.ContactNumber, u.EmergencyNumber, u.Photo, e.AvailableLeaves, s.StatusName, d.Designation, d.DesignationId, a.AddressId, a.Street1, a.Street2, a.City, a.State, a.Zip,  CONCAT(u.FirstName, ' ', u.LastName) AS NAME    from User as u inner join Employee as e on u.EmpId = e.Id inner join Address as a on u.AddressId = a.AddressId inner join EmployeeStatus as s on e.StatusId = s.StatusId inner join Designation as d on u.DesignationId = d.DesignationId where u.UserId = ${req.params.id}`;
 
     // console.log('connectionCommand', connectionCommand)
 
@@ -723,40 +722,65 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
     var leaveStartDate = req.body.datepickerstart;
     var leaveEndDate = req.body.datepickerend;
     var leaveReason = req.body.reason;
-    var leaveType = req.body["leave-type"];
+    var leaveType1 = req.body["leave-type"];
     var EndDate = moment(leaveEndDate).format('YYYY-MM-DD');
     var StartDate = moment(leaveStartDate).format('YYYY-MM-DD');
     var leaveScoreValue = 0;
-    var leaveScore = 1;
+    var leaveScore = 0;
+    var leaveDate1 = req.body["leaveDate"];
+    var leaveDate = [];
+    var leaveType = [];
+
+    if (leaveType1.constructor === Array) {
+        leaveType = leaveDate1;
+    } else {
+        leaveType.push(leaveType1);
+    }
+
+    if (leaveDate1.constructor === Array) {
+        leaveDate = leaveDate1;
+    } else {
+        leaveDate.push(leaveDate1);
+    }
+
+    console.log('leaveDate========>', leaveDate);
 
     var fetchedEmpId = "";
     var applyLeaveforEmp = true;
     var userAvailableLeaves = 0;
     end = moment(EndDate),
-        days = end.diff(StartDate, 'days');
+        days = end.diff(StartDate, 'days') + 1;
 
 
-    switch (parseInt(leaveType)) {
-        case 1:
-            leaveScoreValue = 0.0;
-            break;
-        case 2:
-            leaveScoreValue = 1.0;
-            break;
-        case 3:
-            leaveScoreValue = 0.0;
-            break;
-        case 4:
-            leaveScoreValue = 0.0;
-            break;
-        case 5:
-            leaveScoreValue = 0.5;
-            break;
-        case 6:
-            leaveScoreValue = 0.0;
+    console.log('days', days);
+
+
+    for (var i = 0; i < leaveType.length; i++) {
+        var type = parseInt(leaveType[i]);
+
+        switch (parseInt(type)) {
+            case 1:
+                leaveScoreValue = 0.0;
+                break;
+            case 2:
+                leaveScoreValue = 1.0;
+                break;
+            case 3:
+                leaveScoreValue = 0.0;
+                break;
+            case 4:
+                leaveScoreValue = 0.0;
+                break;
+            case 5:
+                leaveScoreValue = 0.5;
+                break;
+            case 6:
+                leaveScoreValue = 0.0;
+        }
+
+        leaveScore += leaveScoreValue;
     }
 
-    leaveScore = leaveScore * leaveScoreValue;
     console.log("leaveScore calculation " + leaveScore);
 
     //getting activityTable values
@@ -833,12 +857,13 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
                     //     });
                     // }
 
-                    let insertQuery = `insert into leaves(LeaveTypeId, UserId, Reason, LeaveDate, CreatedBy) VALUES `;
-                    for (let i = 0; i < days; i++) {
-                        let leaveDate = moment(leaveStartDate, 'YYYY-MM-DD').add(i, 'days');
-                        leaveDate = leaveDate.format('YYYY-MM-DD');
-                        insertQuery += `(${leaveType},${userIdforAvailableLeave}, '${leaveReason}', '${leaveDate}', ${userId})                                            `;
-                        insertQuery += ((i + 1) == days) ? `` : `, `;
+                    let insertQuery = `insert into leaves(LeaveTypeId, UserId, Reason, LeaveDate, CreatedBy,UpdatedOn,CreatedOn) VALUES `;
+                    for (let i = 0; i < leaveDate.length; i++) {
+                        let leaveDateq = moment(leaveDate[i], 'YYYY-MM-DD');
+                        leaveDateq = leaveDateq.format('YYYY-MM-DD');
+
+                        insertQuery += `(${leaveType[i]},${userIdforAvailableLeave}, '${leaveReason}', '${leaveDateq}', ${userId}, now(), now())                                            `;
+                        insertQuery += ((i + 1) == leaveDate.length) ? `` : `, `;
                     }
                     insertQuery += `;`;
 

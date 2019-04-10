@@ -71,10 +71,10 @@ function showDateRows(startDate, endDate) {
         dummyRow += `<div class="row leaveData${i}" style="padding-bottom:10px;">
         <div class="col-md-5">
             <input type="date" class="form-control" id="leaveDate${i}"
-    name="leaveDate${i}" value="${leaveDate}" readonly><span class="pmd-textfield-focused"></span>
+    name="leaveDate" value="${leaveDate}" readonly><span class="pmd-textfield-focused"></span>
         </div>
         <div class="col-md-5">
-            <select name="leave-type${i}" id="leave-type${i}" class="form-control"
+            <select name="leave-type" id="leave-type${i}" class="form-control"
                 title="Please select a Leave Type" required="">
                 ${leavesStringForDropDown}
             </select><span class="pmd-textfield-focused"></span>
