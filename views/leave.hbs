@@ -277,7 +277,7 @@
                                     <label class="control-label" name="Emplid-type" for="Emplid-type" id="lblEmpId">
                                         {{EmployeeId}}
                                     </label>
-                                    <select name="Emplid-type" id="Empid-type" class="form-control"
+                                    <select name="Emplid-type" id="empidType" class="form-control"
                                         title="Please select a Leave Type" required="">
                                         {{#each EmpidData}}
                                         <option value="{{Id}}">{{EmployeeId}}</option>
@@ -289,7 +289,7 @@
 
                             <div class="form-group pmd-textfield pmd-textfield-floating-label ">
                                 <label for="leave-type">Leave Type</label>
-                                <select name="leave-type" id="leave-type" class="form-control"
+                                <select name="leave-type" id="leaveType" class="form-control"
                                     title="Please select a Leave Type" required="">
                                     {{#each leaveTypeData}}
                                     <option value="{{LeaveTypeId}}">{{LeaveTypeName}}</option>

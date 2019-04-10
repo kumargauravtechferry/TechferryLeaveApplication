@@ -526,6 +526,8 @@ router.get('/view-employees/:id', isAuth.isAuthenticated, isAuth.requireRole(1),
         title: 'View Employees Leaves Previous Page',
         id: req.params.id,
         user: req.user,
+        userRole: req.user.RoleId,
+        displayEditText: true,
         edit_detail: (req.user.RoleId == 1) ? true : false,
         //userRole: (req.user.RoleId == 1) ? true : false,
         buttonText: "Edit Employee Details",
@@ -534,11 +536,8 @@ router.get('/view-employees/:id', isAuth.isAuthenticated, isAuth.requireRole(1),
 });
 
 router.get('/view-employees/:id/edit-employee', isAuth.requireRole(2), function (req, res) {
-    // res.render('edit-employee', {
-    //     id: req.params.id,
-    //     user: req.user
-    // });
-    console.log('req.params.id', req.params.id)
+
+    // console.log('req.params.id', req.params.id)
     var connectionCommand = `Select u.UserId, e.EmployeeId, e.StatusId, DATE_FORMAT(e.JoinedDate, "%Y-%m-%d") as JoinedDate, e.AvailableLeaves, u.FirstName, u.LastName, u.Email, u.Gender, u.MaritalSatus, u.BloodGroup, DATE_FORMAT(u.DOB, "%Y-%m-%d") as dob, u.ContactNumber, u.EmergencyNumber, u.Photo, e.AvailableLeaves, s.StatusName, d.Designation, d.DesignationId, a.AddressId, a.Street1, a.Street2, a.City, a.State, a.Zip from User as u inner join Employee as e on u.EmpId = e.Id inner join Address as a on u.AddressId = a.AddressId inner join EmployeeStatus as s on e.StatusId = s.StatusId inner join Designation as d on u.DesignationId = d.DesignationId where u.UserId = ${req.params.id}`;
 
     // console.log('connectionCommand', connectionCommand)
@@ -554,7 +553,8 @@ router.get('/view-employees/:id/edit-employee', isAuth.requireRole(2), function 
             console.log('rows', rows)
             res.render('edit-employee', {
                 userDetails: rows[0],
-                user: req.user
+                user: req.user,
+                userRole: req.user.RoleId
             });
         }
     });
@@ -609,65 +609,411 @@ var getEmployeeIdData = function (param, callbackFn) {
     });
 };
 
+// router.post('/leave', isAuth.requireRole(2), function (req, res) {
+//     _ativityId = 1;
+//     _activityType = "leave";
+//     _activityBy = req.user.UserId;
+//     _activityFor = req.user.UserId; //req.user.employeeId;
+//     _activityDate = moment(Date.now()).format('YYYY/MM/DD hh:mm:ss') //"2019-04-04 00:00:00"//moment(new Date()).format('YYYY-MM-DD');
+//     //document.getElementById('lblEmpId').textContent
+//     console.log("user information " + req.user);
+//     let leavetype = req.body["leave-type"];
+//     let LeaveDate = req.body.datepickerstart;
+//     let LeaveReason = req.body.reason;
+//     let leaveStartDate = req.body.datepickerstart;
+//     let leaveEndDate = req.body.datepickerend;
+//     var EndDate = moment(leaveEndDate).format('YYYY-MM-DD');
+//     var StartDate = moment(leaveStartDate).format('YYYY-MM-DD');
+//     let UserId = req.user.UserId;
+//     let CreatedBy = req.user.UserId;
+
+//     end = moment(EndDate),
+//         days = end.diff(StartDate, 'days');
+//     console.log("Employee id value " + _activityFor);
+
+//     let leaveScoreValue = 0;
+//     let leaveScore = 1; //days
+
+//     switch (parseInt(leavetype)) {
+//         case 1:
+//             leaveScoreValue = 0.0;
+//             break;
+//         case 2:
+//             leaveScoreValue = 1.0;
+//             break;
+//         case 3:
+//             leaveScoreValue = 0.0;
+//             break;
+//         case 4:
+//             leaveScoreValue = 0.0;
+//             break;
+//         case 5:
+//             leaveScoreValue = 0.5;
+//             break;
+//         case 6:
+//             leaveScoreValue = 0.0;
+//     }
+
+//     leaveScore = leaveScore * leaveScoreValue;
+//     console.log("leaveScore calucation" + leaveScore);
+
+//     let getUserLeaves = `select AvailableLeaves from employee as e inner join user as u on u.EmpId = e.Id where u.UserId = ${UserId};`;
+
+//     let insertQuery = `insert into leaves(LeaveTypeId, UserId, Reason, LeaveDate, CreatedBy) VALUES `;
+
+//     for (let i = 0; i < days; i++) {
+//         let leaveDate = moment(LeaveDate, 'YYYY-MM-DD').add(i, 'days');
+//         leaveDate = leaveDate.format('YYYY-MM-DD');
+//         insertQuery += `(${leavetype},${UserId}, '${LeaveReason}', '${leaveDate}', ${CreatedBy})                                            `;
+//         insertQuery += ((i + 1) == days) ? `` : `, `;
+//     }
+//     insertQuery += `;`;
+
+//     console.log('insertQuery', insertQuery);
+//     let insertactivityBody = [_activityType, _activityBy, _activityFor, _activityDate]
+
+//     let insertActivityQuery = "insert into activitytable(ActivityType,ActivityBy,ActivityFor,ActivityDate)  VALUES (?,?,?,?)";
+
+//     connection.query(getUserLeaves, (err, result1) => {
+//         if (err) throw err
+
+//         console.log('get user leave ', result1);
+
+//         // connection.query(insertQuery, (err, result2) => {
+//         //     if (err) throw err
+
+//         //     console.log('insert query result ', result2)
+//         //     connection.query(insertActivityQuery, insertactivityBody, (error, result3) => {
+//         //         console.log(error);
+//         //         console.log("activity data inserted " + result3);
+//         //         res.redirect("/dashboard")
+//         //     });
+//         // });
+//     });
+// });
+
+
+
 router.post('/leave', isAuth.requireRole(2), function (req, res) {
-    _ativityId = 1;
-    _activityType = "leave";
-    _activityBy = req.user.UserId;
-    _activityFor = req.user.UserId; //req.user.employeeId;
-    _activityDate = moment(Date.now()).format('YYYY/MM/DD hh:mm:ss') //"2019-04-04 00:00:00"//moment(new Date()).format('YYYY-MM-DD');
-    //document.getElementById('lblEmpId').textContent
-    console.log("user information " + req.user);
-    let leavetype = req.body["leave-type"];
-    let LeaveDate = req.body.datepickerstart;
-    let LeaveReason = req.body.reason;
-    let leaveStartDate = req.body.datepickerstart;
-    let leaveEndDate = req.body.datepickerend;
+
+    console.log('req', req.body)
+    //getting users info
+    var userId = req.user.UserId;
+
+    //getting leave info
+    var empId = parseInt(req.body["Emplid-type"]);
+    var leaveStartDate = req.body.datepickerstart;
+    var leaveEndDate = req.body.datepickerend;
+    var leaveReason = req.body.reason;
+    var leaveType = req.body["leave-type"];
     var EndDate = moment(leaveEndDate).format('YYYY-MM-DD');
     var StartDate = moment(leaveStartDate).format('YYYY-MM-DD');
-    let UserId = req.user.UserId;
-    let CreatedBy = req.user.UserId;
+    var leaveScoreValue = 0;
+    var leaveScore = 1;
+
+    var fetchedEmpId = "";
+    var applyLeaveforEmp = true;
+    var userAvailableLeaves = 0;
     end = moment(EndDate),
         days = end.diff(StartDate, 'days');
-    console.log("Employee id value " + _activityFor);
-    // console.log("days calucation" + days);
 
-    // console.log("details- leavetype-{0},LeaveDate-{1}, LeaveReason -{2},req.body- {3}, req.user -{4} " + leavetype, LeaveDate, LeaveReason, req.body, req.user);
 
-    let insertQuery = `
-                                            insert into leaves(LeaveTypeId, UserId, Reason, LeaveDate, CreatedBy) VALUES `;
-
-    for (let i = 0; i < days; i++) {
-        let leaveDate = moment(LeaveDate, 'YYYY-MM-DD').add(i, 'days');
-        leaveDate = leaveDate.format('YYYY-MM-DD');
-        insertQuery += `($ {
-                                                leavetype
-                                            }, $ {
-                                                UserId
-                                            }, '${LeaveReason}', '${leaveDate}', $ {
-                                                CreatedBy
-                                            })
-                                            `;
-        insertQuery += ((i + 1) == days) ? `
-                                            ` : `, `;
+    switch (parseInt(leaveType)) {
+        case 1:
+            leaveScoreValue = 0.0;
+            break;
+        case 2:
+            leaveScoreValue = 1.0;
+            break;
+        case 3:
+            leaveScoreValue = 0.0;
+            break;
+        case 4:
+            leaveScoreValue = 0.0;
+            break;
+        case 5:
+            leaveScoreValue = 0.5;
+            break;
+        case 6:
+            leaveScoreValue = 0.0;
     }
-    insertQuery += `;
-                                            `;
 
-    console.log(insertQuery);
-    let insertactivityBody = [_activityType, _activityBy, _activityFor, _activityDate]
+    leaveScore = leaveScore * leaveScoreValue;
+    console.log("leaveScore calculation " + leaveScore);
 
-    let insertActivityQuery = "insert into activitytable(ActivityType,ActivityBy,ActivityFor,ActivityDate)  VALUES (?,?,?,?)";
+    //getting activityTable values
+    var activityType = "leave";
+    var activityBy = userId;
+    var activityFor = 0;
+    var userIdforAvailableLeave = userId;
 
-    connection.query(insertQuery, (err, result) => {
 
-        connection.query(insertActivityQuery, insertactivityBody, (error, result1) => {
-            console.log(error);
-            console.log("activity data inserted " + result1);
-            res.redirect("/dashboard")
+
+    connection.beginTransaction(function (err) {
+        if (err) {
+            throw err;
+        }
+
+        //getching the logged-in user employee id
+        var getEmpId = `select EmpId from user where UserId = ${userId};`
+        connection.query(getEmpId, [], function (err, result) {
+            if (err) {
+                console.log('err', err)
+                connection.rollback(function () {
+                    throw err;
+                });
+            }
+
+            console.log('getting EmpId ==> ', result[0].EmpId);
+            fetchedEmpId = parseInt(result[0].EmpId);
+
+
+            console.log('fetchedEmpId', fetchedEmpId);
+            //comparing the logged-in user employee id with selected user id.
+            if (fetchedEmpId == empId) {
+                applyLeaveforEmp = false;
+            } else {
+                empId = fetchedEmpId;
+            }
+
+            let queryAvailableLeave = `select AvailableLeaves from employee where Id = ${empId}`;
+            console.log('queryAvailableLeave', queryAvailableLeave);
+
+
+            connection.query(queryAvailableLeave, [], function (err1, result1) {
+                if (err1) {
+                    console.log('err1', err1)
+                    connection.rollback(function () {
+                        throw err1;
+                    });
+                }
+
+
+                console.log('result for AvailableLeaves', result1);
+
+                userAvailableLeaves = parseFloat(result1[0].AvailableLeaves);
+
+                console.log('userAvailableLeaves', userAvailableLeaves);
+                //checking whether applied leave is not greater than available leave
+                if (userAvailableLeaves < leaveScore) {
+                    // error
+                } else {
+
+                    // if (applyLeaveforEmp) {
+                    //     //getting userId for applied leave
+                    //     connection.query('select UserId from employee as e inner join user as u on u.EmpId = e.Id where e.EmployeeId = ' + empId, function (error, rows, columns) {
+                    //         if (error) {
+                    //             console.log('error', error)
+                    //             connection.rollback(function () {
+                    //                 throw error;
+                    //             });
+                    //         }
+                    //         activityFor = rows[0].UserId;
+
+                    //         userIdforAvailableLeave = activityFor;
+
+                    //     });
+                    // }
+
+                    let insertQuery = `insert into leaves(LeaveTypeId, UserId, Reason, LeaveDate, CreatedBy) VALUES `;
+                    for (let i = 0; i < days; i++) {
+                        let leaveDate = moment(leaveStartDate, 'YYYY-MM-DD').add(i, 'days');
+                        leaveDate = leaveDate.format('YYYY-MM-DD');
+                        insertQuery += `(${leaveType},${userIdforAvailableLeave}, '${leaveReason}', '${leaveDate}', ${userId})                                            `;
+                        insertQuery += ((i + 1) == days) ? `` : `, `;
+                    }
+                    insertQuery += `;`;
+
+                    console.log('insertQuery', insertQuery);
+
+                    var leftAvailableLeave = userAvailableLeaves - leaveScore;
+                    let insertActivityQuery = `insert into activitytable(ActivityType,ActivityBy,ActivityFor,ActivityDate)  VALUES ('${activityType}', ${activityBy} , ${activityFor} , now())`;
+
+                    let updateAvailableLeaves = `update employee inner join user on user.EmpId = employee.Id set AvailableLeaves = ${leftAvailableLeave} where user.UserId = ${userIdforAvailableLeave}`;
+
+                    console.log('insertActivityQuery', insertActivityQuery);
+                    console.log('updateAvailableLeaves', updateAvailableLeaves);
+
+
+                    connection.query(insertQuery, [], function (err1, result1) {
+                        if (err1) {
+                            console.log('err1', err1)
+                            connection.rollback(function () {
+                                throw err1;
+                            });
+                        }
+
+                        connection.query(insertActivityQuery, [], function (err1, result1) {
+                            if (err1) {
+                                console.log('err1', err1)
+                                connection.rollback(function () {
+                                    throw err1;
+                                });
+                            }
+
+                            connection.query(updateAvailableLeaves, [], function (err1, result1) {
+                                if (err1) {
+                                    console.log('err1', err1)
+                                    connection.rollback(function () {
+                                        throw err1;
+                                    });
+                                }
+
+                                connection.commit(function (err) {
+                                    if (err) {
+                                        console.log('err commit', err)
+                                        connection.rollback(function () {
+                                            throw err;
+                                        });
+                                    }
+
+
+                                    res.redirect("/dashboard");
+                                });
+                            });
+                        });
+                    });
+
+                } // end of else
+            });
         });
     });
-});
 
+    // checking whether the leave is log for self or another user
+
+    // //getching the logged-in user employee id
+    // var getEmpId = `select EmpId from user where UserId = ${userId};`
+    // connection.query(getEmpId, function (error, rows, columns) {
+    //     if (error) throw error
+
+    //     // console.log('result for Employee Id', rows);
+
+    //     fetchedEmpId = parseInt(rows[0].EmpId);
+    // });
+
+    // console.log('fetchedEmpId', fetchedEmpId);
+    // //comparing the logged-in user employee id with selected user id.
+    // if (fetchedEmpId == empId) {
+    //     applyLeaveforEmp = false;
+    // } else {
+    //     empId = fetchedEmpId;
+    // }
+
+    // //getting the selected user's available leaves
+    // let queryAvailableLeave = `select AvailableLeaves from employee where EmployeeId = ${empId}`;
+    // console.log('queryAvailableLeave', queryAvailableLeave);
+    // connection.query(queryAvailableLeave, function (error, rows, columns) {
+    //     if (error) throw error
+
+    //     console.log('result for AvailableLeaves', rows);
+
+    //     userAvailableLeaves = rows[0].AvailableLeaves;
+    // });
+
+    // console.log('userAvailableLeaves', userAvailableLeaves);
+    // //checking whether applied leave is not greater than available leave
+    // if (userAvailableLeaves > leaveScore) {
+    //     // error
+    // } else {
+
+
+
+    //     if (applyLeaveforEmp) {
+    //         //getting userId for applied leave
+    //         connection.query('select UserId from employee as e inner join user as u on u.EmpId = e.Id where e.EmployeeId = ' + empId, function (error, rows, columns) {
+
+    //             // console.log('result for AvailableLeaves', rows);
+
+    //             activityFor = rows[0].UserId;
+
+    //             userIdforAvailableLeave = activityFor;
+    //         });
+    //     }
+
+
+    //     let insertQuery = `insert into leaves(LeaveTypeId, UserId, Reason, LeaveDate, CreatedBy) VALUES `;
+    //     for (let i = 0; i < days; i++) {
+    //         let leaveDate = moment(leaveStartDate, 'YYYY-MM-DD').add(i, 'days');
+    //         leaveDate = leaveDate.format('YYYY-MM-DD');
+    //         insertQuery += `(${leaveType},${userIdforAvailableLeave}, '${leaveReason}', '${leaveDate}', ${userId})                                            `;
+    //         insertQuery += ((i + 1) == days) ? `` : `, `;
+    //     }
+    //     insertQuery += `;`;
+
+    //     console.log('insertQuery', insertQuery);
+
+    //     var leftAvailableLeave = userAvailableLeaves - leaveScore;
+    //     let insertActivityQuery = `insert into activitytable(ActivityType,ActivityBy,ActivityFor,ActivityDate)  VALUES ('${activityType}', ${activityBy} , ${activityFor} , now())`;
+
+    //     let updateAvailableLeaves = `update employee inner join user on user.EmpId = employee.Id set AvailableLeaves = ${leftAvailableLeave} where user.UserId = ${userIdforAvailableLeave}`;
+
+    //     console.log('insertActivityQuery', insertActivityQuery);
+    //     console.log('updateAvailableLeaves', updateAvailableLeaves);
+    //     connection.beginTransaction(function (err) {
+    //         if (err) {
+    //             throw err;
+    //         }
+
+    //         connection.query(insertQuery, [], function (err, result) {
+    //             if (err) {
+    //                 console.log('err', err)
+    //                 connection.rollback(function () {
+    //                     throw err;
+    //                 });
+    //             }
+
+    //             connection.query(insertActivityQuery, [], function (err1, result1) {
+    //                 if (err1) {
+    //                     console.log('err1', err1)
+    //                     connection.rollback(function () {
+    //                         throw err1;
+    //                     });
+    //                 }
+
+    //                 // send the player's details to the database
+    //                 connection.query(updateAvailableLeaves, [], function (err2, result2) {
+    //                     if (err2) {
+
+    //                         console.log("error::::" + err2);
+    //                         connection.rollback(function () {
+    //                             throw err2;
+    //                         });
+    //                     }
+
+    //                     connection.commit(function (err) {
+    //                         if (err) {
+    //                             console.log('err commit', err)
+    //                             connection.rollback(function () {
+    //                                 throw err;
+    //                             });
+    //                         }
+    //                     });
+    //                 });
+    //             });
+    //         });
+    //     });
+
+    //     // connection.query(insertQuery, (err, result1) => {
+    //     //     if (err) throw err
+
+    //     //     console.log('insert query result ', result1)
+    //     //     connection.query(insertActivityQuery, insertactivityBody, (error, result2) => {
+    //     //         if (error) throw error
+    //     //         console.log(error);
+    //     //         console.log("activity data inserted " + result2);
+    //     //         // res.redirect("/dashboard")
+    //     //         connection.query(updateAvailableLeaves, insertactivityBody, (error, result3) => {
+    //     //             if (error) throw error
+    //     //             console.log("update user available leaves " + result3);
+    //     //             res.redirect("/dashboard");
+    //     //         });
+    //     //     });
+    //     // });
+
+    // } //end of else
+
+
+});
 
 
 router.get('/edit-employee', isAuth.requireRole(2), function (req, res) {
@@ -708,7 +1054,7 @@ router.get('/edit-employee', isAuth.requireRole(2), function (req, res) {
 });
 
 
-//Add Employee Post Request multer({dest: "./uploads/"})
+//Update Employee Post Request multer({dest: "./uploads/"})
 router.post('/updateEmp', isAuth.isAuthenticated, multer({
     dest: "./uploads/"
 }).single("pic"), function (req, res, next) {
@@ -816,7 +1162,7 @@ router.post('/updateEmp', isAuth.isAuthenticated, multer({
                         res.render('success', {
                             title: 'User Updated',
                             user: req.body.userinfo,
-                            userRole: true
+                            userRole: req.user.RoleId
                         });
                     });
 
@@ -836,11 +1182,11 @@ router.get('/fetchLeaveTypes', isAuth.requireRole(2), function (req, res, next) 
     connection.query(`SELECT * FROM LeavesType`, function (err, rows) {
         if (err) {
             console.log("Error: " + err);
-           return res.send(null);
-        } else if(rows.length == 0){
+            return res.send(null);
+        } else if (rows.length == 0) {
             console.log("No row found!");
             return res.send(null);
-        } else{
+        } else {
             console.log(rows);
             return res.send(rows);
         }
@@ -857,7 +1203,7 @@ router.post('/updateLeave', isAuth.requireRole(2), function (req, res, next) {
 
     console.log(leaveTableId);
 
-    
+
 
     connection.beginTransaction(function (err) {
         if (err) {
@@ -874,7 +1220,7 @@ router.post('/updateLeave', isAuth.requireRole(2), function (req, res, next) {
                 });
             }
 
-            connection.query(`UPDATE Employee SET AvailableLeaves = AvailableLeaves + ${req.body.leaveOldValue} - (Select LeaveValue from LeavesType where LeaveTypeId = ${req.body.leaveType}) WHERE Id = (Select EmpId from User where UserId = ${req.body.id})`,  function (err2, result2) {
+            connection.query(`UPDATE Employee SET AvailableLeaves = AvailableLeaves + ${req.body.leaveOldValue} - (Select LeaveValue from LeavesType where LeaveTypeId = ${req.body.leaveType}) WHERE Id = (Select EmpId from User where UserId = ${req.body.id})`, function (err2, result2) {
                 if (err2) {
                     connection.rollback(function () {
                         console.log(err2);
@@ -883,7 +1229,7 @@ router.post('/updateLeave', isAuth.requireRole(2), function (req, res, next) {
                 }
 
                 var activityArray = ["Update Leave", req.body.userid, req.body.id]
-    
+
                 connection.query(`insert into activitytable(ActivityType,ActivityBy,ActivityFor,ActivityDate)  VALUES (?,?,?, now())`, activityArray, function (err3, result3) {
                     if (err3) {
                         connection.rollback(function () {
@@ -891,11 +1237,11 @@ router.post('/updateLeave', isAuth.requireRole(2), function (req, res, next) {
                             throw err3;
                         });
                     }
-        
+
                     return res.send(true);
 
                 });
-    
+
             });
         });
     });
@@ -931,7 +1277,7 @@ router.post('/deleteLeave', isAuth.requireRole(2), function (req, res, next) {
                 });
             }
 
-            connection.query(`UPDATE Employee SET AvailableLeaves = AvailableLeaves + ${req.body.leaveValue} WHERE Id = (Select EmpId from User where UserId = ${req.body.id})`,  function (err2, result2) {
+            connection.query(`UPDATE Employee SET AvailableLeaves = AvailableLeaves + ${req.body.leaveValue} WHERE Id = (Select EmpId from User where UserId = ${req.body.id})`, function (err2, result2) {
                 if (err2) {
                     connection.rollback(function () {
                         console.log(err2);
@@ -940,7 +1286,7 @@ router.post('/deleteLeave', isAuth.requireRole(2), function (req, res, next) {
                 }
 
                 var activityArray = ["Update Leave", req.body.userid, req.body.id]
-    
+
                 connection.query(`insert into activitytable(ActivityType,ActivityBy,ActivityFor,ActivityDate)  VALUES (?,?,?, now())`, activityArray, function (err3, result3) {
                     if (err3) {
                         connection.rollback(function () {
@@ -948,11 +1294,11 @@ router.post('/deleteLeave', isAuth.requireRole(2), function (req, res, next) {
                             throw err3;
                         });
                     }
-        
+
                     return res.send(true);
 
                 });
-    
+
             });
         });
     });

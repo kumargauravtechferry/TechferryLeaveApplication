@@ -245,8 +245,15 @@
                             <div class="col-sm-6" style="display: none;">
                                 <input type="text" name="userId" placeholder="" value="{{userDetails.UserId}}" readonly>
 
-                                <input type="text" name="userinfo" placeholder="" value="{{user}}" readonly>
-                                <input type="text" name="userImg" value="{{userDetails.Photo}}" readonly>
+                                <input type="text" id="userinfo" name="userinfo" placeholder="" value="{{user}}"
+                                    readonly>
+                                <input type="text" id="userImg" name="userImg" value="{{userDetails.Photo}}" readonly>
+                                <input type="text" id="userGender" name="userGender" value="{{userDetails.Gender}}"
+                                    readonly>
+                                <input type="text" id="userState" name="userState" value="{{userDetails.State}}"
+                                    readonly>
+                                <input type="text" id="userMaritalStatus" name="userMaritalStatus"
+                                    value="{{userDetails.MaritalSatus}}" readonly>
                             </div>
                             <div class="col-sm-6">
                                 <img class="empPhoto" src="data:image/png;base64,{{userDetails.Photo}}"
@@ -275,16 +282,16 @@
                             </div>
                             <div class="col-sm-6">
                                 <select id="gender" name="gender" required>
-                                    <option value="{{userDetails.Gender}}" selected="selected">{{userDetails.Gender}}
-                                    </option>
+                                    {{!-- <option value="{{userDetails.Gender}}" selected="selected">{{userDetails.Gender}}
+                                    </option> --}}
                                     <option value="M">Male</option>
                                     <option value="F">Female</option>
                                 </select>
                             </div>
                             <div class="col-sm-6">
                                 <select id="maritalStatus" name="maritalStatus" required>
-                                    <option value="{{userDetails.MaritalSatus}}" selected="selected">
-                                        {{userDetails.MaritalSatus}}</option>
+                                    {{!-- <option value="{{userDetails.MaritalSatus}}" selected="selected"> --}}
+                                    {{userDetails.MaritalSatus}}</option>
                                     <option value="Married">Married</option>
                                     <option value="Unmarried">Unmarried</option>
                                 </select>
@@ -335,7 +342,7 @@
                             </div>
                             <div class="col-sm-6">
                                 <select id="stateslist" name="stateslist" required>
-                                    <option value="{{userDetails.State}}">{{userDetails.State}}</option>
+                                    {{!-- <option value="{{userDetails.State}}">{{userDetails.State}}</option> --}}
                                     <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
                                     <option value="Andhra Pradesh">Andhra Pradesh</option>
                                     <option value="Arunachal Pradesh">Arunachal Pradesh</option>

@@ -38,7 +38,7 @@ $(document).ready(function () {
                                     <div class="card-body text-center mt-4">
                                         <h4 class="card-title empListName">${res[i].FirstName} ${res[i].LastName}</h4>
                                         <h6 class="card-title">Leaves Taken</h6>
-                                        <h5 class="card-title empListLeavesTaken">${res[i].TotalLeaves}</h5>
+                                        <h5 class="card-title empListLeavesTaken">${res[i].TotalLeaves?'Null':0}</h5>
                                         <h6 class="card-title">Available Leaves</h6>
                                         <h5 class="card-title empListAvailableLeaves">${res[i].AvailableLeaves}</h5>
                                         <ul class="list-inline">
@@ -104,6 +104,17 @@ $(document).ready(function () {
 
 
             $('#status')[0].innerHTML = shtml;
+
+            var getGender = $('#userGender').val();
+            console.log('getGender', getGender)
+            $('#gender').val(getGender);
+
+            var getState = $('#userState').val();
+            console.log('getState', getState)
+            $('#stateslist').val(getState);
+
+            var getMaritalStatus = $('#userMaritalStatus').val();
+            $('#maritalStatus').val(getMaritalStatus);
 
         },
         error: function (err) {
