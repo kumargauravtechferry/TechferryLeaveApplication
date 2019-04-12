@@ -272,24 +272,22 @@
                                     onfocus="(this.type='date')" onblur="(this.type='text')" max="{{today}}" required>
                             </div>
                             <div class="col-sm-6">
-                                <select id="gender" name="gender" required>
-                                    <option value="{{Gender}}" selected="selected">{{Gender}}
-                                    </option>
+                                <select id="userGender" name="gender" required>
+                                    <option value="{{Gender}}" selected="selected">{{Gender}}</option>
                                     <option value="M">Male</option>
                                     <option value="F">Female</option>
                                 </select>
                             </div>
                             <div class="col-sm-6">
-                                <select id="maritalStatus" name="maritalStatus" required>
-                                    <option value="{{MaritalStatus}}" selected="selected">
-                                        {{MaritalStatus}}</option>
+                                <select id="userMaritalStatus" name="maritalStatus" required>
+                                    <option value="{{MaritalStatus}}" selected="selected">{{MaritalStatus}}</option>
                                     <option value="Married">Married</option>
                                     <option value="Unmarried">Unmarried</option>
                                 </select>
                             </div>
                             <div class="col-sm-6">
                                 <input type="number" name="contactNumber" placeholder="Enter Contact Number"
-                                    value="{{ContactNumber}}" minlength="10" maxlength="10" required>
+                                    value="{{ContactNumber}}"  minlength="10" maxlength="10" required>
                             </div>
                             <div class="col-sm-6">
                                 <input type="number" name="emergencyNumber" placeholder="Enter Emergency Contact Number"
@@ -332,7 +330,7 @@
                                     required>
                             </div>
                             <div class="col-sm-6">
-                                <select id="stateslist" name="stateslist" required>
+                                <select id="userState" name="stateslist" required>
                                     <option value="{{State}}">{{State}}</option>
                                     <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
                                     <option value="Andhra Pradesh">Andhra Pradesh</option>

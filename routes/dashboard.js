@@ -547,9 +547,14 @@ router.get('/view-employees/:id', isAuth.isAuthenticated, isAuth.requireRole(1),
 router.get('/view-employees/:id/edit-employee', isAuth.requireRole(2), function (req, res) {
 
 
-
+    // console.log('req.params.id', req.params.id)
+    var connectionCommand = `Select u.UserId, e.EmployeeId, e.StatusId, DATE_FORMAT(e.JoinedDate, "%Y-%m-%d") as JoinedDate, e.AvailableLeaves, u.FirstName, u.LastName, u.Email, u.Gender, u.MaritalSatus, u.BloodGroup, DATE_FORMAT(u.DOB, "%Y-%m-%d") as dob, u.ContactNumber, u.EmergencyNumber, u.Photo, e.AvailableLeaves, s.StatusName, d.Designation, d.DesignationId, a.AddressId, a.Street1, a.Street2, a.City, a.State, a.Zip from User as u inner join Employee as e on u.EmpId = e.Id inner join Address as a on u.AddressId = a.AddressId inner join EmployeeStatus as s on e.StatusId = s.StatusId inner join Designation as d on u.DesignationId = d.DesignationId where u.UserId =${req.params.id}`;
+    // res.render('edit-employee', {
+    //     id: req.params.id,
+    //     user: req.user
+    // });
+    console.log('req.params.id', req.params.id)
     var connectionCommand = `Select u.UserId, e.EmployeeId, e.StatusId, DATE_FORMAT(e.JoinedDate, "%Y-%m-%d") as JoinedDate, e.AvailableLeaves, u.FirstName, u.LastName, u.Email, u.Gender, u.MaritalSatus, u.BloodGroup, DATE_FORMAT(u.DOB, "%Y-%m-%d") as dob, u.ContactNumber, u.EmergencyNumber, u.Photo, e.AvailableLeaves, s.StatusName, d.Designation, d.DesignationId, a.AddressId, a.Street1, a.Street2, a.City, a.State, a.Zip,  CONCAT(u.FirstName, ' ', u.LastName) AS NAME    from User as u inner join Employee as e on u.EmpId = e.Id inner join Address as a on u.AddressId = a.AddressId inner join EmployeeStatus as s on e.StatusId = s.StatusId inner join Designation as d on u.DesignationId = d.DesignationId where u.UserId = ${req.params.id}`;
-
     // console.log('connectionCommand', connectionCommand)
 
     connection.query(connectionCommand, function (err, rows) {
@@ -609,7 +614,7 @@ var getLeaveTypeData = function (params, callbackFn) {
 
 var getEmployeeIdData = function (param, callbackFn) {
     var EmpidData = [];
-    connection.query("Select CONCAT(u.FirstName, ' ', u.LastName, ' - [',e.EmployeeId,']') AS NAME , e.EmployeeId   from User as u   inner join Employee as e   on u.Empid = e.id", function (error, rows, columns) {
+    connection.query("Select CONCAT(u.FirstName, ' ', u.LastName, ' - [',e.EmployeeId,']') AS NAME , e.EmployeeId,u.UserId   from User as u   inner join Employee as e   on u.Empid = e.id", function (error, rows, columns) {
         if (rows.length != 0) {
             EmpidData = rows;
         } else {
@@ -711,6 +716,7 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
     var userId = req.user.UserId;
 
     //getting leave info
+    //var employeeId = req.body[]
     var empId = parseInt(req.body["Emplid-type"]);
     var leaveStartDate = req.body.datepickerstart;
     var leaveEndDate = req.body.datepickerend;
@@ -855,7 +861,7 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
                         let leaveDateq = moment(leaveDate[i], 'YYYY-MM-DD');
                         leaveDateq = leaveDateq.format('YYYY-MM-DD');
 
-                        insertQuery += `(${leaveType[i]},${userIdforAvailableLeave}, '${leaveReason}', '${leaveDateq}', ${userId}, now(), now())                                            `;
+                        insertQuery += `(${leaveType[i]},${userIdforAvailableLeave}, '${leaveReason}', '${leaveDateq}', ${empId}, now(), now())`;
                         insertQuery += ((i + 1) == leaveDate.length) ? `` : `, `;
                     }
                     insertQuery += `;`;
@@ -1098,10 +1104,11 @@ router.get('/edit-employee', isAuth.requireRole(2), function (req, res) {
 
 //Update Employee Post Request multer({dest: "./uploads/"})
 router.post('/updateEmp', isAuth.isAuthenticated, multer({
-    dest: "./uploads/"
+    dest: "./uploads/",
+    limits: { fieldSize: 25 * 1024 * 1024 }
 }).single("pic"), function (req, res, next) {
 
-    console.log(JSON.stringify(req.body));
+    //console.log(JSON.stringify(req.body));
 
     //User Table Data
     let userId = req.user.UserId;
@@ -1125,7 +1132,7 @@ router.post('/updateEmp', isAuth.isAuthenticated, multer({
 
     let picture = req.file;
     let picUpload;
-    console.log('picture', picture)
+    //console.log('picture', picture)
     if (picture === undefined || picture == {}) {
         picUpload = req.body.userImg;
     } else {
@@ -1150,7 +1157,7 @@ router.post('/updateEmp', isAuth.isAuthenticated, multer({
         }
 
         var query = `update user set Firstname =  '${firstName}'  , Lastname = '${lastName}' , Email = '${email}',  DOB  = '${dob}', Gender = '${g}' , MaritalSatus = '${maritalStatus}' , ContactNumber = '${contactNumber}' , EmergencyNumber = '${emergencyNumber}', BloodGroup = '${bloodGroup}', Photo = '${picUpload}', UpdatedOn = now(), DesignationId = ${designation} WHERE UserId =${userId} `;
-        console.log('query', query);
+        //console.log('query', query);
         connection.query(query, [], function (err, result) {
             if (err) {
                 console.log('err', err)
@@ -1158,14 +1165,13 @@ router.post('/updateEmp', isAuth.isAuthenticated, multer({
                     throw err;
                 });
             }
-
             // console.log('user details', result);
             // addressId = result.insertId;
             var query2 = `update Employee  
                             inner join user on user.EmpId = Employee.Id
                             set Employee.StatusId = ${status}, Employee.JoinedDate = '${joiningDate}' , Employee.AvailableLeaves = ${availableLeaves}, Employee.UpdatedOn = now() where user.UserId = ${userId}`;
 
-            console.log('query2', query2)
+            //console.log('query2', query2)
 
             connection.query(query2, [], function (err1, result1) {
                 if (err1) {
@@ -1179,7 +1185,7 @@ router.post('/updateEmp', isAuth.isAuthenticated, multer({
                  inner join user on user.EmpId = Address.AddressId  
                  set Address.Street1 = '${address1}', Address.Street2 = '${address2}', Address.City = '${city}', Address.State = '${stateslist}', Address.Zip = ${zip}, Address.UpdatedOn = now() where user.UserId = ${userId}`;
 
-                console.log('query3', query3);
+                //console.log('query3', query3);
                 // send the player's details to the database
                 connection.query(query3, [], function (err2, result2) {
                     if (err2) {
@@ -1199,24 +1205,15 @@ router.post('/updateEmp', isAuth.isAuthenticated, multer({
                                 throw err;
                             });
                         }
-
-
-                        res.render('success', {
+                     res.render('dashboard/edit-employee', {
                             title: 'User Updated',
                             user: req.body.userinfo,
                             userRole: req.user.RoleId
                         });
                     });
-
                 });
-
-
             });
         });
-
-
-
-
     });
 });
 
@@ -1336,7 +1333,6 @@ router.post('/deleteLeave', isAuth.requireRole(2), function (req, res, next) {
                             throw err3;
                         });
                     }
-
                     return res.send(true);
 
                 });

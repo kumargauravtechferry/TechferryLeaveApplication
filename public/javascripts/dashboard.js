@@ -41,7 +41,7 @@ $(document).ready(function () {
             $('.employeeEmail').html(resultData.Email);
             $('.empAddress').html(resultData.Street1 + ", " + resultData.Street2 + ", " + resultData.City + ", " + resultData.State + "-" + resultData.Zip);
             $('.empDob').html(moment(resultData.DOB).format('YYYY - MMM - Do'));
-            $('.empGender').html(resultData.Gender);
+            $('.empGender').html(resultData.Gender=='M'?'Male':'Female');
             $('.empMStatus').html(resultData.MaritalSatus);
             $('.empContactNumber').html(resultData.ContactNumber);
             $('.empEmergencyContactNumber').html(resultData.EmergencyNumber);

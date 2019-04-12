@@ -102,13 +102,11 @@ $(document).ready(function () {
 
             }
 
-
             $('#status')[0].innerHTML = shtml;
 
             var getGender = $('#userGender').val();
             console.log('getGender', getGender)
-            $('#gender').val(getGender);
-
+           $('#gender').val(getGender);
             var getState = $('#userState').val();
             console.log('getState', getState)
             $('#stateslist').val(getState);
