@@ -5,8 +5,8 @@
 var smtpTransport = nodemailer.createTransport({
   service: process.env.MAILER_SERVICE_PROVIDER || 'Gmail',
   auth: {
-    user: 'rajatduvedi.bhumca2014@gmail.com',
-    pass: 'iwillfight'
+    user: 'jayant9583@gmail.com',
+    pass: 'jsr@23bistupur'
   }
 });
 
