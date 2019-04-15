@@ -40,6 +40,7 @@ router.get('/', function (req, res, next) {
         title: 'Dashboard Page',
         user: req.user,
         id: req.user.UserId,
+        displayEditText: (req.user.RoleId == 1) ? true : false,
         edit_detail: (req.user.RoleId == 1) ? true : false,
         userRole: (req.user.RoleId == 1) ? true : false,
         buttonText: "Leave Log",
@@ -536,7 +537,7 @@ router.get('/view-employees/:id', isAuth.isAuthenticated, isAuth.requireRole(1),
         id: req.params.id,
         user: req.user,
         userRole: req.user.RoleId,
-        displayEditText: true,
+        displayEditText: false,
         edit_detail: (req.user.RoleId == 1) ? true : false,
         //userRole: (req.user.RoleId == 1) ? true : false,
         buttonText: "Edit Employee Details",
@@ -581,10 +582,9 @@ router.get('/leave', isAuth.isAuthenticated, isAuth.requireRole(2), function (re
         console.log("resule data " + result)
         var leavedata = result;
         getEmployeeIdData(req.user.UserId, function (error, result1) {
-        if(error)
-        {
-        console.log("error found "+error)
-        }
+            if (error) {
+                console.log("error found " + error)
+            }
             console.log("result data " + result1)
             var EmpidData = result1
             res.render('leave', {
@@ -619,57 +619,55 @@ var getLeaveTypeData = function (params, callbackFn) {
 var getEmployeeIdData = function (param, callbackFn) {
     var EmpidData = [];
     var fetchedRoleId = "";
-  var userId = param;
- 
+    var userId = param;
+
     //var ERoleid = 1 // For Admin/HR role -- Role = 1 for Admin/HR and Role = 2 for Employee
 
     //fetching the logged-in user employee id
-        var getEmpRoleId = `select R.Roleid from user U inner join User_Roles R on U.userid = R.userid where U.userid= ${userId};`
-        connection.query(getEmpRoleId, function (err, result) {
-            if (err) {
-                console.log('err', err)
-            }
-            else
-            {
-    
+    var getEmpRoleId = `select R.Roleid from user U inner join User_Roles R on U.userid = R.userid where U.userid= ${userId};`
+    connection.query(getEmpRoleId, function (err, result) {
+        if (err) {
+            console.log('err', err)
+        }
+        else {
+
             console.log('getting EmpId ==> ', result[0].Roleid);
             fetchedRoleId = parseInt(result[0].Roleid);
 
 
             console.log('fetchedEmpId', fetchedRoleId);
 
-    if (fetchedRoleId == 1) {
-        var querySearch = "Select CONCAT(u.FirstName, ' ', u.LastName, ' - [',e.EmployeeId,']') AS NAME , e.EmployeeId,u.UserId   from User as u   inner join Employee as e   on u.Empid = e.id left join role r on r.id = u.userid"
-        connection.query(querySearch, function (error, rows, columns) {
-            if (error) {
-                return callbackFn(error, null);
-            }
-            else if (rows.length==0)
-            {
-                return callbackFn("No Row Found", null);
-            }
-            else {
-                return callbackFn(null, rows);
-            }
-        });
-    } else {
-
-        var querySearch = `Select CONCAT(u.FirstName, ' ', u.LastName, ' - [',e.EmployeeId,']') AS NAME , e.EmployeeId,u.UserId from User as u   inner join Employee as e   on u.Empid = e.id where u.userid =`+userId
-        connection.query(querySearch, function (error1, rows1) {
-            console.log("dsknlksd");
-            if (error1) {
-                return callbackFn(error1, null);
-            } else if (rows1.length == 0) {
-                return callbackFn("No Row Found", null);
+            if (fetchedRoleId == 1) {
+                var querySearch = "Select CONCAT(u.FirstName, ' ', u.LastName, ' - [',e.EmployeeId,']') AS NAME , e.EmployeeId,u.UserId   from User as u   inner join Employee as e   on u.Empid = e.id left join role r on r.id = u.userid"
+                connection.query(querySearch, function (error, rows, columns) {
+                    if (error) {
+                        return callbackFn(error, null);
+                    }
+                    else if (rows.length == 0) {
+                        return callbackFn("No Row Found", null);
+                    }
+                    else {
+                        return callbackFn(null, rows);
+                    }
+                });
             } else {
-                return callbackFn(null, rows1);
-            }
-        });
-    }
-}
 
-    //callbackFn(null, EmpidData);
-});
+                var querySearch = `Select CONCAT(u.FirstName, ' ', u.LastName, ' - [',e.EmployeeId,']') AS NAME , e.EmployeeId,u.UserId from User as u   inner join Employee as e   on u.Empid = e.id where u.userid =` + userId
+                connection.query(querySearch, function (error1, rows1) {
+                    console.log("dsknlksd");
+                    if (error1) {
+                        return callbackFn(error1, null);
+                    } else if (rows1.length == 0) {
+                        return callbackFn("No Row Found", null);
+                    } else {
+                        return callbackFn(null, rows1);
+                    }
+                });
+            }
+        }
+
+        //callbackFn(null, EmpidData);
+    });
 
 };
 
@@ -887,7 +885,7 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
             //checking whether applied leave is not greater than available leave
             if (userAvailableLeaves < leaveScore) {
                 // error
-            } 
+            }
             else {
 
                 // if (applyLeaveforEmp) {
@@ -1289,6 +1287,7 @@ router.post('/updateLeave', isAuth.requireRole(2), function (req, res, next) {
     console.log(JSON.stringify(req.body));
 
     var leaveTableId = req.body.leaveTableId;
+    var userid = req.user.UserId;
 
     console.log(leaveTableId);
 
@@ -1299,7 +1298,7 @@ router.post('/updateLeave', isAuth.requireRole(2), function (req, res, next) {
             throw err;
         }
 
-        var leaveArray = [req.body.leaveDate, req.body.id, req.body.leaveReason, req.body.leaveType, req.body.leaveTableId];
+        var leaveArray = [req.body.leaveDate, userid, req.body.leaveReason, req.body.leaveType, req.body.leaveTableId];
 
         connection.query(`UPDATE Leaves SET LeaveDate = ?, UpdatedBy = ?, UpdatedOn = now(), Reason = ?, LeaveTypeId = ? where LeaveId = ?`, leaveArray, function (err, result) {
             if (err) {
@@ -1317,7 +1316,7 @@ router.post('/updateLeave', isAuth.requireRole(2), function (req, res, next) {
                     });
                 }
 
-                var activityArray = ["Update Leave", req.body.userid, req.body.id]
+                var activityArray = ["Update Leave", userid, req.body.id]
 
                 connection.query(`insert into activitytable(ActivityType,ActivityBy,ActivityFor,ActivityDate)  VALUES (?,?,?, now())`, activityArray, function (err3, result3) {
                     if (err3) {
@@ -1327,7 +1326,16 @@ router.post('/updateLeave', isAuth.requireRole(2), function (req, res, next) {
                         });
                     }
 
-                    return res.send(true);
+                    connection.commit(function (err4) {
+                        if (err4) {
+                            connection.rollback(function () {
+                                throw err4;
+                            });
+                        }
+
+                        return res.send(true);
+
+                    });
 
                 });
 
@@ -1343,7 +1351,7 @@ router.post('/deleteLeave', isAuth.requireRole(2), function (req, res, next) {
     console.log(JSON.stringify(req.body));
 
     var leaveTableId = req.body.leaveTableId;
-    var userid = req.body.userid;
+    var userid = req.user.UserId;
     var id = req.body.id;
     var leaveDate = req.body.leaveDate;
     var leaveReason = req.body.leaveReason;
@@ -1374,7 +1382,7 @@ router.post('/deleteLeave', isAuth.requireRole(2), function (req, res, next) {
                     });
                 }
 
-                var activityArray = ["Update Leave", req.body.userid, req.body.id]
+                var activityArray = ["Update Leave", userid, req.body.id]
 
                 connection.query(`insert into activitytable(ActivityType,ActivityBy,ActivityFor,ActivityDate)  VALUES (?,?,?, now())`, activityArray, function (err3, result3) {
                     if (err3) {
@@ -1383,7 +1391,16 @@ router.post('/deleteLeave', isAuth.requireRole(2), function (req, res, next) {
                             throw err3;
                         });
                     }
-                    return res.send(true);
+
+                    connection.commit(function (err4) {
+                        if (err4) {
+                            connection.rollback(function () {
+                                throw err4;
+                            });
+                        }
+                        return res.send(true);
+
+                    });
 
                 });
 
