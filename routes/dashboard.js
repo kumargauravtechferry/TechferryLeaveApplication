@@ -832,8 +832,8 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
     //getting activityTable values
     var activityType = "leave";
     var activityBy = userId;
-    var activityFor = 0;
-    var userIdforAvailableLeave = userId;
+    var activityFor = empId;//0;
+    var userIdforAvailableLeave = empId;
 
 
 
@@ -864,7 +864,7 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
         //         empId = fetchedEmpId;
         //     }
 
-        let queryAvailableLeave = `select AvailableLeaves from employee where Id = ${userId}`;
+        let queryAvailableLeave = `select AvailableLeaves from employee where Id = ${empId}`;
         console.log('queryAvailableLeave', queryAvailableLeave);
 
 

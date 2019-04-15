@@ -146,11 +146,7 @@ function bindClickEvents() {
             data: params,
             async: true,
             success: function (res) {
-
                 //console.log(res);
-
-
-
             },
             error: function (err) {
 
