@@ -280,15 +280,15 @@ var connectionPromiseFetchEmployeeId = new Promise(function (resolve, reject) {
     connection.query(`SELECT e.employeeId FROM user as u
     inner join Employee as e on e.id = u.empId
     ORDER BY u.userId DESC LIMIT 1`, function (err, rows) {
-            if (err) {
-                reject(null);
-            } else if (!rows.length) {
-                reject(null);
-            } else {
-                var empId = (rows[0].employeeId).substring(3);
-                resolve(empId);
-            }
-        });
+        if (err) {
+            reject(null);
+        } else if (!rows.length) {
+            reject(null);
+        } else {
+            var empId = (rows[0].employeeId).substring(3);
+            resolve(empId);
+        }
+    });
 });
 
 function convertImgToDataURLviaCanvas(url, callback, outputFormat) {
@@ -629,8 +629,7 @@ var getEmployeeIdData = function (param, callbackFn) {
     connection.query(getEmpRoleId, function (err, result) {
         if (err) {
             console.log('err', err)
-        }
-        else {
+        } else {
 
             console.log('getting EmpId ==> ', result[0].Roleid);
             fetchedRoleId = parseInt(result[0].Roleid);
@@ -643,11 +642,9 @@ var getEmployeeIdData = function (param, callbackFn) {
                 connection.query(querySearch, function (error, rows, columns) {
                     if (error) {
                         return callbackFn(error, null);
-                    }
-                    else if (rows.length == 0) {
+                    } else if (rows.length == 0) {
                         return callbackFn("No Row Found", null);
-                    }
-                    else {
+                    } else {
                         return callbackFn(null, rows);
                     }
                 });
@@ -833,7 +830,7 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
     //getting activityTable values
     var activityType = "leave";
     var activityBy = userId;
-    var activityFor = empId;//0;
+    var activityFor = empId; //0;
     var userIdforAvailableLeave = empId;
 
 
@@ -886,8 +883,7 @@ router.post('/leave', isAuth.requireRole(2), function (req, res) {
             //checking whether applied leave is not greater than available leave
             if (userAvailableLeaves < leaveScore) {
                 // error
-            }
-            else {
+            } else {
 
                 // if (applyLeaveforEmp) {
                 //     //getting userId for applied leave
@@ -1154,13 +1150,15 @@ router.get('/edit-employee', isAuth.requireRole(2), function (req, res) {
 //Update Employee Post Request multer({dest: "./uploads/"})
 router.post('/updateEmp', isAuth.isAuthenticated, multer({
     dest: "./uploads/",
-    limits: { fieldSize: 25 * 1024 * 1024 }
+    limits: {
+        fieldSize: 25 * 1024 * 1024
+    }
 }).single("pic"), function (req, res, next) {
 
-    //console.log(JSON.stringify(req.body));
+    // console.log(JSON.stringify(req.body));
 
     //User Table Data
-    let userId = req.user.UserId;
+    let userId = req.body.userId;
     let firstName = req.body.firstName;
     let lastName = req.body.lastName;
     let email = req.body.email;
@@ -1205,7 +1203,7 @@ router.post('/updateEmp', isAuth.isAuthenticated, multer({
             throw err;
         }
 
-        var query = `update user set Firstname =  '${firstName}'  , Lastname = '${lastName}' , Email = '${email}',  DOB  = '${dob}', Gender = '${g}' , MaritalSatus = '${maritalStatus}' , ContactNumber = '${contactNumber}' , EmergencyNumber = '${emergencyNumber}', BloodGroup = '${bloodGroup}', Photo = '${picUpload}', UpdatedOn = now(), DesignationId = ${designation} WHERE UserId =${userId} `;
+        var query = `update user set Firstname =  '${firstName}'  , Lastname = '${lastName}' ,  DOB  = '${dob}', Gender = '${g}' , MaritalSatus = '${maritalStatus}' , ContactNumber = '${contactNumber}' , EmergencyNumber = '${emergencyNumber}', BloodGroup = '${bloodGroup}', Photo = '${picUpload}', UpdatedOn = now(), DesignationId = ${designation} WHERE UserId =${userId} `;
         //console.log('query', query);
         connection.query(query, [], function (err, result) {
             if (err) {
@@ -1254,7 +1252,7 @@ router.post('/updateEmp', isAuth.isAuthenticated, multer({
                                 throw err;
                             });
                         }
-                        res.render('dashboard/edit-employee', {
+                        res.render('view_employees', {
                             title: 'User Updated',
                             user: req.body.userinfo,
                             userRole: req.user.RoleId
