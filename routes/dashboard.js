@@ -117,7 +117,8 @@ router.post('/fetchLeaves', (req, res, next) => {
     inner join LeavesType as lt on l.LeaveTypeId = lt.LeaveTypeId
     inner join user as u on u.UserId = l.UserId
     where u.UserId = "${req.body.id}"
-    and MONTH(l.LeaveDate) = MONTH(CURRENT_DATE())`;
+    and MONTH(l.LeaveDate) = MONTH(CURRENT_DATE())
+    and YEAR(l.LeaveDate) = YEAR(CURRENT_DATE())`;
 
     connection.query(connectionCommand, function (err, rows) {
         if (err)
