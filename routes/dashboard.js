@@ -116,7 +116,8 @@ router.post('/fetchLeaves', (req, res, next) => {
     var connectionCommand = `Select l.LeaveId, l.LeaveDate, lt.LeaveTypeName, lt.LeaveValue, l.Reason from Leaves as l
     inner join LeavesType as lt on l.LeaveTypeId = lt.LeaveTypeId
     inner join user as u on u.UserId = l.UserId
-    where u.UserId = "${req.body.id}"`;
+    where u.UserId = "${req.body.id}"
+    and MONTH(l.LeaveDate) = MONTH(CURRENT_DATE())`;
 
     connection.query(connectionCommand, function (err, rows) {
         if (err)
@@ -1382,7 +1383,7 @@ router.post('/deleteLeave', isAuth.requireRole(2), function (req, res, next) {
                     });
                 }
 
-                var activityArray = ["Update Leave", userid, req.body.id]
+                var activityArray = ["Delete Leave", userid, req.body.id]
 
                 connection.query(`insert into activitytable(ActivityType,ActivityBy,ActivityFor,ActivityDate)  VALUES (?,?,?, now())`, activityArray, function (err3, result3) {
                     if (err3) {
