@@ -374,7 +374,6 @@ router.post('/addEmp', isAuth.isAuthenticated, multer({
 
                 // passowrd encyption
                 var encpassword = isAuth.EncryptPassword(password);
-
                 let userParams = [firstName, lastName, email, encpassword, dob, g, maritalStatus, contactNumber, emergencyNumber, bloodGroup, picUpload, designation];
 
                 // send the player's details to the database
